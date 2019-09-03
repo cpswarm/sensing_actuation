@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="pos_type" default="local" />
+    <arg name="output" default="log" />
+
+    <!-- Position provider -->
+    <node pkg="mavros_vel_provider" type="mavros_vel_provider" name="mavros_vel_provider_$(arg id)" output="$(arg output)" required="true">
+        <param name="pos_type" value="$(arg pos_type)" />
+        <rosparam file="$(find mavros_vel_provider)/param/mavros_vel_provider.yaml" command="load" />
+    </node>
+
+</launch>

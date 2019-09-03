@@ -1,0 +1,4 @@
+sensor_msgs/NavSatFix fix
+float64 yaw
+---
+mavros_msgs/GlobalPositionTarget target

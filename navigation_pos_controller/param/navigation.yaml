@@ -1,0 +1,5 @@
+# http://wiki.ros.org/base_local_planner
+TrajectoryPlannerROS:
+  yaw_goal_tolerance: 3.14
+  occdist_scale: 0.1
+  pdist_scale: 0.1

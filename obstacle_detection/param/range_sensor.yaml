@@ -1,0 +1,4 @@
+obstacle_dist_min: 0.0 # The minimum range at which obstacles are considered.
+obstacle_dist_max: 1.5 # The maximum range at which obstacles are considered.
+num_msgs:          10  # Number of sensor messages being used for reliably detecting an obstacle.
+threshold:         0.5 # Percentage of sensor messages that must report an obstacle in order for the behavior to assume an obstacle.

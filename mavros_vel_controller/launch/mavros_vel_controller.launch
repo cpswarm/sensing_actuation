@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="id" default="1" />
+	<arg name="output" default="screen" />
+	
+	<!-- Position controller NODE -->
+    <node pkg="mavros_vel_controller" name="vel_controller_$(arg id)" type="mavros_vel_controller" output="$(arg output)" required="true">
+        <rosparam command="load" file="$(find mavros_vel_controller)/param/mavros_vel_controller_params.yaml" />
+	</node>
+
+</launch>

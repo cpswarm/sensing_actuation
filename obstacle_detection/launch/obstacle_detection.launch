@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Obstacle detection -->
+    <node pkg="obstacle_detection" type="obstacle_detection" name="obstacle_detection_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find obstacle_detection)/param/obstacle_detection.yaml" command="load" />
+        <rosparam file="$(find obstacle_detection)/param/range_sensor.yaml" command="load" />
+        <rosparam file="$(find obstacle_detection)/param/lidar_sensor.yaml" command="load" />
+        <rosparam file="$(find swarm_kinematics)/param/swarm_kinematics.yaml" command="load" />
+    </node>
+
+</launch>

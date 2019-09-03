@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id" default="1" />
+	<arg name="log_output" default="screen" />
+	
+    <!-- Battery monitor node -->
+    <node pkg="battery_monitor" name="battery_monitor_$(arg id)" type="battery_monitor" output="$(arg log_output)">
+		<rosparam file="$(find battery_monitor)/param/battery.yaml" command="load" />
+	</node>
+</launch>

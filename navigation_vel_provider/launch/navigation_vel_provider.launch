@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Position provider -->
+    <node pkg="navigation_vel_provider" type="navigation_vel_provider" name="navigation_vel_provider_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find navigation_vel_provider)/param/navigation_vel_provider.yaml" command="load" />
+    </node>
+
+</launch>

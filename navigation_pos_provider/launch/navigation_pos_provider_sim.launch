@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="frame" />
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+    <arg name="world" />
+    <arg name="output" default="log" />
+
+    <!-- Position provider -->
+    <node pkg="navigation_pos_provider" type="navigation_pos_provider" name="navigation_pos_provider_$(arg id)" output="$(arg output)" required="true">
+        <param name="x" value="$(arg x)" />
+        <param name="y" value="$(arg y)" />
+        <rosparam file="$(find navigation_pos_provider)/param/navigation_pos_provider.yaml" command="load" />
+    </node>
+
+    <!-- Map provider -->
+    <node pkg="map_server" type="map_server" name="map_server_$(arg id)" args="$(arg world)" output="$(arg output)" required="true">
+        <param name="frame_id" value="map" />
+    </node>
+
+    <!-- Localization -->
+    <node pkg="fake_localization" type="fake_localization" name="fake_localization_$(arg id)" output="$(arg output)" required="true">
+        <param name="delta_x" value="$(arg x)" />
+        <param name="delta_y" value="$(arg y)" />
+        <param name="odom_frame_id" value="$(arg frame)/odom" />
+        <param name="base_frame_id" value="$(arg frame)/base_link" />
+        <param name="global_frame_id" value="/map" />
+    </node>
+
+</launch>

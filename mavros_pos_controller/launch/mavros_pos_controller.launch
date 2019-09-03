@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id" default="1" />
+    <arg name="pos_type" default="global" />
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+    <arg name="output" default="screen" />
+	
+	<!-- Position controller NODE -->
+    <node pkg="mavros_pos_controller" name="pos_controller_$(arg id)" type="mavros_pos_controller" output="$(arg output)" required="true">
+        <param name="pos_type" type="str" value="$(arg pos_type)" />
+        <param name="x" value="$(arg x)" />
+        <param name="y" value="$(arg y)" />
+		<rosparam command="load" file="$(find mavros_pos_controller)/param/mavros_pos_controller_params.yaml" />
+	</node>
+
+</launch>

@@ -1,0 +1,3 @@
+mavros_msgs/GlobalPositionTarget target
+---
+sensor_msgs/NavSatFix fix

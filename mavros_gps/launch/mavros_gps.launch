@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Position controller -->
+    <node pkg="mavros_gps" type="mavros_gps" name="mavros_gps_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find mavros_gps)/param/mavros_gps.yaml" command="load" />
+    </node>
+
+</launch>

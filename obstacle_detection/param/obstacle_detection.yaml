@@ -1,0 +1,14 @@
+queue_size:          1         # The size of the message queue used for publishing and subscribing to topics.
+loop_rate:           5.0       # The frequency in Hz at which to run the control loop.
+range_sensor_topics:           # The topics on which the range sensors publish their sensor readings.
+- sonar_ranger_right
+- sonar_ranger_front
+- sonar_ranger_left
+range_sensor_angles:           # Direction in which the of range sensors sense relative to the CPS forward direction in radian.
+- -0.5236
+- 0.0
+- 0.5236
+#lidar_sensor_topic:  base_scan # The topic on which the LIDAR sensor publishes its sensor readings.
+avoidance_dist:      1.5       # The distance in meters to obstacles below which the CPS starts its collision avoidance procedure.
+critical_dist:       0.5       # The distance in meters to obstacles below which the CPS has to back off first before the standard avoidance procedure.
+

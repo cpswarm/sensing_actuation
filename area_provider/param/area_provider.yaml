@@ -1,0 +1,22 @@
+area_x:                         # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+- -33
+- 33
+- 33
+- -33
+area_y:
+- -33
+- -33
+- 33
+- 33
+
+# CPSwarm arena at DigiSky premises.
+#- 7.61074548
+#- 7.61074548
+#- 7.61083452
+#- 7.61083452
+#area_y:
+#- 45.08387651
+#- 45.08390349
+#- 45.08390349
+#- 45.08387651
+# center 45.08389, 7.61079

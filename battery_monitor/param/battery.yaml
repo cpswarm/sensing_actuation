@@ -1,0 +1,2 @@
+battery_limit: 0.3 #battery percentage on 0 to 1 range that would trigger a return to home
+advertise_period: 20 #period in seconds (if set to 0, will only publish once)

@@ -1,0 +1,1 @@
+num_msgs: 5 # Number of sensor messages being used for reliably computing the yaw.
