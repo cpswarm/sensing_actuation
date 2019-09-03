@@ -318,10 +318,6 @@ void stop_callback(const std_msgs::Empty::ConstPtr& msg)
 {
     ROS_DEBUG("POS_CTRL - Stop");
 
-    // stop moving
-    local_goal = pose;
-    publish_goal(local_goal);
-
     // stop publishing set points
     goal_valid = false;
 }
