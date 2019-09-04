@@ -4,7 +4,6 @@
 #include <std_msgs/Empty.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <move_base_msgs/MoveBaseAction.h>
-#include "angle.h"
 
 using namespace std;
 using namespace ros;
@@ -44,11 +43,11 @@ bool cancel_goal;
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
  */
-angle get_yaw (geometry_msgs::Pose pose)
+double get_yaw (geometry_msgs::Pose pose)
 {
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
-    return angle(tf2::getYaw(orientation));
+    return tf2::getYaw(orientation);
 }
 
 /**
@@ -58,7 +57,7 @@ angle get_yaw (geometry_msgs::Pose pose)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = msg->pose;
-    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Local pose (%.2f,%.2f,%2.f)", pose.position.x, pose.position.y, get_yaw(pose).rad_pos());
+    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Local pose (%.2f,%.2f,%2.f)", pose.position.x, pose.position.y, get_yaw(pose));
     pose_valid = true;
 }
 
@@ -70,7 +69,7 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     goal = msg->pose;
 
-    ROS_DEBUG("POS_CTRL - Local goal (%.2f,%.2f,%.2f)", goal.position.x, goal.position.y, get_yaw(goal).rad_pos());
+    ROS_DEBUG("POS_CTRL - Local goal (%.2f,%.2f,%.2f)", goal.position.x, goal.position.y, get_yaw(goal));
 
     goal_valid = true;
     cancel_goal = false;
@@ -154,8 +153,8 @@ int main(int argc, char **argv)
         spinOnce();
 
         // only move if goal is far enough from current pose
-        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) > goal_tolerance || (get_yaw(pose) - get_yaw(goal)).rad_pos() < goal_tolerance_a)) {
-            ROS_DEBUG("POS_CTRL - Move to (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal).rad_pos());
+        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) > goal_tolerance || remainder(get_yaw(pose) - get_yaw(goal), 2*M_PI) + M_PI < goal_tolerance_a)) {
+            ROS_DEBUG("POS_CTRL - Move to (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal));
 
             // create goal message
             goal_msg.target_pose.header.seq++;
@@ -192,12 +191,12 @@ int main(int argc, char **argv)
 
             // action server finished successfully
             if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
-                ROS_DEBUG("POS_CTRL - Reached goal (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal).rad_pos());
+                ROS_DEBUG("POS_CTRL - Reached goal (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal));
             }
 
             // action server failed
             else {
-                ROS_ERROR("POS_CTRL - Failed to reach goal (%.2f,%.2f,%.2f), goal %s.", goal.position.x, goal.position.y, get_yaw(goal).rad_pos(), ac.getState().toString().c_str());
+                ROS_ERROR("POS_CTRL - Failed to reach goal (%.2f,%.2f,%.2f), goal %s.", goal.position.x, goal.position.y, get_yaw(goal), ac.getState().toString().c_str());
             }
         }
 

@@ -31,8 +31,6 @@
   <depend>sensor_msgs</depend>
   <depend>mavros_gps</depend>
   <depend>cpswarm_msgs</depend>
-  <depend>angle</depend>
-  <depend>sector</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

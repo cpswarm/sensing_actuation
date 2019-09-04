@@ -93,14 +93,14 @@ bool gps::target_to_fix (mavros_gps::target_to_fix::Request &req, mavros_gps::ta
 
 double gps::dist (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
 {
-    // convert to angle
-    angle lat1 = angle(start.latitude, false);
-    angle lon1 = angle(start.longitude, false);
-    angle lat2 = angle(goal.latitude, false);
-    angle lon2 = angle(goal.longitude, false);
+    // convert to radian
+    double lat1 = start.latitude / 180.0 * M_PI;
+    double lon1 = start.longitude / 180.0 * M_PI;
+    double lat2 = goal.latitude / 180.0 * M_PI;
+    double lon2 = goal.longitude / 180.0 * M_PI;
 
     // compute great circle distance
-    return 2 * R * asin(sqrt(pow(sin((lat2.rad() - lat1.rad()) / 2), 2) + cos(lat1.rad()) * cos(lat2.rad()) * pow(sin((lon2.rad() - lon1.rad()) / 2), 2)));
+    return 2 * R * asin(sqrt(pow(sin((lat2 - lat1) / 2), 2) + cos(lat1) * cos(lat2) * pow(sin((lon2 - lon1) / 2), 2)));
 }
 
 double gps::dist (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
@@ -138,18 +138,18 @@ mavros_msgs::GlobalPositionTarget gps::fix_to_target (sensor_msgs::NavSatFix fix
 sensor_msgs::NavSatFix gps::goal (sensor_msgs::NavSatFix start, double distance, double yaw) const
 {
 
-    // convert to angle
-    angle lat1 = angle(start.latitude, false);
-    angle lon1 = angle(start.longitude, false);
+    // convert to radian
+    double lat1 = start.latitude / 180.0 * M_PI;
+    double lon1 = start.longitude / 180.0 * M_PI;
 
     // compute goal
-    angle lat2 = angle(asin(sin(lat1.rad()) * cos(distance / R) + cos(lat1.rad()) * sin(distance / R) * cos(ned_to_enu(yaw))));
-    angle lon2 = angle(lon1.rad() + atan2(sin(ned_to_enu(yaw)) * sin(distance / R) * cos(lat1.rad()), cos(distance / R) - sin(lat1.rad()) * sin(lat2.rad())));
+    double lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * sin(distance / R) * cos(ned_to_enu(yaw)));
+    double lon2 = remainder(lon1 + atan2(sin(ned_to_enu(yaw)) * sin(distance / R) * cos(lat1), cos(distance / R) - sin(lat1) * sin(lat2)), 2*M_PI);
 
     // goal coordinates
     sensor_msgs::NavSatFix goal;
-    goal.latitude = lat2.deg();
-    goal.longitude = lon2.deg();
+    goal.latitude = lat2 / M_PI * 180.0;
+    goal.longitude = lon2 / M_PI * 180.0;
     goal.altitude = start.altitude; // keep altitude
 
     return goal;
@@ -162,7 +162,7 @@ sensor_msgs::NavSatFix gps::goal (mavros_msgs::GlobalPositionTarget start, doubl
 
 double gps::ned_to_enu (double yaw) const
 {
-    return angle(2 * M_PI - yaw + M_PI / 2).rad_pos();
+    return remainder(2 * M_PI - yaw + M_PI / 2, 2*M_PI) + M_PI;
 }
 
 sensor_msgs::NavSatFix gps::target_to_fix (mavros_msgs::GlobalPositionTarget target) const
@@ -181,17 +181,16 @@ sensor_msgs::NavSatFix gps::target_to_fix (mavros_msgs::GlobalPositionTarget tar
 
 double gps::yaw (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
 {
-    // convert to angle
-    angle lat1 = angle(start.latitude, false);
-    angle lon1 = angle(start.longitude, false);
-    angle lat2 = angle(goal.latitude, false);
-    angle lon2 = angle(goal.longitude, false);
+    // convert to radian
+    double lat1 = start.latitude / 180.0 * M_PI;
+    double lon1 = start.longitude / 180.0 * M_PI;
+    double lat2 = goal.latitude / 180.0 * M_PI;
+    double lon2 = goal.longitude / 180.0 * M_PI;
 
     // compute initial yaw
-    double dx = cos(lat1.rad()) * sin(lat2.rad()) - sin(lat1.rad()) * cos(lat2.rad()) * cos(lon2.rad() - lon1.rad());
-    double dy = sin(lon2.rad() - lon1.rad()) * cos(lat2.rad());
-    angle yaw = angle(atan2(dy, dx));
-    return yaw.rad_pos();
+    double dx = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1);
+    double dy = sin(lon2 - lon1) * cos(lat2);
+    return atan2(dy, dx) + M_PI;
 }
 
 double gps::yaw (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const

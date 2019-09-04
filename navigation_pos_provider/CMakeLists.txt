@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   geometry_msgs
   cpswarm_msgs
-  angle
 )
 
 ## System dependencies are found with CMake's conventions

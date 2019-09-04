@@ -7,7 +7,6 @@
 #include "cpswarm_msgs/fix_to_pose.h"
 #include "cpswarm_msgs/ned_to_enu.h"
 #include "lib/compass_sensor.h"
-#include "angle.h"
 
 using namespace std;
 using namespace ros;
@@ -37,11 +36,11 @@ ServiceClient ned_to_enu_client;
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
  */
-angle get_yaw (geometry_msgs::Pose pose)
+double get_yaw (geometry_msgs::Pose pose)
 {
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
-    return angle(tf2::getYaw(orientation));
+    return tf2::getYaw(orientation);
 }
 
 /**
@@ -157,7 +156,7 @@ int main(int argc, char **argv)
             pose.pose.orientation = tf2::toMsg(orientation);
         }
 
-        ROS_DEBUG_THROTTLE(1, "POS_PROV - Current position (%.2f,%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose).rad_pos());
+        ROS_DEBUG_THROTTLE(1, "POS_PROV - Current position (%.2f,%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
 
         // publish position
         pose.header.stamp = Time::now();

@@ -3,7 +3,6 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
-#include "angle.h"
 #include "cpswarm_msgs/fix_to_pose.h"
 #include "cpswarm_msgs/get_gps_origin.h"
 #include "cpswarm_msgs/closest_bound.h"

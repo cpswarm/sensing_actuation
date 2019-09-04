@@ -49,17 +49,10 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>genmsg</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>mavros_msgs</build_depend>
-  <build_depend>angle</build_depend>
-
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>genmsg</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>mavros_msgs</exec_depend>
-  <exec_depend>angle</exec_depend>
+  <depend>roscpp</depend>
+  <depend>genmsg</depend>
+  <depend>sensor_msgs</depend>
+  <depend>mavros_msgs</depend>
 
   <test_depend>rostest</test_depend>
 

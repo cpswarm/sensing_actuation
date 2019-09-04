@@ -2,7 +2,6 @@
 #include <tf2/utils.h>
 #include <std_msgs/Empty.h>
 #include <geometry_msgs/PoseStamped.h>
-#include "angle.h"
 
 using namespace std;
 using namespace ros;
@@ -37,11 +36,11 @@ bool cancel_goal;
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
  */
-angle get_yaw (geometry_msgs::Pose pose)
+double get_yaw (geometry_msgs::Pose pose)
 {
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
-    return angle(tf2::getYaw(orientation));
+    return tf2::getYaw(orientation);
 }
 
 /**
@@ -51,7 +50,7 @@ angle get_yaw (geometry_msgs::Pose pose)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = msg->pose;
-    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Local pose (%.2f,%.2f,%2.f)", pose.position.x, pose.position.y, get_yaw(pose).rad_pos());
+    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Local pose (%.2f,%.2f,%2.f)", pose.position.x, pose.position.y, get_yaw(pose));
     pose_valid = true;
 }
 
@@ -63,7 +62,7 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     goal = msg->pose;
 
-    ROS_DEBUG("POS_CTRL - Local goal (%.2f,%.2f,%.2f)", goal.position.x, goal.position.y, get_yaw(goal).rad_pos());
+    ROS_DEBUG("POS_CTRL - Local goal (%.2f,%.2f,%.2f)", goal.position.x, goal.position.y, get_yaw(goal));
 
     goal_valid = true;
     cancel_goal = false;
@@ -143,8 +142,8 @@ int main(int argc, char **argv)
         spinOnce();
 
         // only move if goal is far enough from current pose
-        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) > goal_tolerance || (get_yaw(pose) - get_yaw(goal)).rad_pos() < goal_tolerance_a)) {
-            ROS_DEBUG_THROTTLE(10, "POS_CTRL - Move to (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal).rad_pos());
+        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) > goal_tolerance || remainder(get_yaw(pose) - get_yaw(goal), 2*M_PI) + M_PI < goal_tolerance_a)) {
+            ROS_DEBUG_THROTTLE(10, "POS_CTRL - Move to (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal));
 
             // publish goal
             goal_msg.header.stamp = Time::now();
@@ -161,7 +160,7 @@ int main(int argc, char **argv)
             goal_msg.pose.position.x -= origin.position.x;
             goal_msg.pose.position.y -= origin.position.y;
             publisher.publish(goal_msg);
-            ROS_DEBUG("POS_CTRL - Stop at (%.2f,%.2f,%.2f)", pose.position.x, pose.position.y, get_yaw(pose).rad_pos());
+            ROS_DEBUG("POS_CTRL - Stop at (%.2f,%.2f,%.2f)", pose.position.x, pose.position.y, get_yaw(pose));
             cancel_goal = false;
             goal_valid = false;
         }

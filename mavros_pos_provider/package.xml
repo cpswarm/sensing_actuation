@@ -55,7 +55,6 @@
     <depend>sensor_msgs</depend>
     <depend>cpswarm_msgs</depend>
     <depend>mavros_gps</depend>
-    <depend>angle</depend>
 
     <test_depend>rostest</test_depend>
 

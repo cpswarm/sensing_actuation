@@ -8,8 +8,6 @@
 #include "cpswarm_msgs/clear_of_obstacles.h"
 #include "cpswarm_msgs/danger.h"
 #include "cpswarm_msgs/get_occupied_sector.h"
-#include "angle.h"
-#include "sector.h"
 
 using namespace std;
 using namespace ros;
@@ -94,11 +92,11 @@ Publisher stop_vel_pub;
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
  */
-angle get_yaw (geometry_msgs::Pose pose)
+double get_yaw (geometry_msgs::Pose pose)
 {
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
-    return angle(tf2::getYaw(orientation));
+    return tf2::getYaw(orientation);
 }
 
 /**
@@ -120,7 +118,7 @@ bool enough_dist ()
  */
 bool enough_yaw()
 {
-    double delta_yaw = (get_yaw(pose.pose) - get_yaw(local_goal.pose)).rad();
+    double delta_yaw = remainder(get_yaw(pose.pose) - get_yaw(local_goal.pose), 2*M_PI);
     return delta_yaw < -yaw_tolerance || yaw_tolerance < delta_yaw;
 }
 
@@ -153,7 +151,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         // shift local goal according to origin
         goal.pose.position.x -= origin.position.x;
         goal.pose.position.y -= origin.position.y;
-        ROS_DEBUG("POS_CTRL - Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose).rad_pos());
+        ROS_DEBUG("POS_CTRL - Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
 
         // publish goal to fcu
         goal.header.stamp = Time::now();
@@ -185,7 +183,7 @@ geometry_msgs::PoseStamped compute_goal (double distance, double direction)
 }
 
 /**
- * @brief Obstacle avoidance procedure.
+ * @brief Obstacle avoidance procedure to avoid other CPS with the same controller.
  */
 void obstacle_avoidance ()
 {
@@ -193,32 +191,27 @@ void obstacle_avoidance ()
 
     // compute direction and distance of goal
     double goal_dist = hypot(pose.pose.position.x - local_goal.pose.position.x, pose.pose.position.y - local_goal.pose.position.y);
-    double goal_dir = get_yaw(local_goal.pose).rad_pos();
+    double goal_dir = get_yaw(local_goal.pose);
 
     // get occupied sector
-    sector* occ;
     cpswarm_msgs::get_occupied_sector gos;
-    if (occupied_sector_client.call(gos)){
-        occ = new sector(gos.response.min, gos.response.max);
-    }
-    else{
+    if (occupied_sector_client.call(gos) == false){
         ROS_ERROR("POS_CTRL - Failed to get occupied sector, stop moving!");
         publish_goal(pose);
         return;
     }
+    double occ = gos.response.min + (gos.response.max - gos.response.min) / 2.0; // always max > min
 
     // yaw of occupied sector relative to current yaw
-    double rel_yaw = (angle(occ->center()) - get_yaw(pose.pose)).rad_pos();
+    double rel_yaw = remainder(occ - get_yaw(pose.pose), 2*M_PI) + M_PI; // [0,2π]
 
-    ROS_DEBUG("POS_CTRL - Obstacle at yaw %.2f < %.2f < %.2f", occ->min(), occ->center(), occ->max());
-    ROS_DEBUG("POS_CTRL - My yaw %.2f", get_yaw(pose.pose).rad_pos());
-
-    delete occ;
+    ROS_DEBUG("POS_CTRL - Obstacle at yaw %.2f < %.2f < %.2f", gos.response.min, occ, gos.response.max);
+    ROS_DEBUG("POS_CTRL - My yaw %.2f", get_yaw(pose.pose));
 
     // turn right if cps is coming from ahead
     if (rel_yaw < M_PI / 2.0 || 3.0 * M_PI / 2.0 < rel_yaw) {
-        ROS_DEBUG("POS_CTRL - Change yaw %.2f --> %.2f", goal_dir, angle(goal_dir + M_PI / 4.0 * cos(rel_yaw)).rad_pos());
-        goal_dir += angle(M_PI / 4.0 * cos(rel_yaw)).rad_pos();
+        ROS_DEBUG("POS_CTRL - Change yaw %.2f --> %.2f", goal_dir, goal_dir + M_PI / 4.0 * cos(rel_yaw));
+        goal_dir += M_PI / 4.0 * cos(rel_yaw);
     }
 
     // slow down if cps is coming from right
@@ -260,7 +253,7 @@ void turn ()
         // wait
         rate->sleep();
 
-        ROS_DEBUG("Turning %.2f --> %.2f", get_yaw(pose.pose).rad_pos(), get_yaw(local_goal.pose).rad_pos());
+        ROS_DEBUG("Turning %.2f --> %.2f", get_yaw(pose.pose), get_yaw(local_goal.pose));
 
         // check if reached goal
         spinOnce();
@@ -281,7 +274,7 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     // store goal position
     local_goal = *msg;
 
-    ROS_DEBUG("POS_CTRL - Move to (%.2f,%.2f,%.2f,%.2f)", local_goal.pose.position.x, local_goal.pose.position.y, local_goal.pose.position.z, get_yaw(local_goal.pose).rad_pos());
+    ROS_DEBUG("POS_CTRL - Move to (%.2f,%.2f,%.2f,%.2f)", local_goal.pose.position.x, local_goal.pose.position.y, local_goal.pose.position.z, get_yaw(local_goal.pose));
 
     // start publishing position set points
     goal_valid = true;
@@ -298,7 +291,7 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = *msg;
-    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Pose (%.2f,%.2f,%2.f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose).rad_pos());
+    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Pose (%.2f,%.2f,%2.f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
     pose_valid = true;
 }
 

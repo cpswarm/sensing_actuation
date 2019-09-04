@@ -141,8 +141,7 @@ bool area::out_of_bounds (cpswarm_msgs::out_of_bounds::Request &req, cpswarm_msg
         p2.y = coords[(i+1)%coords.size()].y - req.pose.position.y;
 
         // angle between the two points
-        angle a = angle(atan2(p2.y, p2.x) - atan2(p1.y, p1.x));
-        angle_sum += a.rad();
+        angle_sum += remainder(atan2(p2.y, p2.x) - atan2(p1.y, p1.x), 2*M_PI);
     }
 
     // pose is outside (sum = 0)

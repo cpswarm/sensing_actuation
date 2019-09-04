@@ -3,7 +3,6 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include "cpswarm_msgs/out_of_bounds.h"
-#include "angle.h"
 
 using namespace std;
 using namespace ros;
@@ -23,11 +22,11 @@ geometry_msgs::Pose origin;
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
  */
-angle get_yaw (geometry_msgs::Pose pose)
+double get_yaw (geometry_msgs::Pose pose)
 {
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
-    return angle(tf2::getYaw(orientation));
+    return tf2::getYaw(orientation);
 }
 
 /**
@@ -43,7 +42,7 @@ void local_pose_callback (const geometry_msgs::PoseWithCovarianceStamped::ConstP
     pose.pose.position.x += origin.position.x;
     pose.pose.position.y += origin.position.y;
 
-    ROS_DEBUG_THROTTLE(1, "POS_PROV - Pose (%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, get_yaw(pose.pose).rad_pos());
+    ROS_DEBUG_THROTTLE(1, "POS_PROV - Pose (%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, get_yaw(pose.pose));
 }
 
 /**

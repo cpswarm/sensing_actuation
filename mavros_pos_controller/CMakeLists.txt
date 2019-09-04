@@ -15,8 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   mavros_gps
   cpswarm_msgs
-  angle
-  sector
 )
 
 ## System dependencies are found with CMake's conventions

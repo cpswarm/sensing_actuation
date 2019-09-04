@@ -5,7 +5,6 @@
 #include <tf2/utils.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
-#include "angle.h"
 #include "cpswarm_msgs/fix_to_pose.h"
 #include "cpswarm_msgs/get_gps_origin.h"
 #include "cpswarm_msgs/ned_to_enu.h"
