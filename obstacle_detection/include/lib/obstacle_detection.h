@@ -11,7 +11,7 @@
 #include "sector.h"
 #include "cpswarm_msgs/clear_of_obstacles.h"
 #include "cpswarm_msgs/danger.h"
-#include "cpswarm_msgs/get_occupied_sector.h"
+#include "cpswarm_msgs/get_sector.h"
 
 using namespace std;
 using namespace ros;
@@ -49,12 +49,20 @@ public:
     bool danger (cpswarm_msgs::danger::Request &req, cpswarm_msgs::danger::Response &res);
 
     /**
+     * @brief Get the sector that is not occupied by obstacles.
+     * @param req Empty request.
+     * @param res The sector that is clear.
+     * @return Whether request succeeded.
+     */
+    bool get_clear_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res);
+
+    /**
      * @brief Get the sector that is occupied by obstacles.
      * @param req Empty request.
      * @param res The sector that is occupied.
      * @return Whether request succeeded.
      */
-    bool get_occupied_sector (cpswarm_msgs::get_occupied_sector::Request &req, cpswarm_msgs::get_occupied_sector::Response &res);
+    bool get_occupied_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res);
 
 private:
     /**

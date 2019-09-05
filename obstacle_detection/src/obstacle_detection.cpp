@@ -23,6 +23,7 @@ int main(int argc, char **argv)
     ServiceServer clear_of_obstacles_service = nh.advertiseService("obstacle_detection/clear_of_obstacles", &obstacle_detection::clear_of_obstacles, &lib);
     ServiceServer danger_service = nh.advertiseService("obstacle_detection/danger", &obstacle_detection::danger, &lib);
     ServiceServer get_occupied_sector_service = nh.advertiseService("obstacle_detection/get_occupied_sector", &obstacle_detection::get_occupied_sector, &lib);
+    ServiceServer get_clear_sector_service = nh.advertiseService("obstacle_detection/get_clear_sector", &obstacle_detection::get_clear_sector, &lib);
 
     ROS_INFO("OBST_DETECT - Services are ready");
     spin();

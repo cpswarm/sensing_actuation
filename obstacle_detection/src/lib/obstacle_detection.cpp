@@ -106,7 +106,20 @@ bool obstacle_detection::danger (cpswarm_msgs::danger::Request &req, cpswarm_msg
     return true;
 }
 
-bool obstacle_detection::get_occupied_sector (cpswarm_msgs::get_occupied_sector::Request &req, cpswarm_msgs::get_occupied_sector::Response &res)
+bool obstacle_detection::get_clear_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res)
+{
+    get_occupied_sector(req, res);
+
+    sector occupied = sector(res.min, res.max);
+    sector clear = occupied.inverse();
+
+    res.min = clear.min();
+    res.max = clear.max_ord();
+
+    return true;
+}
+
+bool obstacle_detection::get_occupied_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res)
 {
     // compute minimum and maximum bearing of sector occupied by obstacles according to range sensors
     double obst_min = 0;
