@@ -221,19 +221,19 @@ target_link_libraries(
 ## Testing ##
 #############
 
-# if(CATKIN_ENABLE_TESTING)
-#   ## Add gtest based cpp test target and link libraries
-#   catkin_add_gtest(sector_test test/test_sector.cpp)
-#   if(TARGET sector_test)
-#     #find_package(gtest)
-#     target_link_libraries(sector_test sector)
-#   endif()
-#   catkin_add_gtest(angle_test test/test_angle.cpp)
-#   if(TARGET angle_test)
-#     #find_package(gtest)
-#     target_link_libraries(angle_test angle)
-#   endif()
-# endif()
+if(CATKIN_ENABLE_TESTING)
+  ## Add gtest based cpp test target and link libraries
+  catkin_add_gtest(sector_test test/test_sector.cpp)
+  if(TARGET sector_test)
+    #find_package(gtest)
+    target_link_libraries(sector_test sector)
+  endif()
+  catkin_add_gtest(angle_test test/test_angle.cpp)
+  if(TARGET angle_test)
+    #find_package(gtest)
+    target_link_libraries(angle_test angle)
+  endif()
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
