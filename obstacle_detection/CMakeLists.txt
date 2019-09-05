@@ -13,10 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   cpswarm_msgs
-  swarm_kinematics
-  angle
-  sector
-  position
 )
 
 ## System dependencies are found with CMake's conventions
@@ -110,7 +106,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS cpswarm_msgs swarm_kinematics angle sector position
+  CATKIN_DEPENDS cpswarm_msgs
 #  DEPENDS system_lib
 )
 
@@ -137,6 +133,18 @@ add_library(
 add_library(
   lidar_sensor
   src/lib/lidar_sensor.cpp
+)
+add_library(
+  swarm_position
+  src/lib/swarm_position.cpp
+)
+add_library(
+  sector
+  src/lib/sector.cpp
+)
+add_library(
+  angle
+  src/lib/angle.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -168,6 +176,9 @@ target_link_libraries(
   ${PROJECT_NAME}_lib
   range_sensor
   lidar_sensor
+  swarm_position
+  sector
+  angle
   ${catkin_LIBRARIES}
 )
 
@@ -210,14 +221,19 @@ target_link_libraries(
 ## Testing ##
 #############
 
-if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  #catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  #if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-  #  target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
-  #endif()
-endif()
+# if(CATKIN_ENABLE_TESTING)
+#   ## Add gtest based cpp test target and link libraries
+#   catkin_add_gtest(sector_test test/test_sector.cpp)
+#   if(TARGET sector_test)
+#     #find_package(gtest)
+#     target_link_libraries(sector_test sector)
+#   endif()
+#   catkin_add_gtest(angle_test test/test_angle.cpp)
+#   if(TARGET angle_test)
+#     #find_package(gtest)
+#     target_link_libraries(angle_test angle)
+#   endif()
+# endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

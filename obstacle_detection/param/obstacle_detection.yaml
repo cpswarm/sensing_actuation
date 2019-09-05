@@ -11,4 +11,4 @@ range_sensor_angles:           # Direction in which the of range sensors sense r
 #lidar_sensor_topic:  base_scan # The topic on which the LIDAR sensor publishes its sensor readings.
 avoidance_dist:      1.5       # The distance in meters to obstacles below which the CPS starts its collision avoidance procedure.
 critical_dist:       0.5       # The distance in meters to obstacles below which the CPS has to back off first before the standard avoidance procedure.
-
+clear_ang:           0.175     # The angle in radian that must be clear on each side around the CPS's movement direction.
