@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
+#include <nav_msgs/OccupancyGrid.h>
 #include "cpswarm_msgs/fix_to_pose.h"
 #include "cpswarm_msgs/get_gps_origin.h"
 #include "cpswarm_msgs/closest_bound.h"
@@ -41,6 +42,12 @@ public:
     bool get_area (cpswarm_msgs::get_area::Request &req, cpswarm_msgs::get_area::Response &res);
 
     /**
+     * @brief Generate a grid map the the given area coordinates.
+     * @return An empty grid map that represents the area.
+     */
+    nav_msgs::OccupancyGrid get_gridmap ();
+
+    /**
      * @brief Return the origin of the coordinate system.
      * @param req Empty request.
      * @param res A point that defines the origin coordinates.
@@ -71,6 +78,11 @@ private:
      * @brief The origin of the coordinate system.
      */
     geometry_msgs::Point origin;
+
+    /**
+     * @brief Resolution of the grid map representing the area in meter / cell.
+     */
+    double resolution;
 };
 
 #endif // AREA_H

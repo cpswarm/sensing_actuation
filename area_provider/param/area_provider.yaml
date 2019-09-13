@@ -1,4 +1,4 @@
-area_x:                         # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+area_x: # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 - -33
 - 33
 - 33
@@ -8,6 +8,7 @@ area_y:
 - -33
 - 33
 - 33
+resolution: 0.05 # Resolution of the grid map representing the area in meter / cell.
 
 # CPSwarm arena at DigiSky premises.
 #- 7.61074548

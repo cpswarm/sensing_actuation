@@ -7,6 +7,9 @@ area::area ()
     nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
     bool global = pos_type == "local" ? false : true;
 
+    // grid map resolution
+    nh.getParam(this_node::getName() + "/resolution", resolution);
+
     // read area coordinates
     vector<double> area_x;
     vector<double> area_y;
@@ -117,6 +120,65 @@ bool area::get_area (cpswarm_msgs::get_area::Request &req, cpswarm_msgs::get_are
 {
     res.area = coords;
     return true;
+}
+
+nav_msgs::OccupancyGrid area::get_gridmap ()
+{
+    // create grid map
+    nav_msgs::OccupancyGrid map;
+
+    // get coordinates
+    double xmin = numeric_limits<double>::max();
+    double xmax = numeric_limits<double>::min();
+    double ymin = numeric_limits<double>::max();
+    double ymax = numeric_limits<double>::min();
+    for (auto p : coords) {
+        if (p.x < xmin)
+            xmin = p.x;
+        if (p.x > xmax)
+            xmax = p.x;
+        if (p.y < ymin)
+            ymin = p.y;
+        if (p.y > ymax)
+            ymax = p.y;
+    }
+    int x = int(ceil((xmax - xmin) / resolution));
+    int y = int(ceil((ymax - ymin) / resolution));
+
+    // generate grid map data
+    cpswarm_msgs::out_of_bounds::Request req;
+    cpswarm_msgs::out_of_bounds::Response res;
+    vector<int8_t> data;
+    for (int i=0; i<y; ++i) { // row major order
+        for (int j=0; j<x; ++j) {
+            // check if cell is within area
+            req.pose.position.x = j * resolution + xmin;
+            req.pose.position.y = i * resolution + ymin;
+            out_of_bounds(req, res);
+
+            // out of bounds
+            if (res.out)
+                data.push_back(100); // occupied
+
+            // inside area
+            else
+                data.push_back(-1); // unknown
+        }
+    }
+    map.data = data;
+
+    // set map header
+    map.header.stamp = Time::now();
+    map.header.frame_id = "local_origin_ned";
+
+    // set map meta data
+    map.info.map_load_time == Time::now();
+    map.info.resolution = resolution;
+    map.info.width = x;
+    map.info.height = y;
+    map.info.origin.position = origin;
+
+    return map;
 }
 
 bool area::get_origin (cpswarm_msgs::get_origin::Request &req, cpswarm_msgs::get_origin::Response &res)
