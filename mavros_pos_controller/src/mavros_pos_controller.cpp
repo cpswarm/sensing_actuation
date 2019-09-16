@@ -7,7 +7,7 @@
 #include "mavros_gps/pose_to_target.h"
 #include "cpswarm_msgs/clear_of_obstacles.h"
 #include "cpswarm_msgs/danger.h"
-#include "cpswarm_msgs/get_occupied_sector.h"
+#include "cpswarm_msgs/get_sector.h"
 
 using namespace std;
 using namespace ros;
@@ -194,7 +194,7 @@ void obstacle_avoidance ()
     double goal_dir = get_yaw(local_goal.pose);
 
     // get occupied sector
-    cpswarm_msgs::get_occupied_sector gos;
+    cpswarm_msgs::get_sector gos;
     if (occupied_sector_client.call(gos) == false){
         ROS_ERROR("POS_CTRL - Failed to get occupied sector, stop moving!");
         publish_goal(pose);
@@ -381,7 +381,7 @@ int main(int argc, char **argv) {
     obstacle_client.waitForExistence();
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::danger>("obstacle_detection/danger");
     danger_client.waitForExistence();
-    occupied_sector_client = nh.serviceClient<cpswarm_msgs::get_occupied_sector>("obstacle_detection/get_occupied_sector");
+    occupied_sector_client = nh.serviceClient<cpswarm_msgs::get_sector>("obstacle_detection/get_occupied_sector");
     occupied_sector_client.waitForExistence();
 
     // goal publisher
