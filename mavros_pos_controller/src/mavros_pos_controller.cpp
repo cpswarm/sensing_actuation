@@ -242,14 +242,14 @@ void turn ()
     // set goal orientation to new orientation
     turn_goal.pose.orientation = local_goal.pose.orientation;
 
-    // send goal to cps controller
-    publish_goal(turn_goal);
-
     // turning start time
     Time turn_time = Time::now();
 
     // turn until cps reached goal
     while (ok() && enough_yaw() && turn_time + turn_timeout > Time::now()) {
+        // send goal to cps controller
+        publish_goal(turn_goal);
+
         // wait
         rate->sleep();
 
