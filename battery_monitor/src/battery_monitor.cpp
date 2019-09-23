@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber battery_level = n.subscribe(ros::this_node::getNamespace() + "/mavros/battery", 10, check_battery);
 	ros::Subscriber force_panic = n.subscribe(ros::this_node::getNamespace() + "/debug/battery_panic", 10, panic_callback);
 
-	ros::Publisher DANGER_publisher = n.advertise<std_msgs::Empty> (ros::this_node::getNamespace() + "/danger/battery", 10);
+	ros::Publisher DANGER_publisher = n.advertise<std_msgs::Empty> (ros::this_node::getNamespace() + "/danger/battery", 10, true);
 
 	ros::Rate loop_rate(1.0/period);
 

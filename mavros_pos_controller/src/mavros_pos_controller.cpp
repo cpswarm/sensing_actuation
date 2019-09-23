@@ -357,7 +357,7 @@ int main(int argc, char **argv) {
     Subscriber state_sub = nh.subscribe < mavros_msgs::State > ("mavros/state", queue_size, state_callback);
 
     // publisher
-    stop_vel_pub = nh.advertise<std_msgs::Empty>("vel_controller/stop", queue_size);
+    stop_vel_pub = nh.advertise<std_msgs::Empty>("vel_controller/stop", queue_size, true);
 
     // wait for fcu connection
     while (ok() && state.connected == false) {
@@ -386,10 +386,10 @@ int main(int argc, char **argv) {
 
     // goal publisher
     if (global) {
-        publisher = nh.advertise<mavros_msgs::GlobalPositionTarget>("mavros/setpoint_position/global", queue_size);
+        publisher = nh.advertise<mavros_msgs::GlobalPositionTarget>("mavros/setpoint_position/global", queue_size, true);
     }
     else {
-        publisher = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", queue_size);
+        publisher = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", queue_size, true);
     }
 
     ROS_INFO("POS_CTRL - Ready");

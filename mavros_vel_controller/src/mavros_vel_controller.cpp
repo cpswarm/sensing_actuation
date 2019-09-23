@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
     // publishers
     setpoint_pub = nh.advertise<geometry_msgs::Twist>("mavros/setpoint_velocity/cmd_vel_unstamped", 10);
-    stop_pos_pub = nh.advertise<std_msgs::Empty>("pos_controller/stop", 1);
+    stop_pos_pub = nh.advertise<std_msgs::Empty>("pos_controller/stop", 1, true);
 
     // subscribers
     state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, state_cb);
