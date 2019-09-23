@@ -176,7 +176,9 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
     map.info.resolution = resolution;
     map.info.width = x;
     map.info.height = y;
-    map.info.origin.position = origin;
+    // position of cell (0,0)
+    map.info.origin.position.x = xmin;
+    map.info.origin.position.y = ymin;
 
     return map;
 }
