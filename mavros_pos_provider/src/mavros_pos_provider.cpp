@@ -3,9 +3,9 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/MagneticField.h>
-#include "cpswarm_msgs/out_of_bounds.h"
-#include "cpswarm_msgs/fix_to_pose.h"
-#include "cpswarm_msgs/ned_to_enu.h"
+#include "cpswarm_msgs/OutOfBounds.h"
+#include "cpswarm_msgs/FixToPose.h"
+#include "cpswarm_msgs/NedToEnu.h"
 #include "lib/compass_sensor.h"
 
 using namespace std;
@@ -64,7 +64,7 @@ void local_pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
 void global_pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
     // store updated position converted to local coordinates
-    cpswarm_msgs::fix_to_pose f2p;
+    cpswarm_msgs::FixToPose f2p;
     f2p.request.fix = *msg;
     if (fix_to_pose_client.call(f2p))
         pose = f2p.response.pose;
@@ -114,8 +114,8 @@ int main(int argc, char **argv)
     Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_provider/pose", queue_size);
 
     // init gps service clients
-    fix_to_pose_client = nh.serviceClient<cpswarm_msgs::fix_to_pose>("gps/fix_to_pose");
-    ned_to_enu_client = nh.serviceClient<cpswarm_msgs::ned_to_enu>("gps/ned_to_enu");
+    fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+    ned_to_enu_client = nh.serviceClient<cpswarm_msgs::NedToEnu>("gps/ned_to_enu");
 
     // wait for valid position
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
@@ -125,8 +125,8 @@ int main(int argc, char **argv)
     }
 
     // make sure position is within allowed area
-    ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::out_of_bounds>("area/out_of_bounds");
-    cpswarm_msgs::out_of_bounds oob;
+    ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
+    cpswarm_msgs::OutOfBounds oob;
     oob.request.pose = pose.pose;
     if (out_of_bounds_client.call(oob)) {
         if (oob.response.out == true){
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
         // convert orientation to local coordinates
         if (global) {
             tf2::Quaternion orientation;
-            cpswarm_msgs::ned_to_enu n2e;
+            cpswarm_msgs::NedToEnu n2e;
             n2e.request.yaw = yaw_sensor->get_yaw();
             if (ned_to_enu_client.call(n2e))
                 orientation.setRPY(0, 0, n2e.response.yaw);

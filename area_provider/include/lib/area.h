@@ -4,12 +4,12 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include "cpswarm_msgs/fix_to_pose.h"
-#include "cpswarm_msgs/get_gps_origin.h"
-#include "cpswarm_msgs/closest_bound.h"
-#include "cpswarm_msgs/get_area.h"
-#include "cpswarm_msgs/get_origin.h"
-#include "cpswarm_msgs/out_of_bounds.h"
+#include "cpswarm_msgs/FixToPose.h"
+#include "cpswarm_msgs/GetGpsOrigin.h"
+#include "cpswarm_msgs/ClosestBound.h"
+#include "cpswarm_msgs/GetArea.h"
+#include "cpswarm_msgs/GetOrigin.h"
+#include "cpswarm_msgs/OutOfBounds.h"
 
 using namespace std;
 using namespace ros;
@@ -31,7 +31,7 @@ public:
      * @param res The coordinates of the bound and the perpendicular distance to the given point.
      * @return Whether request succeeded.
      */
-    bool closest_bound (cpswarm_msgs::closest_bound::Request &req, cpswarm_msgs::closest_bound::Response &res);
+    bool closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res);
 
     /**
      * @brief Return the bounding area in which the CPS is allowed to move.
@@ -39,7 +39,7 @@ public:
      * @param res A vector of points that defines the bounding polygon coordinates.
      * @return Whether request succeeded.
      */
-    bool get_area (cpswarm_msgs::get_area::Request &req, cpswarm_msgs::get_area::Response &res);
+    bool get_area (cpswarm_msgs::GetArea::Request &req, cpswarm_msgs::GetArea::Response &res);
 
     /**
      * @brief Generate a grid map the the given area coordinates.
@@ -53,7 +53,7 @@ public:
      * @param res A point that defines the origin coordinates.
      * @return Whether request succeeded.
      */
-    bool get_origin (cpswarm_msgs::get_origin::Request &req, cpswarm_msgs::get_origin::Response &res);
+    bool get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res);
 
     /**
      * @brief Determine whether a position is within the area. Uses the approach described in solution 2 at http://paulbourke.net/geometry/polygonmesh/#insidepoly.
@@ -61,7 +61,7 @@ public:
      * @param res True, if the position is outside of the area, false otherwise.
      * @return Whether the request succeeded.
      */
-    bool out_of_bounds (cpswarm_msgs::out_of_bounds::Request &req, cpswarm_msgs::out_of_bounds::Response &res);
+    bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
 private:
     /**

@@ -17,7 +17,7 @@ gps::gps ()
     }
 }
 
-bool gps::fix_to_pose (cpswarm_msgs::fix_to_pose::Request &req, cpswarm_msgs::fix_to_pose::Response &res)
+bool gps::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixToPose::Response &res)
 {
     // copy header
     res.pose.header = req.fix.header;
@@ -32,25 +32,25 @@ bool gps::fix_to_pose (cpswarm_msgs::fix_to_pose::Request &req, cpswarm_msgs::fi
     return true;
 }
 
-bool gps::fix_to_target (mavros_gps::fix_to_target::Request &req, mavros_gps::fix_to_target::Response &res)
+bool gps::fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixToTarget::Response &res)
 {
     res.target = fix_to_target(req.fix, req.yaw);
     return true;
 }
 
-bool gps::get_gps_origin (cpswarm_msgs::get_gps_origin::Request &req, cpswarm_msgs::get_gps_origin::Response &res)
+bool gps::get_gps_origin (cpswarm_msgs::GetGpsOrigin::Request &req, cpswarm_msgs::GetGpsOrigin::Response &res)
 {
     res.origin = origin;
     return true;
 }
 
-bool gps::ned_to_enu (cpswarm_msgs::ned_to_enu::Request &req, cpswarm_msgs::ned_to_enu::Response &res)
+bool gps::ned_to_enu (cpswarm_msgs::NedToEnu::Request &req, cpswarm_msgs::NedToEnu::Response &res)
 {
     res.yaw = ned_to_enu(req.yaw);
     return true;
 }
 
-bool gps::pose_to_fix (cpswarm_msgs::pose_to_fix::Request &req, cpswarm_msgs::pose_to_fix::Response &res)
+bool gps::pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::PoseToFix::Response &res)
 {
     // compute gps coordinates
     double dist = hypot(req.pose.pose.position.x, req.pose.pose.position.y);
@@ -66,7 +66,7 @@ bool gps::pose_to_fix (cpswarm_msgs::pose_to_fix::Request &req, cpswarm_msgs::po
     return true;
 }
 
-bool gps::pose_to_target (mavros_gps::pose_to_target::Request &req, mavros_gps::pose_to_target::Response &res)
+bool gps::pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::PoseToTarget::Response &res)
 {
     // compute gps coordinates
     double dist = hypot(req.pose.pose.position.x, req.pose.pose.position.y);
@@ -85,7 +85,7 @@ bool gps::pose_to_target (mavros_gps::pose_to_target::Request &req, mavros_gps::
     return true;
 }
 
-bool gps::target_to_fix (mavros_gps::target_to_fix::Request &req, mavros_gps::target_to_fix::Response &res)
+bool gps::target_to_fix (mavros_gps::TargetToFix::Request &req, mavros_gps::TargetToFix::Response &res)
 {
     res.fix = target_to_fix(req.target);
     return true;

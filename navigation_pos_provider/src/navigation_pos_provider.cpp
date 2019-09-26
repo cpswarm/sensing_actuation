@@ -2,7 +2,7 @@
 #include <tf2/utils.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include "cpswarm_msgs/out_of_bounds.h"
+#include "cpswarm_msgs/OutOfBounds.h"
 
 using namespace std;
 using namespace ros;
@@ -83,8 +83,8 @@ int main(int argc, char **argv)
     }
 
     // make sure position is within allowed area
-    ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::out_of_bounds>("area/out_of_bounds");
-    cpswarm_msgs::out_of_bounds oob;
+    ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
+    cpswarm_msgs::OutOfBounds oob;
     oob.request.pose = pose.pose;
     if (out_of_bounds_client.call(oob)) {
         if (oob.response.out == true){

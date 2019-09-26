@@ -26,8 +26,8 @@ area::area ()
     // global positioning
     if (global) {
         // service client for converting GPS to local coordinates
-        ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::fix_to_pose>("gps/fix_to_pose");
-        cpswarm_msgs::fix_to_pose f2p;
+        ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+        cpswarm_msgs::FixToPose f2p;
 
         // convert given area to local coordinates
         for (int i = 0; i < raw_coords.size(); ++i) {
@@ -41,8 +41,8 @@ area::area ()
         }
 
         // get origin from gps node
-        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::get_gps_origin>("gps/get_gps_origin");
-        cpswarm_msgs::get_gps_origin gpso;
+        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsOrigin>("gps/get_gps_origin");
+        cpswarm_msgs::GetGpsOrigin gpso;
         if (get_gps_origin_client.call(gpso)) {
             // convert origin to local coordinates
             f2p.request.fix = gpso.response.origin;
@@ -75,7 +75,7 @@ area::area ()
     }
 }
 
-bool area::closest_bound (cpswarm_msgs::closest_bound::Request &req, cpswarm_msgs::closest_bound::Response &res)
+bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res)
 {
     // use origin
     if (req.point.x == 0 && req.point.y == 0) {
@@ -116,7 +116,7 @@ bool area::closest_bound (cpswarm_msgs::closest_bound::Request &req, cpswarm_msg
     return true;
 }
 
-bool area::get_area (cpswarm_msgs::get_area::Request &req, cpswarm_msgs::get_area::Response &res)
+bool area::get_area (cpswarm_msgs::GetArea::Request &req, cpswarm_msgs::GetArea::Response &res)
 {
     res.area = coords;
     return true;
@@ -146,8 +146,8 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
     int y = int(ceil((ymax - ymin) / resolution));
 
     // generate grid map data
-    cpswarm_msgs::out_of_bounds::Request req;
-    cpswarm_msgs::out_of_bounds::Response res;
+    cpswarm_msgs::OutOfBounds::Request req;
+    cpswarm_msgs::OutOfBounds::Response res;
     vector<int8_t> data;
     for (int i=0; i<y; ++i) { // row major order
         for (int j=0; j<x; ++j) {
@@ -183,13 +183,13 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
     return map;
 }
 
-bool area::get_origin (cpswarm_msgs::get_origin::Request &req, cpswarm_msgs::get_origin::Response &res)
+bool area::get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res)
 {
     res.origin = origin;
     return true;
 }
 
-bool area::out_of_bounds (cpswarm_msgs::out_of_bounds::Request &req, cpswarm_msgs::out_of_bounds::Response &res)
+bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
 {
     // sum of the angles made between pose and each pair of points making up the polygon
     double angle_sum = 0;

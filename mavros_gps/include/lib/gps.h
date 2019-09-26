@@ -5,13 +5,13 @@
 #include <tf2/utils.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
-#include "cpswarm_msgs/fix_to_pose.h"
-#include "cpswarm_msgs/get_gps_origin.h"
-#include "cpswarm_msgs/ned_to_enu.h"
-#include "cpswarm_msgs/pose_to_fix.h"
-#include "mavros_gps/fix_to_target.h"
-#include "mavros_gps/pose_to_target.h"
-#include "mavros_gps/target_to_fix.h"
+#include "cpswarm_msgs/FixToPose.h"
+#include "cpswarm_msgs/GetGpsOrigin.h"
+#include "cpswarm_msgs/NedToEnu.h"
+#include "cpswarm_msgs/PoseToFix.h"
+#include "mavros_gps/FixToTarget.h"
+#include "mavros_gps/PoseToTarget.h"
+#include "mavros_gps/TargetToFix.h"
 
 using namespace std;
 using namespace ros;
@@ -33,7 +33,7 @@ public:
      * @param res The converted local message without orientation
      * @return Whether the conversion succeeded.
      */
-    bool fix_to_pose (cpswarm_msgs::fix_to_pose::Request &req, cpswarm_msgs::fix_to_pose::Response &res);
+    bool fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixToPose::Response &res);
 
     /**
      * @brief Convert a message from sensor_msgs::NavSatFix to mavros_msgs::GlobalPositionTarget.
@@ -41,7 +41,7 @@ public:
      * @param res The converted message.
      * @return Whether the conversion succeeded.
      */
-    bool fix_to_target (mavros_gps::fix_to_target::Request &req, mavros_gps::fix_to_target::Response &res);
+    bool fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixToTarget::Response &res);
 
     /**
      * @brief Get the GPS fix defining the local origin of this CPS.
@@ -49,7 +49,7 @@ public:
      * @param res The GPS coordinates first received by this CPS.
      * @return Whether the request succeeded.
      */
-    bool get_gps_origin (cpswarm_msgs::get_gps_origin::Request &req, cpswarm_msgs::get_gps_origin::Response &res);
+    bool get_gps_origin (cpswarm_msgs::GetGpsOrigin::Request &req, cpswarm_msgs::GetGpsOrigin::Response &res);
 
     /**
      * @brief Convert a yaw angle from north east down (NED) to east north up (ENU) coordinate system and vice versa.
@@ -57,7 +57,7 @@ public:
      * @param res The converted yaw angle in radian.
      * @return Whether the conversion succeeded.
      */
-    bool ned_to_enu(cpswarm_msgs::ned_to_enu::Request &req, cpswarm_msgs::ned_to_enu::Response &res);
+    bool ned_to_enu(cpswarm_msgs::NedToEnu::Request &req, cpswarm_msgs::NedToEnu::Response &res);
 
     /**
      * @brief Convert a message from geometry_msgs::PoseStamped to sensor_msgs::NavSatFix.
@@ -65,7 +65,7 @@ public:
      * @param res The converted global message.
      * @return Whether the conversion succeeded.
      */
-    bool pose_to_fix (cpswarm_msgs::pose_to_fix::Request &req, cpswarm_msgs::pose_to_fix::Response &res);
+    bool pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::PoseToFix::Response &res);
 
     /**
      * @brief Convert a message from geometry_msgs::PoseStamped to mavros_msgs::GlobalPositionTarget.
@@ -73,7 +73,7 @@ public:
      * @param res The converted global message including yaw.
      * @return Whether the conversion succeeded.
      */
-    bool pose_to_target (mavros_gps::pose_to_target::Request &req, mavros_gps::pose_to_target::Response &res);
+    bool pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::PoseToTarget::Response &res);
 
     /**
      * @brief Convert a message from mavros_msgs::GlobalPositionTarget to sensor_msgs::NavSatFix.
@@ -81,7 +81,7 @@ public:
      * @param res The converted message.
      * @return Whether the conversion succeeded.
      */
-    bool target_to_fix (mavros_gps::target_to_fix::Request &req, mavros_gps::target_to_fix::Response &res);
+    bool target_to_fix (mavros_gps::TargetToFix::Request &req, mavros_gps::TargetToFix::Response &res);
 
 private:
     /**

@@ -5,9 +5,9 @@
 #include <mavros_msgs/GlobalPositionTarget.h>
 #include <std_msgs/Empty.h>
 #include "mavros_gps/pose_to_target.h"
-#include "cpswarm_msgs/clear_of_obstacles.h"
-#include "cpswarm_msgs/danger.h"
-#include "cpswarm_msgs/get_sector.h"
+#include "cpswarm_msgs/ClearOfObstacles.h"
+#include "cpswarm_msgs/Danger.h"
+#include "cpswarm_msgs/GetSector.h"
 
 using namespace std;
 using namespace ros;
@@ -194,7 +194,7 @@ void obstacle_avoidance ()
     double goal_dir = get_yaw(local_goal.pose);
 
     // get occupied sector
-    cpswarm_msgs::get_sector gos;
+    cpswarm_msgs::GetSector gos;
     if (occupied_sector_client.call(gos) == false){
         ROS_ERROR("POS_CTRL - Failed to get occupied sector, stop moving!");
         publish_goal(pose);
@@ -377,11 +377,11 @@ int main(int argc, char **argv) {
     pose_to_target_client = nh.serviceClient< mavros_gps::pose_to_target > ("gps/pose_to_target");
     if (global)
         pose_to_target_client.waitForExistence();
-    ServiceClient obstacle_client = nh.serviceClient<cpswarm_msgs::clear_of_obstacles>("obstacle_detection/clear_of_obstacles");
+    ServiceClient obstacle_client = nh.serviceClient<cpswarm_msgs::ClearOfObstacles>("obstacle_detection/clear_of_obstacles");
     obstacle_client.waitForExistence();
-    ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::danger>("obstacle_detection/danger");
+    ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
     danger_client.waitForExistence();
-    occupied_sector_client = nh.serviceClient<cpswarm_msgs::get_sector>("obstacle_detection/get_occupied_sector");
+    occupied_sector_client = nh.serviceClient<cpswarm_msgs::GetSector>("obstacle_detection/get_occupied_sector");
     occupied_sector_client.waitForExistence();
 
     // goal publisher
@@ -409,7 +409,7 @@ int main(int argc, char **argv) {
                 }
 
                 // check if dangerously close to obstacle
-                cpswarm_msgs::danger danger;
+                cpswarm_msgs::Danger danger;
                 if (danger_client.call(danger) == false) {
                     ROS_ERROR("POS_CTRL - Failed to check if obstacle near by");
                     publish_goal(pose);
@@ -425,7 +425,7 @@ int main(int argc, char **argv) {
 
                 // check if clear of obstacles
                 else {
-                    cpswarm_msgs::clear_of_obstacles obstacle;
+                    cpswarm_msgs::ClearOfObstacles obstacle;
                     if (obstacle_client.call(obstacle) == false) {
                         ROS_ERROR("POS_CTRL - Failed to check if clear of obstacles");
                         publish_goal(pose);

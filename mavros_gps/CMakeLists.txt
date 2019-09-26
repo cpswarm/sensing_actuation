@@ -52,9 +52,9 @@ find_package(catkin REQUIRED COMPONENTS roscpp genmsg sensor_msgs mavros_msgs cp
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  fix_to_target.srv
-  pose_to_target.srv
-  target_to_fix.srv
+  FixToTarget.srv
+  PoseToTarget.srv
+  TargetToFix.srv
 )
 
 ## Generate actions in the 'action' folder

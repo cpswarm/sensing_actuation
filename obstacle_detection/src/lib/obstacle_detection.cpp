@@ -39,7 +39,7 @@ obstacle_detection::~obstacle_detection ()
         delete lidar;
 }
 
-bool obstacle_detection::clear_of_obstacles (cpswarm_msgs::clear_of_obstacles::Request &req, cpswarm_msgs::clear_of_obstacles::Response &res)
+bool obstacle_detection::clear_of_obstacles (cpswarm_msgs::ClearOfObstacles::Request &req, cpswarm_msgs::ClearOfObstacles::Response &res)
 {
     // clear of obstacles by default
     res.clear = true;
@@ -71,7 +71,7 @@ bool obstacle_detection::clear_of_obstacles (cpswarm_msgs::clear_of_obstacles::R
     return true;
 }
 
-bool obstacle_detection::danger (cpswarm_msgs::danger::Request &req, cpswarm_msgs::danger::Response &res)
+bool obstacle_detection::danger (cpswarm_msgs::Danger::Request &req, cpswarm_msgs::Danger::Response &res)
 {
     // no danger by default
     res.danger = false;
@@ -106,7 +106,7 @@ bool obstacle_detection::danger (cpswarm_msgs::danger::Request &req, cpswarm_msg
     return true;
 }
 
-bool obstacle_detection::get_clear_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res)
+bool obstacle_detection::get_clear_sector (cpswarm_msgs::GetSector::Request &req, cpswarm_msgs::GetSector::Response &res)
 {
     get_occupied_sector(req, res);
 
@@ -119,7 +119,7 @@ bool obstacle_detection::get_clear_sector (cpswarm_msgs::get_sector::Request &re
     return true;
 }
 
-bool obstacle_detection::get_occupied_sector (cpswarm_msgs::get_sector::Request &req, cpswarm_msgs::get_sector::Response &res)
+bool obstacle_detection::get_occupied_sector (cpswarm_msgs::GetSector::Request &req, cpswarm_msgs::GetSector::Response &res)
 {
     // compute minimum and maximum bearing of sector occupied by obstacles according to range sensors
     double obst_min = 0;
