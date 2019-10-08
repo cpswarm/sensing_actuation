@@ -56,7 +56,7 @@ public:
     bool get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res);
 
     /**
-     * @brief Determine whether a position is within the area. Uses the approach described in solution 2 at http://paulbourke.net/geometry/polygonmesh/#insidepoly.
+     * @brief Determine whether a position is within the area using the winding number algorithm.
      * @param req The position to check.
      * @param res True, if the position is outside of the area, false otherwise.
      * @return Whether the request succeeded.
@@ -64,6 +64,15 @@ public:
     bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
 private:
+    /**
+     * @brief Test whether a point is left of an infinite line.
+     * @param p0 First point of the line.
+     * @param p1 Second point of the line.
+     * @param p2 Point to test.
+     * @return False, if the point is right of the line, true otherwise.
+     */
+    bool is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
+
     /**
      * @brief A node handle for the main ROS node.
      */

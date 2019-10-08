@@ -191,30 +191,42 @@ bool area::get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetO
 
 bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
 {
-    // sum of the angles made between pose and each pair of points making up the polygon
-    double angle_sum = 0;
+    // the winding number counter
+    int wn = 0;
 
-    // compute the angle sum
+    // loop through all edges of the polygon
     for (int i = 0; i < coords.size(); ++i) {
-        // coordinates of two neighboring polygon points relative to the given pose
-        geometry_msgs::Point p1;
-        p1.x = coords[i].x - req.pose.position.x;
-        p1.y = coords[i].y - req.pose.position.y;
-        geometry_msgs::Point p2;
-        p2.x = coords[(i+1)%coords.size()].x - req.pose.position.x;
-        p2.y = coords[(i+1)%coords.size()].y - req.pose.position.y;
-
-        // angle between the two points
-        angle_sum += remainder(atan2(p2.y, p2.x) - atan2(p1.y, p1.x), 2*M_PI);
+        if (coords[i].y <= req.pose.position.y) {
+            // an upward crossing
+            if (coords[(i+1)%coords.size()].y  > req.pose.position.y)
+                // point left of edge, count upward crossing
+                if (is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position) == true)
+                    ++wn;
+        }
+        else {
+            // a downward crossing
+            if (coords[(i+1)%coords.size()].y  <= req.pose.position.y)
+                // point right of  edge, count downward crossing
+                if (is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position) == false)
+                    --wn;
+        }
     }
 
-    // pose is outside (sum = 0)
-    if (abs(angle_sum) < M_PI)
+    // pose is outside
+    if (wn == 0)
         res.out = true;
 
-    // pose is inside (sum = 2π)
+    // pose is inside
     else
         res.out = false;
 
     return true;
+}
+
+bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
+{
+    // >0 for p2 left of the line through p0 and p1
+    // =0 for p2 on the line
+    // <0 for p2 right of the line
+    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) >= 0;
 }
