@@ -84,6 +84,7 @@ int main(int argc, char **argv)
 
     // make sure position is within allowed area
     ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
+    out_of_bounds_client.waitForExistence();
     cpswarm_msgs::OutOfBounds oob;
     oob.request.pose = pose.pose;
     if (out_of_bounds_client.call(oob)) {

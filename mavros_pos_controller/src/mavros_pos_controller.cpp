@@ -75,7 +75,7 @@ ServiceClient occupied_sector_client;
 /**
  * @brief Service client to get the GPS target from the local pose.
  */
-ServiceClient PoseToTarget_client;
+ServiceClient pose_to_target_client;
 
 /**
  * @brief Publisher for the position set point.
@@ -133,7 +133,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         mavros_msgs::GlobalPositionTarget global_goal;
         mavros_gps::PoseToTarget p2t;
         p2t.request.pose = goal;
-        if (PoseToTarget_client.call(p2t)) {
+        if (pose_to_target_client.call(p2t)) {
             ROS_DEBUG("POS_CTRL - Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
 
             // publish goal to fcu
@@ -374,9 +374,9 @@ int main(int argc, char **argv) {
     }
 
     // service clients
-    PoseToTarget_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/PoseToTarget");
+    pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/PoseToTarget");
     if (global)
-        PoseToTarget_client.waitForExistence();
+        pose_to_target_client.waitForExistence();
     ServiceClient obstacle_client = nh.serviceClient<cpswarm_msgs::ClearOfObstacles>("obstacle_detection/clear_of_obstacles");
     obstacle_client.waitForExistence();
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
