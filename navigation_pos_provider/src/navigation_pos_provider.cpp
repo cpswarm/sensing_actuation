@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 
         // publish position
         pose.header.stamp = Time::now();
+        pose.header.frame_id = "map";
         pose_pub.publish(pose);
 
         rate.sleep();
