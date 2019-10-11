@@ -8,4 +8,3 @@ footprint: [[-0.05, -0.05], [-0.05, 0.05], [0.05, 0.05],[0.05, -0.05]]
 observation_sources: base_scan
 base_scan: {data_type: LaserScan, clearing: true}
 transform_tolerance: 1.4
-

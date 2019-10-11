@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         spinOnce();
 
         // only move if goal is far enough from current pose
-        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) > goal_tolerance || remainder(get_yaw(pose) - get_yaw(goal), 2*M_PI) + M_PI < goal_tolerance_a)) {
+        if (goal_valid && (hypot(goal.position.x - pose.position.x, goal.position.y - pose.position.y) >= goal_tolerance || abs(remainder(get_yaw(pose) - get_yaw(goal), 2*M_PI)) >= goal_tolerance_a)) {
             ROS_DEBUG_THROTTLE(10, "POS_CTRL - Move to (%.2f,%.2f,%.2f).", goal.position.x, goal.position.y, get_yaw(goal));
 
             // publish goal
