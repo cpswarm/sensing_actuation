@@ -115,9 +115,11 @@ int main(int argc, char **argv)
 
     // init gps service clients
     fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
-    fix_to_pose_client.waitForExistence();
     ned_to_enu_client = nh.serviceClient<cpswarm_msgs::NedToEnu>("gps/ned_to_enu");
-    ned_to_enu_client.waitForExistence();
+    if (global) {
+        fix_to_pose_client.waitForExistence();
+        ned_to_enu_client.waitForExistence();
+    }
 
     // wait for valid position
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
