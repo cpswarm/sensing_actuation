@@ -162,7 +162,7 @@ sensor_msgs::NavSatFix gps::goal (mavros_msgs::GlobalPositionTarget start, doubl
 
 double gps::ned_to_enu (double yaw) const
 {
-    return remainder(2 * M_PI - yaw + M_PI / 2, 2*M_PI) + M_PI;
+    return remainder(2 * M_PI - yaw + M_PI / 2, 2*M_PI);
 }
 
 sensor_msgs::NavSatFix gps::target_to_fix (mavros_msgs::GlobalPositionTarget target) const

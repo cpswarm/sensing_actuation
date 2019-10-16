@@ -203,19 +203,19 @@ void obstacle_avoidance ()
     double occ = gos.response.min + (gos.response.max - gos.response.min) / 2.0; // always max > min
 
     // yaw of occupied sector relative to current yaw
-    double rel_yaw = remainder(occ - get_yaw(pose.pose), 2*M_PI) + M_PI; // [0,2π]
+    double rel_yaw = remainder(occ - get_yaw(pose.pose), 2*M_PI);
 
     ROS_DEBUG("POS_CTRL - Obstacle at yaw %.2f < %.2f < %.2f", gos.response.min, occ, gos.response.max);
     ROS_DEBUG("POS_CTRL - My yaw %.2f", get_yaw(pose.pose));
 
     // turn right if cps is coming from ahead
-    if (rel_yaw < M_PI / 2.0 || 3.0 * M_PI / 2.0 < rel_yaw) {
+    if (abs(rel_yaw) < M_PI / 2.0) {
         ROS_DEBUG("POS_CTRL - Change yaw %.2f --> %.2f", goal_dir, goal_dir + M_PI / 4.0 * cos(rel_yaw));
         goal_dir += M_PI / 4.0 * cos(rel_yaw);
     }
 
     // slow down if cps is coming from right
-    if (rel_yaw < M_PI) {
+    if (rel_yaw < 0) {
         ROS_DEBUG("POS_CTRL - Reduce distance %.2f --> %.2f", goal_dist, goal_dist * (1 - sin(rel_yaw)));
         goal_dist *= (1.0 - sin(rel_yaw));
     }
