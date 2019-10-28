@@ -24,14 +24,6 @@ int main(int argc, char **argv)
     ServiceServer get_origin_service = nh.advertiseService("area/get_origin", &area::get_origin, &lib);
     ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
 
-    // init publishers
-    int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    Publisher gridmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>("map", queue_size, true);
-
-    // publish grid map
-    gridmap_publisher.publish(lib.get_gridmap());
-
     ROS_DEBUG("AREA_PROV - Services are ready");
     spin();
 

@@ -65,6 +65,11 @@ public:
 
 private:
     /**
+     * @brief Initialize area coordinates, either from existing map or from given coordinates.
+     */
+    void init_area ();
+
+    /**
      * @brief Test whether a point is left of an infinite line.
      * @param p0 First point of the line.
      * @param p1 Second point of the line.
@@ -74,9 +79,29 @@ private:
     bool is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
 
     /**
+     * @brief Callback function to receive map updates.
+     */
+    void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg);
+
+    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
+
+    /**
+     * @brief Subscriber to receive an existing map.
+     */
+    Subscriber map_subscriber;
+
+    /**
+     * @brief Publisher to publish own map.
+     */
+    Publisher map_publisher;
+
+    /**
+    /**@brief The grid map representing the area.
+     */
+    nav_msgs::OccupancyGrid map;
 
     /**
      * @brief The coordinates of the area in which the CPS can move.
@@ -92,6 +117,11 @@ private:
      * @brief Resolution of the grid map representing the area in meter / cell.
      */
     double resolution;
+
+    /**
+     * @brief Set coordinates from existing map provided by another node.
+     */
+    bool map_exists;
 };
 
 #endif // AREA_H
