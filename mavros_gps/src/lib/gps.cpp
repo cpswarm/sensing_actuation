@@ -38,9 +38,9 @@ bool gps::fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixT
     return true;
 }
 
-bool gps::get_gps_origin (cpswarm_msgs::GetGpsOrigin::Request &req, cpswarm_msgs::GetGpsOrigin::Response &res)
+bool gps::get_gps_origin (cpswarm_msgs::GetGpsFix::Request &req, cpswarm_msgs::GetGpsFix::Response &res)
 {
-    res.origin = origin;
+    res.fix = origin;
     return true;
 }
 
