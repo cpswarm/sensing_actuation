@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/GetGpsOrigin.h"
 #include "cpswarm_msgs/ClosestBound.h"
@@ -46,6 +47,14 @@ public:
      * @return An empty grid map that represents the area.
      */
     nav_msgs::OccupancyGrid get_gridmap ();
+
+    /**
+     * @brief Return the map that represents the environment in which the CPS is allowed to move.
+     * @param req Empty request.
+     * @param res The grid map of the environment.
+     * @return Whether the request succeeded.
+     */
+    bool get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res);
 
     /**
      * @brief Return the origin of the coordinate system.

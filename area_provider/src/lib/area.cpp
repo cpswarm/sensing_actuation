@@ -128,12 +128,19 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         map.info.resolution = resolution;
         map.info.width = x;
         map.info.height = y;
+
         // position of cell (0,0)
         map.info.origin.position.x = xmin;
         map.info.origin.position.y = ymin;
     }
 
     return map;
+}
+
+bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
+{
+    res.map = get_gridmap();
+    return true;
 }
 
 bool area::get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res)
