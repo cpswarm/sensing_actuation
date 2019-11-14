@@ -72,9 +72,21 @@ bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs
     return true;
 }
 
-bool area::get_area (cpswarm_msgs::GetArea::Request &req, cpswarm_msgs::GetArea::Response &res)
+bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
-    res.area = coords;
+    res.points = coords;
+    return true;
+}
+
+bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
+{
+    // compute centroid / barycenter
+    for (auto c : coords) {
+        res.point.x += c.x;
+        res.point.y += c.y;
+    }
+    res.point.x /= coords.size();
+    res.point.y /= coords.size();
     return true;
 }
 
@@ -148,9 +160,9 @@ bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &
     return true;
 }
 
-bool area::get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res)
+bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
 {
-    res.origin = origin;
+    res.point = origin;
     return true;
 }
 
@@ -261,12 +273,12 @@ void area::init_area ()
             }
 
             // get origin from gps node
-            ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsOrigin>("gps/get_gps_origin");
+            ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
             get_gps_origin_client.waitForExistence();
-            cpswarm_msgs::GetGpsOrigin gpso;
+            cpswarm_msgs::GetGpsFix gpso;
             if (get_gps_origin_client.call(gpso)) {
                 // convert origin to local coordinates
-                f2p.request.fix = gpso.response.origin;
+                f2p.request.fix = gpso.response.fix;
                 if (fix_to_pose_client.call(f2p)) {
                     origin = f2p.response.pose.pose.position;
                 }
