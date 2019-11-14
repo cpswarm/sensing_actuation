@@ -2,6 +2,9 @@
 
 area::area ()
 {
+    // grid map resolution
+    nh.param(this_node::getName() + "/resolution", resolution, 1.0);
+
     // init map publisher
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
@@ -114,7 +117,7 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
 
                 // inside area
                 else
-                    data.push_back(-1); // unknown
+                    data.push_back(0); // free
             }
         }
         map.data = data;
@@ -132,6 +135,8 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         // position of cell (0,0)
         map.info.origin.position.x = xmin;
         map.info.origin.position.y = ymin;
+
+        map_exists = true;
     }
 
     return map;
@@ -223,9 +228,6 @@ void area::init_area ()
         string pos_type = "global";
         nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
         bool global = pos_type == "local" ? false : true;
-
-        // grid map resolution
-        nh.getParam(this_node::getName() + "/resolution", resolution);
 
         // read area coordinates
         vector<double> area_x;
