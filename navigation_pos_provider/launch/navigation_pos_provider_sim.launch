@@ -24,9 +24,9 @@
     <node pkg="fake_localization" type="fake_localization" name="fake_localization_$(arg id)" output="$(arg output)" required="true">
         <param name="delta_x" value="$(arg x)" />
         <param name="delta_y" value="$(arg y)" />
-        <param name="odom_frame_id" value="$(arg frame)/odom" />
-        <param name="base_frame_id" value="$(arg frame)/base_link" />
-        <param name="global_frame_id" value="/map" />
+        <param name="odom_frame_id" value="$(arg frame)_odom" />
+        <param name="base_frame_id" value="$(arg frame)_base_link" />
+        <param name="global_frame_id" value="$(arg frame)_map" />
     </node>
 
 </launch>
