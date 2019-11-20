@@ -15,7 +15,7 @@
     </node>
 
     <!-- Navigation move base -->
-    <node pkg="move_base" type="move_base" name="move_base_$(arg id)" output="$(arg output)" required="true">
+    <!--node pkg="move_base" type="move_base" name="move_base_$(arg id)" output="$(arg output)" required="true">
         <rosparam file="$(find navigation_pos_controller)/param/common_costmap.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find navigation_pos_controller)/param/common_costmap.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find navigation_pos_controller)/param/navigation.yaml" command="load" />
@@ -25,7 +25,7 @@
         <param name="local_costmap/global_frame" value="$(arg frame)/odom" />
         <param name="global_costmap/robot_base_frame" value="$(arg frame)/base_link" />
         <param name="global_costmap/global_frame" value="map" />
-<!--         <remap from="map" to="/map" /> -->
-    </node>
+
+    </node-->
 
 </launch>
