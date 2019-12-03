@@ -24,6 +24,11 @@ geometry_msgs::Pose goal;
  */
 geometry_msgs::Pose pose;
 
+/**
+ * @brief Frame id of the position
+ */
+string frame_id;
+
 /*
  * @brief Whether a valid position has been received.
  */
@@ -58,6 +63,7 @@ double get_yaw (geometry_msgs::Pose pose)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = msg->pose;
+    
     ROS_DEBUG_THROTTLE(10, "POS_CTRL - Local pose (%.2f,%.2f,%2.f)", pose.position.x, pose.position.y, get_yaw(pose));
     pose_valid = true;
 }
@@ -69,7 +75,7 @@ void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     goal = msg->pose;
-
+    frame_id = msg->header.frame_id;
     ROS_DEBUG("POS_CTRL - Local goal (%.2f,%.2f,%.2f)", goal.position.x, goal.position.y, get_yaw(goal));
 
     goal_valid = true;
@@ -162,7 +168,7 @@ int main(int argc, char **argv)
 			
 			// goal action message
 			move_base_msgs::MoveBaseGoal goal_msg;
-			goal_msg.target_pose.header.frame_id = "map";
+			goal_msg.target_pose.header.frame_id = frame_id;
 			
 			// create goal message
 			goal_msg.target_pose.header.seq++;
