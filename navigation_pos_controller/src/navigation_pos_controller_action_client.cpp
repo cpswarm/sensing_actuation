@@ -122,6 +122,8 @@ int main(int argc, char **argv)
     nh.param(this_node::getName() + "/goal_tolerance", goal_tolerance, 0.1);
     double goal_tolerance_a;
     nh.param(this_node::getName() + "/goal_tolerance_a", goal_tolerance_a, 0.1);
+    double goal_timeout;
+    nh.param(this_node::getName() + "/goal_timeout", goal_timeout, 30.0);
     
     //To clear costmap before navigation
 	ServiceClient clear_costmaps_client;
@@ -187,7 +189,7 @@ int main(int argc, char **argv)
 			}
 			
 			// send goal to ugv
-			ac.sendGoalAndWait(goal_msg);
+			ac.sendGoalAndWait(goal_msg, Duration(goal_timeout));
 			
 			if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
 				ROS_INFO("Goal reached!");
