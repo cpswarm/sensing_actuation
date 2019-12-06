@@ -4,11 +4,12 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
 #include "cpswarm_msgs/FixToPose.h"
-#include "cpswarm_msgs/GetGpsOrigin.h"
+#include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/ClosestBound.h"
-#include "cpswarm_msgs/GetArea.h"
-#include "cpswarm_msgs/GetOrigin.h"
+#include "cpswarm_msgs/GetPoints.h"
+#include "cpswarm_msgs/GetPoint.h"
 #include "cpswarm_msgs/OutOfBounds.h"
 
 using namespace std;
@@ -39,7 +40,15 @@ public:
      * @param res A vector of points that defines the bounding polygon coordinates.
      * @return Whether request succeeded.
      */
-    bool get_area (cpswarm_msgs::GetArea::Request &req, cpswarm_msgs::GetArea::Response &res);
+    bool get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res);
+
+    /**
+     * @brief Return the center of the area in which the CPS is allowed to move.
+     * @param req Empty request.
+     * @param res The center of the area.
+     * @return Whether request succeeded.
+     */
+    bool get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
      * @brief Generate a grid map the the given area coordinates.
@@ -48,12 +57,20 @@ public:
     nav_msgs::OccupancyGrid get_gridmap ();
 
     /**
+     * @brief Return the map that represents the environment in which the CPS is allowed to move.
+     * @param req Empty request.
+     * @param res The grid map of the environment.
+     * @return Whether the request succeeded.
+     */
+    bool get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res);
+
+    /**
      * @brief Return the origin of the coordinate system.
      * @param req Empty request.
      * @param res A point that defines the origin coordinates.
      * @return Whether request succeeded.
      */
-    bool get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res);
+    bool get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
      * @brief Determine whether a position is within the area using the winding number algorithm.

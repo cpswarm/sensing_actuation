@@ -6,7 +6,7 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
 #include "cpswarm_msgs/FixToPose.h"
-#include "cpswarm_msgs/GetGpsOrigin.h"
+#include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/NedToEnu.h"
 #include "cpswarm_msgs/PoseToFix.h"
 #include "mavros_gps/FixToTarget.h"
@@ -49,7 +49,7 @@ public:
      * @param res The GPS coordinates first received by this CPS.
      * @return Whether the request succeeded.
      */
-    bool get_gps_origin (cpswarm_msgs::GetGpsOrigin::Request &req, cpswarm_msgs::GetGpsOrigin::Response &res);
+    bool get_gps_origin (cpswarm_msgs::GetGpsFix::Request &req, cpswarm_msgs::GetGpsFix::Response &res);
 
     /**
      * @brief Convert a yaw angle from north east down (NED) to east north up (ENU) coordinate system and vice versa.

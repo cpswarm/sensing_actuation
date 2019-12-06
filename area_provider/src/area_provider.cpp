@@ -22,8 +22,10 @@ int main(int argc, char **argv)
 
     // advertise services
     ServiceServer closest_bound_service = nh.advertiseService("area/closest_bound", &area::closest_bound, &lib);
-    ServiceServer fix_to_pose_service = nh.advertiseService("area/get_area", &area::get_area, &lib);
-    ServiceServer get_origin_service = nh.advertiseService("area/get_origin", &area::get_origin, &lib);
+    ServiceServer get_area_service      = nh.advertiseService("area/get_area",      &area::get_area, &lib);
+    ServiceServer get_center_service    = nh.advertiseService("area/get_center",    &area::get_center, &lib);
+    ServiceServer get_map_service       = nh.advertiseService("area/get_map",       &area::get_map, &lib);
+    ServiceServer get_origin_service    = nh.advertiseService("area/get_origin",    &area::get_origin, &lib);
     ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
 
     // broadcast static tf

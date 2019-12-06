@@ -2,6 +2,9 @@
 
 area::area ()
 {
+    // grid map resolution
+    nh.param(this_node::getName() + "/resolution", resolution, 1.0);
+
     // init map publisher
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
@@ -69,9 +72,21 @@ bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs
     return true;
 }
 
-bool area::get_area (cpswarm_msgs::GetArea::Request &req, cpswarm_msgs::GetArea::Response &res)
+bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
-    res.area = coords;
+    res.points = coords;
+    return true;
+}
+
+bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
+{
+    // compute centroid / barycenter
+    for (auto c : coords) {
+        res.point.x += c.x;
+        res.point.y += c.y;
+    }
+    res.point.x /= coords.size();
+    res.point.y /= coords.size();
     return true;
 }
 
@@ -114,7 +129,7 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
 
                 // inside area
                 else
-                    data.push_back(-1); // unknown
+                    data.push_back(0); // free
             }
         }
         map.data = data;
@@ -128,17 +143,26 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         map.info.resolution = resolution;
         map.info.width = x;
         map.info.height = y;
+
         // position of cell (0,0)
         map.info.origin.position.x = xmin;
         map.info.origin.position.y = ymin;
+
+        map_exists = true;
     }
 
     return map;
 }
 
-bool area::get_origin (cpswarm_msgs::GetOrigin::Request &req, cpswarm_msgs::GetOrigin::Response &res)
+bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 {
-    res.origin = origin;
+    res.map = get_gridmap();
+    return true;
+}
+
+bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
+{
+    res.point = origin;
     return true;
 }
 
@@ -178,10 +202,66 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
 
 void area::init_area ()
 {
-    // use already existing map
-    if (map_exists) {
-        // use only initial map
-        map_subscriber.shutdown();
+    // read area coordinates
+    vector<double> area_x;
+    vector<double> area_y;
+    nh.getParam(this_node::getName() + "/area_x", area_x);
+    nh.getParam(this_node::getName() + "/area_y", area_y);
+    if (map_exists == false && (area_x.size() != area_y.size() || area_x.size() < 3)) {
+        ROS_FATAL("AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...");
+        shutdown();
+    }
+    vector<pair<double,double>> raw_coords;
+    for (int i = 0; i < area_x.size(); ++i)
+        raw_coords.emplace_back(area_x[i], area_y[i]);
+
+    // global positioning
+    string pos_type = "global";
+    nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
+    bool global = pos_type == "local" ? false : true;
+    if (global) {
+        // service client for converting GPS to local coordinates
+        ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+        fix_to_pose_client.waitForExistence();
+        cpswarm_msgs::FixToPose f2p;
+
+        // convert given area to local coordinates
+        for (int i = 0; i < raw_coords.size(); ++i) {
+            f2p.request.fix.longitude = raw_coords[i].first;
+            f2p.request.fix.latitude = raw_coords[i].second;
+            if (fix_to_pose_client.call(f2p)) {
+                coords.push_back(f2p.response.pose.pose.position);
+            }
+            else
+                ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
+        }
+
+        // get origin from gps node
+        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
+        get_gps_origin_client.waitForExistence();
+        cpswarm_msgs::GetGpsFix gpso;
+        if (get_gps_origin_client.call(gpso)) {
+            // convert origin to local coordinates
+            f2p.request.fix = gpso.response.fix;
+            if (fix_to_pose_client.call(f2p)) {
+                origin = f2p.response.pose.pose.position;
+            }
+            else
+                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
+        }
+        else
+            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
+    }
+
+    // local positioning
+    else {
+        for (int i = 0; i < raw_coords.size(); ++i) {
+            // copy given area coordinates
+            geometry_msgs::Point p;
+            p.x = raw_coords[i].first;
+            p.y = raw_coords[i].second;
+            coords.push_back(p);
+        }
 
         // read origin from parameters
         double x,y;
@@ -189,8 +269,10 @@ void area::init_area ()
         nh.param(this_node::getName() + "/y", y, 0.0);
         origin.x = x;
         origin.y = y;
+    }
 
-        // set coords
+    // no coordinates given, extract from map
+    if (map_exists && coords.size() < 3) {
         geometry_msgs::Point c;
 
         // bottom left
@@ -210,83 +292,6 @@ void area::init_area ()
         coords.push_back(c);
     }
 
-    // create empty map from given coordinates
-    else {
-        // positioning type
-        string pos_type = "global";
-        nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
-        bool global = pos_type == "local" ? false : true;
-
-        // grid map resolution
-        nh.getParam(this_node::getName() + "/resolution", resolution);
-
-        // read area coordinates
-        vector<double> area_x;
-        vector<double> area_y;
-        nh.getParam(this_node::getName() + "/area_x", area_x);
-        nh.getParam(this_node::getName() + "/area_y", area_y);
-        if (area_x.size() != area_y.size() || area_x.size() < 3) {
-            ROS_FATAL("AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...");
-            shutdown();
-        }
-        vector<pair<double,double>> raw_coords;
-        for (int i = 0; i < area_x.size(); ++i)
-            raw_coords.emplace_back(area_x[i], area_y[i]);
-
-        // global positioning
-        if (global) {
-            // service client for converting GPS to local coordinates
-            ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
-            fix_to_pose_client.waitForExistence();
-            cpswarm_msgs::FixToPose f2p;
-
-            // convert given area to local coordinates
-            for (int i = 0; i < raw_coords.size(); ++i) {
-                f2p.request.fix.longitude = raw_coords[i].first;
-                f2p.request.fix.latitude = raw_coords[i].second;
-                if (fix_to_pose_client.call(f2p)) {
-                    coords.push_back(f2p.response.pose.pose.position);
-                }
-                else
-                    ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
-            }
-
-            // get origin from gps node
-            ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsOrigin>("gps/get_gps_origin");
-            get_gps_origin_client.waitForExistence();
-            cpswarm_msgs::GetGpsOrigin gpso;
-            if (get_gps_origin_client.call(gpso)) {
-                // convert origin to local coordinates
-                f2p.request.fix = gpso.response.origin;
-                if (fix_to_pose_client.call(f2p)) {
-                    origin = f2p.response.pose.pose.position;
-                }
-                else
-                    ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
-        }
-
-        // local positioning
-        else {
-            for (int i = 0; i < raw_coords.size(); ++i) {
-                // copy given area coordinates
-                geometry_msgs::Point p;
-                p.x = raw_coords[i].first;
-                p.y = raw_coords[i].second;
-                coords.push_back(p);
-
-                // read origin from parameters
-                double x,y;
-                nh.param(this_node::getName() + "/x", x, 0.0);
-                nh.param(this_node::getName() + "/y", y, 0.0);
-                origin.x = x;
-                origin.y = y;
-            }
-        }
-    }
-
     // publish grid map
     map_publisher.publish(get_gridmap());
 }
@@ -304,6 +309,9 @@ void area::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
     // store map
     map = *msg;
     map_exists = true;
+
+    // use only initial map
+    map_subscriber.shutdown();
 
     // initialize area coordinates
     init_area();
