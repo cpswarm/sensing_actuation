@@ -1,7 +1,7 @@
 loop_rate:    1.0 # The frequency in Hz at which to run the control loops.
 wait_for_map: 2.0 # Time in seconds to wait initially for another map provider.
 resolution:   1   # Resolution of the grid map representing the area in meter / cell.
-area_x: # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+area_x: # The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 - -10
 - 10
 - 10
@@ -11,15 +11,3 @@ area_y:
 - -10
 - 10
 - 10
-
-# CPSwarm arena at DigiSky premises.
-#- 7.61074548
-#- 7.61074548
-#- 7.61083452
-#- 7.61083452
-#area_y:
-#- 45.08387651
-#- 45.08390349
-#- 45.08390349
-#- 45.08387651
-# center 45.08389, 7.61079
