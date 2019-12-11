@@ -168,25 +168,18 @@ bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 
 bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
 {
-    // the winding number counter
+    // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
     int wn = 0;
 
     // loop through all edges of the polygon
     for (int i = 0; i < coords.size(); ++i) {
-        if (coords[i].y <= req.pose.position.y) {
-            // an upward crossing
-            if (coords[(i+1)%coords.size()].y  > req.pose.position.y)
-                // point left of edge, count upward crossing
-                if (is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position) == true)
-                    ++wn;
-        }
-        else {
-            // a downward crossing
-            if (coords[(i+1)%coords.size()].y  <= req.pose.position.y)
-                // point right of  edge, count downward crossing
-                if (is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position) == false)
-                    --wn;
-        }
+        // ray crosses upward edge
+        if (coords[i].y <= req.pose.position.y && coords[(i+1)%coords.size()].y  > req.pose.position.y && is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+            ++wn;
+
+        // ray crosses downward edge
+        else if (coords[i].y > req.pose.position.y && coords[(i+1)%coords.size()].y  <= req.pose.position.y && is_right(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+            --wn;
     }
 
     // pose is outside
@@ -301,7 +294,15 @@ bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_m
     // >0 for p2 left of the line through p0 and p1
     // =0 for p2 on the line
     // <0 for p2 right of the line
-    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) >= 0;
+    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) > 0;
+}
+
+bool area::is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
+{
+    // >0 for p2 left of the line through p0 and p1
+    // =0 for p2 on the line
+    // <0 for p2 right of the line
+    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) < 0;
 }
 
 void area::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)

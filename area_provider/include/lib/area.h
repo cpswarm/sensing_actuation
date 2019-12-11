@@ -91,9 +91,18 @@ private:
      * @param p0 First point of the line.
      * @param p1 Second point of the line.
      * @param p2 Point to test.
-     * @return False, if the point is right of the line, true otherwise.
+     * @return True, if the point is left of the line, false otherwise.
      */
     bool is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
+
+    /**
+     * @brief Test whether a point is right of an infinite line.
+     * @param p0 First point of the line.
+     * @param p1 Second point of the line.
+     * @param p2 Point to test.
+     * @return True, if the point is right of the line, false otherwise.
+     */
+    bool is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
 
     /**
      * @brief Callback function to receive map updates.
