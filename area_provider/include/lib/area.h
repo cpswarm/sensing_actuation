@@ -10,6 +10,7 @@
 #include "cpswarm_msgs/ClosestBound.h"
 #include "cpswarm_msgs/GetPoints.h"
 #include "cpswarm_msgs/GetPoint.h"
+#include "cpswarm_msgs/GetDouble.h"
 #include "cpswarm_msgs/OutOfBounds.h"
 
 using namespace std;
@@ -79,6 +80,14 @@ public:
      * @return Whether the request succeeded.
      */
     bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
+
+    /**
+     * @brief Get the rotation of the area given by coordinates. Assuming a quadrilateral.
+     * @param req Empty request.
+     * @param res The angle that the bottom edge of the area is rotated with respect to the x-axis.
+     * @return Whether the request succeeded.
+     */
+    bool get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res);
 
 private:
     /**

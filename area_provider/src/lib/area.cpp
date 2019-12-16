@@ -193,6 +193,44 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
     return true;
 }
 
+bool area::get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res)
+{
+    // get coordinates
+    geometry_msgs::Point pl, pb, pr;
+    pl.x = numeric_limits<double>::max();
+    pb.y = numeric_limits<double>::max();
+    pr.x = numeric_limits<double>::min();
+    for (auto p : coords) {
+        // left most point
+        if (p.x < pl.x || (p.x == pl.x && p.y < pl.y))
+            pl = p;
+
+        // bottom most point
+        if (p.y < pb.y)
+            pb = p;
+
+        // right most point
+        if (p.x > pr.x || (p.x == pr.x && p.y < pr.y))
+            pr = p;
+    }
+
+    // no rotation required
+    if ((pl.x == pb.x && pl.y == pb.y) || (pr.x == pb.x && pr.y == pb.y))
+        return false;
+
+    // rotate clockwise
+    if (pr.y < pl.y) {
+        res.value = -atan2(pr.y - pb.y, pr.x - pb.x);
+    }
+
+    // rotate counter clockwise
+    else {
+        res.value = -atan2(pb.y - pl.y, pb.x - pl.x);
+    }
+
+    return true;
+}
+
 void area::init_area ()
 {
     // read area coordinates
