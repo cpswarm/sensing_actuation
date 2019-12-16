@@ -1,5 +1,7 @@
 #include <ros/ros.h>
 #include <tf2/utils.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/MagneticField.h>
@@ -121,6 +123,10 @@ int main(int argc, char **argv)
         ned_to_enu_client.waitForExistence();
     }
 
+    // init tf publisher
+    tf2_ros::TransformBroadcaster br;
+    geometry_msgs::TransformStamped transformStamped;
+
     // wait for valid position
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
         ROS_DEBUG_ONCE("POS_PROV - Waiting for valid pose");
@@ -167,6 +173,19 @@ int main(int argc, char **argv)
         pose.header.stamp = Time::now();
         pose.header.frame_id = "local_origin_ned";
         pose_pub.publish(pose);
+
+        // broadcast tf
+        transformStamped.header.stamp = Time::now();
+        transformStamped.header.frame_id = "map";
+        transformStamped.child_frame_id = "base_link";
+        transformStamped.transform.translation.x = pose.pose.position.x;
+        transformStamped.transform.translation.y = pose.pose.position.y;
+        transformStamped.transform.translation.z = pose.pose.position.z;
+        transformStamped.transform.rotation.x = pose.pose.orientation.x;
+        transformStamped.transform.rotation.y = pose.pose.orientation.y;
+        transformStamped.transform.rotation.z = pose.pose.orientation.z;
+        transformStamped.transform.rotation.w = pose.pose.orientation.w;
+        br.sendTransform(transformStamped);
 
         rate.sleep();
     }
