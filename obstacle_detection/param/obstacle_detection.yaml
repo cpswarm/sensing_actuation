@@ -1,5 +1,5 @@
 queue_size:          1         # The size of the message queue used for publishing and subscribing to topics.
-loop_rate:           5.0       # The frequency in Hz at which to run the control loop.
+loop_rate:           10.0      # The frequency in Hz at which to run the control loop.
 #range_sensor_topics:           # The topics on which the range sensors publish their sensor readings.
 #- sonar_ranger_right
 #- sonar_ranger_front
