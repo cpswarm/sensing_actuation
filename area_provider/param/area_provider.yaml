@@ -7,7 +7,7 @@ area_x: # The area in which the mission takes place. It is a polygon specified b
 - 9
 - -8.5
 area_y:
-- -8.5
-- -8.5
+- -1.5
+- -1.5
 - 8
 - 8
