@@ -1,13 +1,12 @@
 #include <ros/ros.h>
 #include <tf2/utils.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PointStamped.h>
 #include <mavros_msgs/State.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
 #include <std_msgs/Empty.h>
 #include "mavros_gps/PoseToTarget.h"
-#include "cpswarm_msgs/ClearOfObstacles.h"
 #include "cpswarm_msgs/Danger.h"
-#include "cpswarm_msgs/GetSector.h"
 
 using namespace std;
 using namespace ros;
@@ -48,14 +47,19 @@ bool goal_valid;
 Duration turn_timeout;
 
 /**
+ * @brief Whether the CPS should turn its front into movement direction or not.
+ */
+bool turning;
+
+/**
+ * @brief Whether to publish the waypoints on a topic for visualization.
+ */
+bool visualize;
+
+/**
  * @brief Whether global GPS coordinates should be published.
  */
 bool global;
-
-/**
- * @brief The distance in meter which the position of the CPS can vary around the set point.
- */
-double goal_tolerance;
 
 /**
  * @brief The angle in radian which the yaw of the CPS can vary around the set point.
@@ -66,11 +70,6 @@ double yaw_tolerance;
  * @brief Frequency of the control loops.
  */
 Rate* rate;
-
-/**
- * @brief Service client to retrieve the sector occupied by obstacles.
- */
-ServiceClient occupied_sector_client;
 
 /**
  * @brief Service client to get the GPS target from the local pose.
@@ -88,6 +87,11 @@ Publisher publisher;
 Publisher stop_vel_pub;
 
 /**
+ * @brief Publisher to visualize the current waypoint.
+ */
+Publisher wp_pub;
+
+/**
  * @brief Compute the yaw angle from a given pose.
  * @param pose The pose to compute the angle from.
  * @return An angle that represents the orientation of the pose.
@@ -97,19 +101,6 @@ double get_yaw (geometry_msgs::Pose pose)
     tf2::Quaternion orientation;
     tf2::fromMsg(pose.orientation, orientation);
     return tf2::getYaw(orientation);
-}
-
-/**
- * @brief Check whether the current goal is at least the goal tolerance away from the current pose.
- * @return True, if the goal is far enough away.
- */
-bool enough_dist ()
-{
-    double dx = local_goal.pose.position.x - pose.pose.position.x;
-    double dy = local_goal.pose.position.y - pose.pose.position.y;
-    double dz = local_goal.pose.position.z - pose.pose.position.z;
-
-    return (dx*dx + dy*dy + dz*dz) > (goal_tolerance * goal_tolerance);
 }
 
 /**
@@ -127,6 +118,15 @@ bool enough_yaw()
  * @param goal The goal to move to.
  */
 void publish_goal (geometry_msgs::PoseStamped goal) {
+    // visualize waypoint
+    if (visualize) {
+        geometry_msgs::PointStamped wp;
+        wp.header.stamp = Time::now();
+        wp.header.frame_id = "local_origin_ned";
+        wp.point = goal.pose.position;
+        wp_pub.publish(wp);
+    }
+
     // move cps using gps coordinates
     if (global) {
         // convert local goal to gps coordinates
@@ -134,7 +134,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         mavros_gps::PoseToTarget p2t;
         p2t.request.pose = goal;
         if (pose_to_target_client.call(p2t)) {
-            ROS_DEBUG("POS_CTRL - Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
+            ROS_DEBUG("Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
 
             // publish goal to fcu
             global_goal = p2t.response.target;
@@ -142,7 +142,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
             publisher.publish(global_goal);
         }
         else {
-            ROS_ERROR("POS_CTRL - Failed to convert global goal");
+            ROS_ERROR("Failed to convert global goal");
         }
     }
 
@@ -151,7 +151,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         // shift local goal according to origin
         goal.pose.position.x -= origin.position.x;
         goal.pose.position.y -= origin.position.y;
-        ROS_DEBUG("POS_CTRL - Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
+        ROS_DEBUG("Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
 
         // publish goal to fcu
         goal.header.stamp = Time::now();
@@ -175,59 +175,15 @@ geometry_msgs::PoseStamped compute_goal (double distance, double direction)
     goal.pose.position.z = pose.pose.position.z;
 
     // calculate orientation
-    tf2::Quaternion orientation;
-    orientation.setRPY(0, 0, direction);
-    goal.pose.orientation = tf2::toMsg(orientation);
+    if (turning) {
+        tf2::Quaternion orientation;
+        orientation.setRPY(0, 0, direction);
+        goal.pose.orientation = tf2::toMsg(orientation);
+    }
+    else
+        goal.pose.orientation = pose.pose.orientation;
 
     return goal;
-}
-
-/**
- * @brief Obstacle avoidance procedure to avoid other CPS with the same controller.
- */
-void obstacle_avoidance ()
-{
-    ROS_INFO("POS_CTRL - Obstacle avoidance");
-
-    // compute direction and distance of goal
-    double goal_dist = hypot(pose.pose.position.x - local_goal.pose.position.x, pose.pose.position.y - local_goal.pose.position.y);
-    double goal_dir = get_yaw(local_goal.pose);
-
-    // get occupied sector
-    cpswarm_msgs::GetSector gos;
-    if (occupied_sector_client.call(gos) == false){
-        ROS_ERROR("POS_CTRL - Failed to get occupied sector, stop moving!");
-        publish_goal(pose);
-        return;
-    }
-    double occ = gos.response.min + (gos.response.max - gos.response.min) / 2.0; // always max > min
-
-    // yaw of occupied sector relative to current yaw
-    double rel_yaw = remainder(occ - get_yaw(pose.pose), 2*M_PI);
-
-    ROS_DEBUG("POS_CTRL - Obstacle at yaw %.2f < %.2f < %.2f", gos.response.min, occ, gos.response.max);
-    ROS_DEBUG("POS_CTRL - My yaw %.2f", get_yaw(pose.pose));
-
-    // turn right if cps is coming from ahead
-    if (abs(rel_yaw) < M_PI / 2.0) {
-        ROS_DEBUG("POS_CTRL - Change yaw %.2f --> %.2f", goal_dir, goal_dir + M_PI / 4.0 * cos(rel_yaw));
-        goal_dir += M_PI / 4.0 * cos(rel_yaw);
-    }
-
-    // slow down if cps is coming from right
-    if (rel_yaw < 0) {
-        ROS_DEBUG("POS_CTRL - Reduce distance %.2f --> %.2f", goal_dist, goal_dist * (1 - sin(rel_yaw)));
-        goal_dist *= (1.0 - sin(rel_yaw));
-    }
-
-    // speed up if cps is coming from left
-    else {
-        ROS_DEBUG("POS_CTRL - Increase distance %.2f --> %.2f", goal_dist, goal_dist * (1 + abs(sin(rel_yaw))));
-        goal_dist *= (1.0 + abs(sin(rel_yaw)));
-    }
-
-    // set new goal
-    publish_goal(compute_goal(goal_dist, goal_dir));
 }
 
 void turn ()
@@ -274,7 +230,12 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     // store goal position
     local_goal = *msg;
 
-    ROS_DEBUG("POS_CTRL - Move to (%.2f,%.2f,%.2f,%.2f)", local_goal.pose.position.x, local_goal.pose.position.y, local_goal.pose.position.z, get_yaw(local_goal.pose));
+    // keep orientation if turning is disabled
+    if (turning == false)
+        local_goal.pose.orientation = pose.pose.orientation;
+
+
+    ROS_DEBUG("Move to (%.2f,%.2f,%.2f,%.2f)", local_goal.pose.position.x, local_goal.pose.position.y, local_goal.pose.position.z, get_yaw(local_goal.pose));
 
     // start publishing position set points
     goal_valid = true;
@@ -291,7 +252,7 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = *msg;
-    ROS_DEBUG_THROTTLE(10, "POS_CTRL - Pose (%.2f,%.2f,%2.f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
+    ROS_DEBUG_THROTTLE(10, "Pose (%.2f,%.2f,%2.f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
     pose_valid = true;
 }
 
@@ -309,7 +270,7 @@ void state_callback(const mavros_msgs::State::ConstPtr& msg) {
  */
 void stop_callback(const std_msgs::Empty::ConstPtr& msg)
 {
-    ROS_DEBUG("POS_CTRL - Stop");
+    ROS_DEBUG("Stop");
 
     // stop publishing set points
     goal_valid = false;
@@ -340,11 +301,12 @@ int main(int argc, char **argv) {
     rate = new Rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    nh.param(this_node::getName() + "/goal_tolerance", goal_tolerance, 0.1);
     nh.param(this_node::getName() + "/yaw_tolerance", yaw_tolerance, 0.1);
     double d_turn_timeout;
     nh.param(this_node::getName() + "/turn_timeout", d_turn_timeout, 5.0);
     turn_timeout = Duration(d_turn_timeout);
+    nh.param(this_node::getName() + "/turning", turning, true);
+    nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // wait for valid pose and goal
     pose_valid = false;
@@ -358,17 +320,20 @@ int main(int argc, char **argv) {
 
     // publisher
     stop_vel_pub = nh.advertise<std_msgs::Empty>("vel_controller/stop", queue_size, true);
+    if (visualize) {
+        wp_pub = nh.advertise<geometry_msgs::PointStamped>("pos_controller/waypoint", queue_size, true);
+    }
 
     // wait for fcu connection
     while (ok() && state.connected == false) {
-        ROS_DEBUG_ONCE("POS_CTRL - Waiting for FCU connection");
+        ROS_DEBUG_ONCE("Waiting for FCU connection");
         spinOnce();
         rate->sleep();
     }
 
     // wait for valid position
     while (ok() && pose_valid == false) {
-        ROS_DEBUG_ONCE("POS_CTRL - Waiting for valid pose");
+        ROS_DEBUG_ONCE("Waiting for valid pose");
         spinOnce();
         rate->sleep();
     }
@@ -377,12 +342,8 @@ int main(int argc, char **argv) {
     pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/PoseToTarget");
     if (global)
         pose_to_target_client.waitForExistence();
-    ServiceClient obstacle_client = nh.serviceClient<cpswarm_msgs::ClearOfObstacles>("obstacle_detection/clear_of_obstacles");
-    obstacle_client.waitForExistence();
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
     danger_client.waitForExistence();
-    occupied_sector_client = nh.serviceClient<cpswarm_msgs::GetSector>("obstacle_detection/get_occupied_sector");
-    occupied_sector_client.waitForExistence();
 
     // goal publisher
     if (global) {
@@ -392,7 +353,7 @@ int main(int argc, char **argv) {
         publisher = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", queue_size, true);
     }
 
-    ROS_INFO("POS_CTRL - Ready");
+    ROS_INFO("Ready");
 
     // provide position controller
     while (ok()) {
@@ -401,47 +362,26 @@ int main(int argc, char **argv) {
 
         // only publish set point if a goal has been received
         if (goal_valid) {
-            // only move if goal is far enough from current pose
-            if (enough_dist() || enough_yaw()) {
-                // turn nose into movement direction, if required
-                if (enough_yaw()) {
-                    turn();
-                }
+            // turn nose into movement direction, if required
+            if (turning)
+                turn();
 
-                // check if dangerously close to obstacle
-                cpswarm_msgs::Danger danger;
-                if (danger_client.call(danger) == false) {
-                    ROS_ERROR("POS_CTRL - Failed to check if obstacle near by");
-                    publish_goal(pose);
-                    continue;
-                }
+            // check if dangerously close to obstacle
+            cpswarm_msgs::Danger danger;
+            if (danger_client.call(danger) == false) {
+                ROS_ERROR_THROTTLE(1, "Failed to check if obstacle near by");
+                publish_goal(pose);
+            }
 
-                // there are obstacles dangerously close, back off
-                else if (danger.response.danger) {
-                    ROS_ERROR("POS_CTRL - Obstacle too close, backoff!");
-                    publish_goal(compute_goal(danger.response.backoff / 2.0, danger.response.direction));
-                    continue;
-                }
-
-                // check if clear of obstacles
-                else {
-                    cpswarm_msgs::ClearOfObstacles obstacle;
-                    if (obstacle_client.call(obstacle) == false) {
-                        ROS_ERROR("POS_CTRL - Failed to check if clear of obstacles");
-                        publish_goal(pose);
-                        continue;
-                    }
-
-                    // if there is an obstacle, avoid collision
-                    else if (obstacle.response.clear == false) {
-                        obstacle_avoidance();
-                        continue;
-                    }
-                }
+            // there are obstacles dangerously close, back off
+            else if (danger.response.danger) {
+                ROS_ERROR_THROTTLE(1, "Obstacle too close, backoff!");
+                publish_goal(compute_goal(danger.response.backoff, danger.response.direction));
             }
 
             // publish set point
-            publish_goal(local_goal);
+            else
+                publish_goal(local_goal);
         }
 
         // sleep rest of cycle
