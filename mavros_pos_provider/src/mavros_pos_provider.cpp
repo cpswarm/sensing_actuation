@@ -98,6 +98,8 @@ int main(int argc, char **argv)
     Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    double init_time;
+    nh.param(this_node::getName() + "/init_time", init_time, 10.0);
 
     // init pose subscribers
     compass_sensor* yaw_sensor;
@@ -122,6 +124,7 @@ int main(int argc, char **argv)
     }
 
     // wait for valid position
+    Duration(init_time).sleep();
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
         ROS_DEBUG_ONCE("POS_PROV - Waiting for valid pose");
         spinOnce();
