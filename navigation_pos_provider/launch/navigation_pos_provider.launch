@@ -18,7 +18,7 @@
     <!-- TODO: SLAM -->
 
     <!-- Localization -->
-    <node pkg="amcl" type="amcl" name="amcl_$(arg id)" output="$(arg output)" required="true">
+    <!--node pkg="amcl" type="amcl" name="amcl_$(arg id)" output="$(arg output)" required="true">
         <param name="first_map_only" value="true" />
         <param name="use_map_topic" value="true" />
         <param name="odom_frame_id" value="$(arg frame)/odom" />
@@ -26,6 +26,6 @@
         <param name="initial_pose_x" value="$(arg x)"/>
         <param name="initial_pose_y" value="$(arg y)"/>
         <remap from="scan" to="base_scan" />
-    </node>
+    </node-->
 
 </launch>
