@@ -2,3 +2,4 @@ loop_rate:      10.0 # The frequency in Hz at which to run the control loop.
 timeout:        5.0  # The time in seconds to wait for the action server.
 queue_size:     1    # The size of the message queue used for publishing and subscribing to topics.
 goal_tolerance: 0.1  # The distance that the CPS can be away from a goal while still being considered to have reached that goal.
+init_time:      20.0 # The time in seconds to wait for a valid pose at start up.
