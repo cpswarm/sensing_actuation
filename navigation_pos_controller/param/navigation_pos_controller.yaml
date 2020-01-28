@@ -2,4 +2,4 @@ loop_rate:        10.0 # The frequency in Hz at which to run the control loop.
 queue_size:       1    # The size of the message queue used for publishing and subscribing to topics.
 goal_tolerance:   0.1  # The distance a goal has to be away from the current pose in order for the CPS to move there.
 goal_tolerance_a: 0.1  # The angle that a goal has to be away from the current yaw in order for the CPS to turn.
-
+goal_timeout:     30.0 # The time in seconds that the CPS is given time to reach a destination before giving up.
