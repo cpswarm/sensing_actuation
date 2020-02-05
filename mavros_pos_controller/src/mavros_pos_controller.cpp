@@ -234,6 +234,13 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     if (turning == false)
         local_goal.pose.orientation = pose.pose.orientation;
 
+    // calculate new orientation if turning is enabled
+    else {
+        // calculate orientation
+        tf2::Quaternion orientation;
+        orientation.setRPY(0, 0, atan2(local_goal.pose.position.y - pose.pose.position.y, local_goal.pose.position.x - pose.pose.position.x));
+        local_goal.pose.orientation = tf2::toMsg(orientation);
+    }
 
     ROS_DEBUG("Move to (%.2f,%.2f,%.2f,%.2f)", local_goal.pose.position.x, local_goal.pose.position.y, local_goal.pose.position.z, get_yaw(local_goal.pose));
 
