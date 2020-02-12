@@ -8,7 +8,7 @@ area::area ()
     // init map publisher
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area_provider/map", queue_size, true);
+    map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
 
     // subscribe to map
     map_exists = false;
