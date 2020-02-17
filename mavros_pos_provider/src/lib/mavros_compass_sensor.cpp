@@ -1,6 +1,6 @@
-#include "lib/compass_sensor.h"
+#include "lib/mavros_compass_sensor.h"
 
-compass_sensor::compass_sensor ()
+mavros_compass_sensor::mavros_compass_sensor ()
 {
     // read parameters
     int num_msgs;
@@ -14,7 +14,7 @@ compass_sensor::compass_sensor ()
     // subscribe sensor readings
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    subscriber = nh.subscribe("mavros/imu/mag", queue_size, &compass_sensor::callback, this);
+    subscriber = nh.subscribe("mavros/imu/mag", queue_size, &mavros_compass_sensor::callback, this);
 
     // initialize range sensor messages
     for (int i = 0; i < num_msgs; ++i) {
@@ -23,7 +23,7 @@ compass_sensor::compass_sensor ()
     }
 }
 
-double compass_sensor::get_yaw ()
+double mavros_compass_sensor::get_yaw ()
 {
     // process new sensor messages
     if (dirty)
@@ -32,7 +32,7 @@ double compass_sensor::get_yaw ()
     return yaw;
 }
 
-void compass_sensor::process ()
+void mavros_compass_sensor::process ()
 {
     // compute the average yaw
     double total_yaw = 0;
@@ -45,7 +45,7 @@ void compass_sensor::process ()
     dirty = false;
 }
 
-void compass_sensor::callback (const sensor_msgs::MagneticField::ConstPtr& msg)
+void mavros_compass_sensor::callback (const sensor_msgs::MagneticField::ConstPtr& msg)
 {
     // increase current position of message in vector
     cur_msg++;
