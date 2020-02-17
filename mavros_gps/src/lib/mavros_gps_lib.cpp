@@ -1,6 +1,6 @@
-#include "lib/gps.h"
+#include "lib/mavros_gps_lib.h"
 
-gps::gps ()
+mavros_gps_lib::mavros_gps_lib ()
 {
     // read parameters
     double loop_rate;
@@ -10,14 +10,14 @@ gps::gps ()
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
 
     // init origin
-    pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &gps::pose_callback, this);
+    pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &mavros_gps_lib::pose_callback, this);
     while (ok() && origin.latitude == 0) {
         rate.sleep();
         spinOnce();
     }
 }
 
-bool gps::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixToPose::Response &res)
+bool mavros_gps_lib::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixToPose::Response &res)
 {
     // copy header
     res.pose.header = req.fix.header;
@@ -32,25 +32,25 @@ bool gps::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixT
     return true;
 }
 
-bool gps::fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixToTarget::Response &res)
+bool mavros_gps_lib::fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixToTarget::Response &res)
 {
     res.target = fix_to_target(req.fix, req.yaw);
     return true;
 }
 
-bool gps::get_gps_origin (cpswarm_msgs::GetGpsFix::Request &req, cpswarm_msgs::GetGpsFix::Response &res)
+bool mavros_gps_lib::get_gps_origin (cpswarm_msgs::GetGpsFix::Request &req, cpswarm_msgs::GetGpsFix::Response &res)
 {
     res.fix = origin;
     return true;
 }
 
-bool gps::ned_to_enu (cpswarm_msgs::NedToEnu::Request &req, cpswarm_msgs::NedToEnu::Response &res)
+bool mavros_gps_lib::ned_to_enu (cpswarm_msgs::NedToEnu::Request &req, cpswarm_msgs::NedToEnu::Response &res)
 {
     res.yaw = ned_to_enu(req.yaw);
     return true;
 }
 
-bool gps::pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::PoseToFix::Response &res)
+bool mavros_gps_lib::pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::PoseToFix::Response &res)
 {
     // compute gps coordinates
     double dist = hypot(req.pose.pose.position.x, req.pose.pose.position.y);
@@ -66,7 +66,7 @@ bool gps::pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::Pose
     return true;
 }
 
-bool gps::pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::PoseToTarget::Response &res)
+bool mavros_gps_lib::pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::PoseToTarget::Response &res)
 {
     // compute gps coordinates
     double dist = hypot(req.pose.pose.position.x, req.pose.pose.position.y);
@@ -85,13 +85,13 @@ bool gps::pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::Po
     return true;
 }
 
-bool gps::target_to_fix (mavros_gps::TargetToFix::Request &req, mavros_gps::TargetToFix::Response &res)
+bool mavros_gps_lib::target_to_fix (mavros_gps::TargetToFix::Request &req, mavros_gps::TargetToFix::Response &res)
 {
     res.fix = target_to_fix(req.target);
     return true;
 }
 
-double gps::dist (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
+double mavros_gps_lib::dist (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
 {
     // convert to radian
     double lat1 = start.latitude / 180.0 * M_PI;
@@ -103,22 +103,22 @@ double gps::dist (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) con
     return 2 * R * asin(sqrt(pow(sin((lat2 - lat1) / 2), 2) + cos(lat1) * cos(lat2) * pow(sin((lon2 - lon1) / 2), 2)));
 }
 
-double gps::dist (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
+double mavros_gps_lib::dist (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
 {
     return dist(start, target_to_fix(goal));
 }
 
-double gps::dist (mavros_msgs::GlobalPositionTarget start, sensor_msgs::NavSatFix goal) const
+double mavros_gps_lib::dist (mavros_msgs::GlobalPositionTarget start, sensor_msgs::NavSatFix goal) const
 {
     return dist(target_to_fix(start), goal);
 }
 
-double gps::dist (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const
+double mavros_gps_lib::dist (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const
 {
     return dist(target_to_fix(start), target_to_fix(goal));
 }
 
-mavros_msgs::GlobalPositionTarget gps::fix_to_target (sensor_msgs::NavSatFix fix, double yaw) const
+mavros_msgs::GlobalPositionTarget mavros_gps_lib::fix_to_target (sensor_msgs::NavSatFix fix, double yaw) const
 {
     // create target message
     mavros_msgs::GlobalPositionTarget target;
@@ -135,7 +135,7 @@ mavros_msgs::GlobalPositionTarget gps::fix_to_target (sensor_msgs::NavSatFix fix
     return target;
 }
 
-sensor_msgs::NavSatFix gps::goal (sensor_msgs::NavSatFix start, double distance, double yaw) const
+sensor_msgs::NavSatFix mavros_gps_lib::goal (sensor_msgs::NavSatFix start, double distance, double yaw) const
 {
 
     // convert to radian
@@ -155,17 +155,17 @@ sensor_msgs::NavSatFix gps::goal (sensor_msgs::NavSatFix start, double distance,
     return goal;
 }
 
-sensor_msgs::NavSatFix gps::goal (mavros_msgs::GlobalPositionTarget start, double distance, double yaw) const
+sensor_msgs::NavSatFix mavros_gps_lib::goal (mavros_msgs::GlobalPositionTarget start, double distance, double yaw) const
 {
     return goal(target_to_fix(start), distance, yaw);
 }
 
-double gps::ned_to_enu (double yaw) const
+double mavros_gps_lib::ned_to_enu (double yaw) const
 {
     return remainder(2 * M_PI - yaw + M_PI / 2, 2*M_PI);
 }
 
-sensor_msgs::NavSatFix gps::target_to_fix (mavros_msgs::GlobalPositionTarget target) const
+sensor_msgs::NavSatFix mavros_gps_lib::target_to_fix (mavros_msgs::GlobalPositionTarget target) const
 {
     // create message and copy header
     sensor_msgs::NavSatFix fix;
@@ -179,7 +179,7 @@ sensor_msgs::NavSatFix gps::target_to_fix (mavros_msgs::GlobalPositionTarget tar
     return fix;
 }
 
-double gps::yaw (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
+double mavros_gps_lib::yaw (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) const
 {
     // convert to radian
     double lat1 = start.latitude / 180.0 * M_PI;
@@ -193,22 +193,22 @@ double gps::yaw (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix goal) cons
     return atan2(dy, dx) + M_PI;
 }
 
-double gps::yaw (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
+double mavros_gps_lib::yaw (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
 {
     return yaw(start, target_to_fix(goal));
 }
 
-double gps::yaw (mavros_msgs::GlobalPositionTarget start, sensor_msgs::NavSatFix goal) const
+double mavros_gps_lib::yaw (mavros_msgs::GlobalPositionTarget start, sensor_msgs::NavSatFix goal) const
 {
     return yaw(target_to_fix(start), goal);
 }
 
-double gps::yaw (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const
+double mavros_gps_lib::yaw (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const
 {
     return yaw(target_to_fix(start), target_to_fix(goal));
 }
 
-void gps::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
+void mavros_gps_lib::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
     // store pose as origin class variable
     origin = *msg;
