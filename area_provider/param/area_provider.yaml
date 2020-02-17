@@ -7,10 +7,10 @@ area_x: # The area in which the mission takes place. It is a polygon specified b
 - -8.34009337713
 - 7.0200011129
 area_y:
-- 3.26177261058
-- 5.45065015677
-- -3.17471287727
-- -5.33457781643
+- 3.46177261058
+- 5.65065015677
+- -2.97471287727
+- -5.13457781643
 
 # area_x: # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 #- -10
