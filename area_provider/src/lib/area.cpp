@@ -14,6 +14,9 @@ area::area ()
     map_exists = false;
     map_subscriber = nh.subscribe("map", queue_size, &area::map_callback, this);
 
+    //subscribe to new_area message from monitoring tool
+    new_area_subscriber = nh.subscribe("bridge/events/new_area", queue_size, &area::new_area_callback, this);
+
     // wait a bit to see if there is a map provided by another node
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.0);
@@ -304,7 +307,7 @@ bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_m
     return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) >= 0;
 }
 
-void area::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
+void area::map_callback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
     // store map
     map = *msg;
@@ -315,4 +318,31 @@ void area::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 
     // initialize area coordinates
     init_area();
+}
+
+void area::new_area_callback(const cpswarm_msgs::AreaModificationEvent::ConstPtr& msg)
+{
+    new_area = *msg;
+
+
+    if ((new_area.area_x.size() != new_area.area_y.size() || new_area.area_x.size() < 3)) {
+        ROS_FATAL("AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...");
+        return;
+    }
+    vector<pair<double,double>> raw_coords;
+    for (int i = 0; i < new_area.area_x.size(); ++i)
+        raw_coords.emplace_back(new_area.area_x[i], new_area.area_y[i]);
+
+    ROS_INFO("New area defined with %d points", new_area.area_x.size());
+
+    coords.clear();
+
+     for (int i = 0; i < raw_coords.size(); ++i) {
+            // copy given area coordinates
+            geometry_msgs::Point p;
+            p.x = raw_coords[i].first;
+            p.y = raw_coords[i].second;
+            coords.push_back(p);
+        }
+
 }

@@ -11,6 +11,7 @@
 #include "cpswarm_msgs/GetPoints.h"
 #include "cpswarm_msgs/GetPoint.h"
 #include "cpswarm_msgs/OutOfBounds.h"
+#include "cpswarm_msgs/AreaModificationEvent.h"
 
 using namespace std;
 using namespace ros;
@@ -101,6 +102,11 @@ private:
     void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
     /**
+     * @brief Callback function to receive area updates.
+     */
+    void new_area_callback (const cpswarm_msgs::AreaModificationEvent::ConstPtr& msg);
+
+    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
@@ -111,6 +117,11 @@ private:
     Subscriber map_subscriber;
 
     /**
+     * @brief Subscriber to receive a new area.
+     */
+    Subscriber new_area_subscriber;
+
+    /**
      * @brief Publisher to publish own map.
      */
     Publisher map_publisher;
@@ -119,6 +130,11 @@ private:
     /**@brief The grid map representing the area.
      */
     nav_msgs::OccupancyGrid map;
+
+    /**
+    /**@brief The new the area.
+     */
+    cpswarm_msgs::AreaModificationEvent new_area;
 
     /**
      * @brief The coordinates of the area in which the CPS can move.
