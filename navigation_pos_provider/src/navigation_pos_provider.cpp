@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     }
 
     // make sure position is within allowed area
-    ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
+    /*ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
     out_of_bounds_client.waitForExistence();
     cpswarm_msgs::OutOfBounds oob;
     oob.request.pose = pose.pose;
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     }
     else
         ROS_ERROR("POS_PROV - Failed to check if CPS is within allowed area");
-
+    */
     ROS_DEBUG("POS_PROV - Ready");
 
     // publish position locally
