@@ -8,7 +8,7 @@
 #include "cpswarm_msgs/OutOfBounds.h"
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/NedToEnu.h"
-#include "lib/compass_sensor.h"
+#include "lib/mavros_compass_sensor.h"
 
 using namespace std;
 using namespace ros;
@@ -104,11 +104,11 @@ int main(int argc, char **argv)
     nh.param(this_node::getName() + "/init_time", init_time, 10.0);
 
     // init pose subscribers
-    compass_sensor* yaw_sensor;
+    mavros_compass_sensor* yaw_sensor;
     Subscriber yaw_sub, pose_sub;
     if (global) {
         pose_sub = nh.subscribe("mavros/global_position/global", queue_size, global_pose_callback);
-        yaw_sensor = new compass_sensor();
+        yaw_sensor = new mavros_compass_sensor();
     }
     else {
         pose_sub = nh.subscribe("mavros/local_position/pose", queue_size, local_pose_callback);

@@ -1,5 +1,5 @@
-#ifndef GPS_H
-#define GPS_H
+#ifndef MAVROS_GPS_LIB_H
+#define MAVROS_GPS_LIB_H
 
 #include <ros/ros.h>
 #include <tf2/utils.h>
@@ -19,13 +19,13 @@ using namespace ros;
 /**
  * @brief A class that offers common operations required when working with GPS coordinates.
  */
-class gps
+class mavros_gps_lib
 {
 public:
     /**
      * @brief Constructor that initializes the private member variables.
      */
-    gps ();
+    mavros_gps_lib ();
 
     /**
      * @brief Convert a message from sensor_msgs::NavSatFix to geometry_msgs::PoseStamped.
@@ -215,4 +215,4 @@ private:
     const long R = 6378137;
 };
 
-#endif // GPS_H
+#endif // MAVROS_GPS_LIB_H

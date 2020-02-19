@@ -134,12 +134,12 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         mavros_gps::PoseToTarget p2t;
         p2t.request.pose = goal;
         if (pose_to_target_client.call(p2t)) {
-            ROS_DEBUG("Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
-
             // publish goal to fcu
             global_goal = p2t.response.target;
             global_goal.header.stamp = Time::now();
             publisher.publish(global_goal);
+
+            ROS_DEBUG("Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
         }
         else {
             ROS_ERROR("Failed to convert global goal");

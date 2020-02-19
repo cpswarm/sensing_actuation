@@ -126,8 +126,8 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
- compass_sensor
- src/lib/compass_sensor.cpp
+ mavros_compass_sensor
+ src/lib/mavros_compass_sensor.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -156,7 +156,7 @@ add_executable(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
   ${PROJECT_NAME}
-  compass_sensor
+  mavros_compass_sensor
   ${catkin_LIBRARIES}
 )
 

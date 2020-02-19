@@ -10,9 +10,9 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2
-  mavros
+  std_msgs
+  geometry_msgs
   mavros_msgs
-  sensor_msgs
   mavros_gps
   cpswarm_msgs
 )
@@ -104,7 +104,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-	CATKIN_DEPENDS roscpp mavros mavros_msgs sensor_msgs mavros_gps cpswarm_msgs
+# 	CATKIN_DEPENDS roscpp mavros mavros_msgs mavros_gps cpswarm_msgs
 # 	DEPENDS Boost
 )
 
