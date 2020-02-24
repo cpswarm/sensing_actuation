@@ -121,7 +121,7 @@ bool obstacle_detection::get_clear_sector (cpswarm_msgs::GetSector::Request &req
 
 bool obstacle_detection::get_occupied_sector (cpswarm_msgs::GetSector::Request &req, cpswarm_msgs::GetSector::Response &res)
 {
-    ROS_ERROR("Get occupied sector...");
+    ROS_DEBUG("Get occupied sector...");
 
     // compute minimum and maximum bearing of sector occupied by obstacles according to range sensors
     double obst_min = 0;
@@ -154,7 +154,7 @@ bool obstacle_detection::get_occupied_sector (cpswarm_msgs::GetSector::Request &
     res.min = occupied.min();
     res.max = occupied.max_ord();
 
-    ROS_ERROR("... occupied between %.2f and %.2f", res.min, res.max);
+    ROS_DEBUG("... occupied between %.2f and %.2f", res.min, res.max);
 
     return true;
 }
