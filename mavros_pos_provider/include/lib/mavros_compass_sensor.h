@@ -1,5 +1,5 @@
-#ifndef COMPASS_SENSOR_H
-#define COMPASS_SENSOR_H
+#ifndef MAVROS_COMPASS_SENSOR_H
+#define MAVROS_COMPASS_SENSOR_H
 
 #include <ros/ros.h>
 #include <sensor_msgs/MagneticField.h>
@@ -10,13 +10,13 @@ using namespace ros;
 /**
  * @brief An implementation of the sensor class that describes a compass sensor. The yaw angle of the compass is measured in radian, counterclockwise starting from east.
  */
-class compass_sensor
+class mavros_compass_sensor
 {
 public:
     /**
      * @brief Constructor that initializes the private member variables.
      */
-    compass_sensor ();
+    mavros_compass_sensor ();
 
     /**
      * @brief Get the computed reliable CPS yaw.
@@ -67,4 +67,4 @@ private:
     bool dirty;
 };
 
-#endif // COMPASS_SENSOR_H
+#endif // MAVROS_COMPASS_SENSOR_H

@@ -13,6 +13,7 @@
         <param name="x" value="$(arg x)" />
         <param name="y" value="$(arg y)" />
         <rosparam file="$(find mavros_pos_provider)/param/mavros_pos_provider.yaml" command="load" />
+        <rosparam file="$(find mavros_pos_provider)/param/mavros_compass_sensor.yaml" command="load" />
     </node>
 
 </launch>

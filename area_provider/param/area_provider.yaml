@@ -2,15 +2,15 @@ loop_rate:    1.0 # The frequency in Hz at which to run the control loops.
 wait_for_map: 2.0 # Time in seconds to wait initially for another map provider.
 resolution:   0.05 # Resolution of the grid map representing the area in meter / cell.
 area_x: # The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
-- -7.3493197371
-- -6.62529987813
-- 6.35196809568
-- 5.77683587222
+- 8.05992365559
+- -7.2167925647
+- -8.34009337713
+- 7.0200011129
 area_y:
-- -1.89171460765
-- 3.66773488119
-- 1.9993373463
-- -3.57950212083
+- 3.46177261058
+- 5.65065015677
+- -2.97471287727
+- -5.13457781643
 
 # area_x: # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 #- -10

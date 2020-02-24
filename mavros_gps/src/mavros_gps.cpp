@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include "lib/gps.h"
+#include "lib/mavros_gps_lib.h"
 
 using namespace ros;
 
@@ -16,16 +16,16 @@ int main (int argc, char** argv)
     NodeHandle nh;
 
     // gps library
-    gps lib;
+    mavros_gps_lib lib;
 
     // advertise services
-    ServiceServer fix_to_pose_service = nh.advertiseService("gps/fix_to_pose", &gps::fix_to_pose, &lib);
-    ServiceServer fix_to_target_service = nh.advertiseService("gps/fix_to_target", &gps::fix_to_target, &lib);
-    ServiceServer get_gps_origin_service = nh.advertiseService("gps/get_gps_origin", &gps::get_gps_origin, &lib);
-    ServiceServer ned_to_enu_service = nh.advertiseService("gps/ned_to_enu", &gps::fix_to_target, &lib);
-    ServiceServer pose_to_fix_service = nh.advertiseService("gps/pose_to_fix", &gps::pose_to_fix, &lib);
-    ServiceServer pose_to_target_service = nh.advertiseService("gps/pose_to_target", &gps::pose_to_target, &lib);
-    ServiceServer target_to_fix_service = nh.advertiseService("gps/target_to_fix", &gps::target_to_fix, &lib);
+    ServiceServer fix_to_pose_service = nh.advertiseService("gps/fix_to_pose", &mavros_gps_lib::fix_to_pose, &lib);
+    ServiceServer fix_to_target_service = nh.advertiseService("gps/fix_to_target", &mavros_gps_lib::fix_to_target, &lib);
+    ServiceServer get_gps_origin_service = nh.advertiseService("gps/get_gps_origin", &mavros_gps_lib::get_gps_origin, &lib);
+    ServiceServer ned_to_enu_service = nh.advertiseService("gps/ned_to_enu", &mavros_gps_lib::fix_to_target, &lib);
+    ServiceServer pose_to_fix_service = nh.advertiseService("gps/pose_to_fix", &mavros_gps_lib::pose_to_fix, &lib);
+    ServiceServer pose_to_target_service = nh.advertiseService("gps/pose_to_target", &mavros_gps_lib::pose_to_target, &lib);
+    ServiceServer target_to_fix_service = nh.advertiseService("gps/target_to_fix", &mavros_gps_lib::target_to_fix, &lib);
 
     ROS_INFO("GPS - Services are ready");
     spin();

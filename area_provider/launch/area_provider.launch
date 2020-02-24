@@ -7,7 +7,7 @@
     <arg name="y" default="0" />
     <arg name="output" default="log" />
 
-    <!-- Position provider -->
+    <!-- Area provider -->
     <node pkg="area_provider" type="area_provider" name="area_provider_$(arg id)" output="$(arg output)" required="true">
         <param name="pos_type" value="$(arg pos_type)" />
         <param name="x" value="$(arg x)" />
