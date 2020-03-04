@@ -376,19 +376,18 @@ int main(int argc, char **argv) {
             // check if dangerously close to obstacle
             cpswarm_msgs::Danger danger;
             if (danger_client.call(danger) == false) {
-                ROS_ERROR_THROTTLE(1, "Failed to check if obstacle near by");
-                publish_goal(pose);
+                ROS_ERROR_THROTTLE(1, "Failed to check if obstacle near by, stop moving!");
+                local_goal = pose;
             }
 
             // there are obstacles dangerously close, back off
             else if (danger.response.danger) {
                 ROS_ERROR_THROTTLE(1, "Obstacle too close, backoff!");
-                publish_goal(compute_goal(danger.response.backoff, danger.response.direction));
+                local_goal = compute_goal(danger.response.backoff, danger.response.direction);
             }
 
             // publish set point
-            else
-                publish_goal(local_goal);
+            publish_goal(local_goal);
         }
 
         // sleep rest of cycle
