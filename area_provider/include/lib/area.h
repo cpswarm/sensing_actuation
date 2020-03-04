@@ -74,20 +74,20 @@ public:
     bool get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
-     * @brief Determine whether a position is within the area using the winding number algorithm.
-     * @param req The position to check.
-     * @param res True, if the position is outside of the area, false otherwise.
-     * @return Whether the request succeeded.
-     */
-    bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
-
-    /**
      * @brief Get the rotation of the area given by coordinates. Assuming a quadrilateral.
      * @param req Empty request.
      * @param res The angle that the bottom edge of the area is rotated with respect to the x-axis.
      * @return Whether the request succeeded.
      */
     bool get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res);
+
+    /**
+     * @brief Determine whether a position is within the area using the winding number algorithm.
+     * @param req The position to check.
+     * @param res True, if the position is outside of the area, false otherwise.
+     * @return Whether the request succeeded.
+     */
+    bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
 private:
     /**

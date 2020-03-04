@@ -166,33 +166,6 @@ bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
     return true;
 }
 
-bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
-{
-    // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
-    int wn = 0;
-
-    // loop through all edges of the polygon
-    for (int i = 0; i < coords.size(); ++i) {
-        // ray crosses upward edge
-        if (coords[i].y <= req.pose.position.y && coords[(i+1)%coords.size()].y  > req.pose.position.y && is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position))
-            ++wn;
-
-        // ray crosses downward edge
-        else if (coords[i].y > req.pose.position.y && coords[(i+1)%coords.size()].y  <= req.pose.position.y && is_right(coords[i], coords[(i+1)%coords.size()], req.pose.position))
-            --wn;
-    }
-
-    // pose is outside
-    if (wn == 0)
-        res.out = true;
-
-    // pose is inside
-    else
-        res.out = false;
-
-    return true;
-}
-
 bool area::get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res)
 {
     // get coordinates
@@ -227,6 +200,33 @@ bool area::get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::Ge
     else {
         res.value = -atan2(pb.y - pl.y, pb.x - pl.x);
     }
+
+    return true;
+}
+
+bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
+{
+    // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
+    int wn = 0;
+
+    // loop through all edges of the polygon
+    for (int i = 0; i < coords.size(); ++i) {
+        // ray crosses upward edge
+        if (coords[i].y <= req.pose.position.y && coords[(i+1)%coords.size()].y  > req.pose.position.y && is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+            ++wn;
+
+        // ray crosses downward edge
+        else if (coords[i].y > req.pose.position.y && coords[(i+1)%coords.size()].y  <= req.pose.position.y && is_right(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+            --wn;
+    }
+
+    // pose is outside
+    if (wn == 0)
+        res.out = true;
+
+    // pose is inside
+    else
+        res.out = false;
 
     return true;
 }

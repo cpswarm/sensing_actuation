@@ -26,8 +26,8 @@ int main(int argc, char **argv)
     ServiceServer get_center_service    = nh.advertiseService("area/get_center",    &area::get_center, &lib);
     ServiceServer get_map_service       = nh.advertiseService("area/get_map",       &area::get_map, &lib);
     ServiceServer get_origin_service    = nh.advertiseService("area/get_origin",    &area::get_origin, &lib);
-    ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
     ServiceServer get_rotation_service  = nh.advertiseService("area/get_rotation",  &area::get_rotation, &lib);
+    ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
 
     // broadcast static tf
     static tf2_ros::StaticTransformBroadcaster tf_bc;
