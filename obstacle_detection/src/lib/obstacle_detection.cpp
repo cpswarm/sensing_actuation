@@ -82,7 +82,7 @@ bool obstacle_detection::danger (cpswarm_msgs::Danger::Request &req, cpswarm_msg
         // return most critical sensor
         if (sensor.second->danger() > res.backoff) {
             res.danger = true;
-            res.backoff = sensor.second->danger();
+            res.backoff = 2 * sensor.second->danger();
             res.direction = sensor.second->get_angle() + M_PI;
         }
     }
@@ -91,7 +91,7 @@ bool obstacle_detection::danger (cpswarm_msgs::Danger::Request &req, cpswarm_msg
     if (lidar != nullptr) {
         if (lidar->danger() > res.backoff) {
             res.danger = true;
-            res.backoff = lidar->danger();
+            res.backoff = 2 * lidar->danger();
             res.direction = lidar->occupied_region().inverse().center();
         }
     }
@@ -99,7 +99,7 @@ bool obstacle_detection::danger (cpswarm_msgs::Danger::Request &req, cpswarm_msg
     // another cps detected by communication
     if (swarm->danger() > res.backoff) {
         res.danger = true;
-        res.backoff = swarm->danger();
+        res.backoff = 2 * swarm->danger();
         res.direction = swarm->occupied_region().inverse().center();
     }
 
@@ -137,15 +137,18 @@ bool obstacle_detection::get_occupied_sector (cpswarm_msgs::GetSector::Request &
         }
     }
     sector occupied = sector(obst_min, obst_max);
+    ROS_DEBUG("Range sensor: occupied [%.2f,%.2f]", obst_min, obst_max);
 
     // compute minimum and maximum bearing of sector occupied by obstacles according to lidar
     if (lidar != nullptr) {
         sector lidar_sect = lidar->inflated_region();
         occupied.join(lidar_sect);
+        ROS_DEBUG("Swarm: occupied [%.2f,%.2f]", lidar_sect.min(), lidar_sect.max_ord());
     }
 
     // compute minimum and maximum bearing of sector occupied by other cpss
     sector swarm_sect = swarm->inflated_region();
+    ROS_DEBUG("Swarm: occupied [%.2f,%.2f]", swarm_sect.min(), swarm_sect.max_ord());
 
     // join all sectors
     occupied.join(swarm_sect);
