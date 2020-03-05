@@ -36,7 +36,7 @@ bool swarm_position::clear_ahead (double heading) const
     for (auto pose : poses[t]) {
         ROS_DEBUG("Checking pose [%.2f, %.2f]", pose.vector.magnitude, pose.vector.direction);
         // cps is close enough to start avoidance procedure
-        if (pose.vector.magnitude < avoidance_dist) {
+        if (pose.vector.magnitude < avoidance_dist || pose.vector.magnitude < critical_dist) {
             // cps is in critical sector
             if (sec.contains(pose.vector.direction))
                 return false;
@@ -83,7 +83,7 @@ sector swarm_position::occupied_region () const
     // take latest poses
     for (auto pose : poses[t]) {
         ROS_DEBUG("Checking pose [%.2f, %.2f]", pose.vector.magnitude, pose.vector.direction);
-        if (pose.vector.magnitude <= avoidance_dist) {
+        if (pose.vector.magnitude <= avoidance_dist || pose.vector.magnitude <= critical_dist) {
             double swarm_min_temp = pose.vector.direction - bearing_tolerance(pose);
             double swarm_max_temp = pose.vector.direction + bearing_tolerance(pose);
             if (swarm_min_temp < swarm_min || swarm_min == 0)
