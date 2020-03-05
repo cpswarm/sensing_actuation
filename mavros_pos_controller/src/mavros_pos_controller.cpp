@@ -383,7 +383,7 @@ int main(int argc, char **argv) {
             // there are obstacles dangerously close, back off
             else if (danger.response.danger) {
                 ROS_ERROR_THROTTLE(1, "Obstacle too close, backoff!");
-                local_goal = compute_goal(danger.response.backoff, danger.response.direction);
+                local_goal = compute_goal(danger.response.backoff, danger.response.direction + get_yaw(pose.pose));
             }
 
             // publish set point
