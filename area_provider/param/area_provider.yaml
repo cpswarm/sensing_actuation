@@ -2,12 +2,12 @@ loop_rate:    1.0 # The frequency in Hz at which to run the control loops.
 wait_for_map: 2.0 # Time in seconds to wait initially for another map provider.
 resolution:   1   # Resolution of the grid map representing the area in meter / cell.
 area_x: # The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
-- -8.5
-- -1
-- -1
-- -8.5
+- -5
+- 7
+- 7
+- -5
 area_y:
-- -6
-- -6
-- 8
-- 8
+- -4.75
+- -4.75
+- 0.5
+- 0.5
