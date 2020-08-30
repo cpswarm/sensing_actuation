@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- GPS node -->
+    <node pkg="asctec_gps" type="asctec_gps" name="asctec_gps_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find asctec_gps)/param/asctec_gps.yaml" command="load" />
+    </node>
+
+</launch>

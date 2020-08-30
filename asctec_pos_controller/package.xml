@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>asctec_pos_controller</name>
+  <version>0.0.1</version>
+  <description>Asctec position controller package</description>
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="sende@lakeside-labs.com">Micha Sende</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>Apache License 2.0</license>
+
+  <!-- Url tags are optional, but multiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <!-- Example: -->
+  <!-- <url type="website">http://wiki.ros.org/asctec_pos_controller</url> -->
+
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
+  <!-- Example: -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>tf2</depend>
+  <depend>actionlib</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>asctec_gps</depend>
+  <depend>asctec_msgs</depend>
+  <depend>asctec_hl_comm</depend>
+  <exec_depend>asctec_hl_interface</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>

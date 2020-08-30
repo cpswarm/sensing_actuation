@@ -1,0 +1,7 @@
+loop_rate:      10.0  # The frequency in Hz at which to run the control loop.
+queue_size:     1     # The size of the message queue used for publishing and subscribing to topics.
+max_speed:      1.0   # The maximum speed in m/s which the UAV should travel in any direction.
+goal_tolerance: 0.4   # The distance in meter that the UAV can be away from a goal while still being considered to have reached that goal. Should be similar to the tolerance of the swarm behavior.
+yaw_tolerance:  0.25  # The angle in radian which the yaw of the UAV can vary around the set point.
+move_timeout:   8.0   # The time in seconds that reaching a waypoint is allowed to take. Should be shorter than the timeout of the swarm behavior.
+visualize:      true  # Whether to publish the waypoints on a topic for visualization.

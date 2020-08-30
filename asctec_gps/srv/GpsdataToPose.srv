@@ -1,0 +1,3 @@
+asctec_msgs/GPSData gpsdata
+---
+geometry_msgs/PoseStamped pose

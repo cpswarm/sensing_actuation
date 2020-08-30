@@ -1,0 +1,4 @@
+sensor_msgs/NavSatFix fix
+float64 yaw
+---
+asctec_msgs/GPSData gpsdata
