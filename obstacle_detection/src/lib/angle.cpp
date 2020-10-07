@@ -30,7 +30,7 @@ double angle::deg () const
     if (a > M_PI)
         return rad_to_deg(a - 2 * M_PI);
     else
-        rad_to_deg(a);
+        return rad_to_deg(a);
 }
 
 double angle::rad () const
