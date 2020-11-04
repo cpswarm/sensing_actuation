@@ -125,10 +125,6 @@ int main(int argc, char **argv)
         ned_to_enu_client.waitForExistence();
     }
 
-    // init tf publisher
-    tf2_ros::TransformBroadcaster br;
-    geometry_msgs::TransformStamped transformStamped;
-
     // wait for valid position
     Duration(init_time).sleep();
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
@@ -176,19 +172,6 @@ int main(int argc, char **argv)
         pose.header.stamp = Time::now();
         pose.header.frame_id = "local_origin_ned";
         pose_pub.publish(pose);
-
-        // broadcast tf
-        transformStamped.header.stamp = Time::now();
-        transformStamped.header.frame_id = "map";
-        transformStamped.child_frame_id = "base_link";
-        transformStamped.transform.translation.x = pose.pose.position.x;
-        transformStamped.transform.translation.y = pose.pose.position.y;
-        transformStamped.transform.translation.z = pose.pose.position.z;
-        transformStamped.transform.rotation.x = pose.pose.orientation.x;
-        transformStamped.transform.rotation.y = pose.pose.orientation.y;
-        transformStamped.transform.rotation.z = pose.pose.orientation.z;
-        transformStamped.transform.rotation.w = pose.pose.orientation.w;
-        br.sendTransform(transformStamped);
 
         rate.sleep();
     }

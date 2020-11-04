@@ -29,15 +29,6 @@ int main(int argc, char **argv)
     ServiceServer get_rotation_service  = nh.advertiseService("area/get_rotation",  &area::get_rotation, &lib);
     ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
 
-    // broadcast static tf
-    static tf2_ros::StaticTransformBroadcaster tf_bc;
-    geometry_msgs::TransformStamped tf;
-    tf.header.stamp = ros::Time::now();
-    tf.header.frame_id = "local_origin_ned";
-    tf.child_frame_id = "map";
-    tf.transform.rotation.w = 1;
-    tf_bc.sendTransform(tf);
-
     ROS_DEBUG("AREA_PROV - Services are ready");
     spin();
 
