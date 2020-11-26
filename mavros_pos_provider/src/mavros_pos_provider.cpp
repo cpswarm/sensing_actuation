@@ -126,6 +126,7 @@ int main(int argc, char **argv)
     }
 
     // wait for valid position
+    ROS_DEBUG("POS_PROV - Delay startup by %.2f s", init_time);
     Duration(init_time).sleep();
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
         ROS_DEBUG_ONCE("POS_PROV - Waiting for valid pose");
@@ -135,6 +136,7 @@ int main(int argc, char **argv)
 
     // make sure position is within allowed area
     ServiceClient out_of_bounds_client = nh.serviceClient<cpswarm_msgs::OutOfBounds>("area/out_of_bounds");
+    ROS_DEBUG("POS_PROV - Waiting for out of bounds service");
     out_of_bounds_client.waitForExistence();
     cpswarm_msgs::OutOfBounds oob;
     oob.request.pose = pose.pose;
