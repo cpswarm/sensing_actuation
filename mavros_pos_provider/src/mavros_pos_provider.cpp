@@ -68,8 +68,10 @@ void global_pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
     // store updated position converted to local coordinates
     cpswarm_msgs::FixToPose f2p;
     f2p.request.fix = *msg;
-    if (fix_to_pose_client.call(f2p))
+    if (fix_to_pose_client.call(f2p)) {
         pose = f2p.response.pose;
+        ROS_DEBUG("Converted global position %f,%f to local position %f,%f / %f,%f,%f,%f", msg->longitude, msg->latitude, pose.pose.position.x, pose.pose.position.y, pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z, pose.pose.orientation.w);
+    }
     else
         ROS_ERROR("POS_PROV - Failed to convert global pose");
 }
@@ -129,7 +131,7 @@ int main(int argc, char **argv)
     ROS_DEBUG("POS_PROV - Delay startup by %.2f s", init_time);
     Duration(init_time).sleep();
     while (ok() && (pose.pose.position.x == 0 || pose.pose.orientation.x == 0)) {
-        ROS_DEBUG_ONCE("POS_PROV - Waiting for valid pose");
+        ROS_DEBUG_THROTTLE(1, "POS_PROV - Waiting for valid pose");
         spinOnce();
         rate.sleep();
     }

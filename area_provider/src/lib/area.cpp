@@ -253,6 +253,7 @@ void area::init_area ()
     if (global) {
         // service client for converting GPS to local coordinates
         ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+        ROS_DEBUG("Wait for fix_to_pose service...");
         fix_to_pose_client.waitForExistence();
         cpswarm_msgs::FixToPose f2p;
 
@@ -270,6 +271,7 @@ void area::init_area ()
         // get origin from gps node
         ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
         get_gps_origin_client.waitForExistence();
+        ROS_DEBUG("Wait for get_gps_origin service...");
         cpswarm_msgs::GetGpsFix gpso;
         if (get_gps_origin_client.call(gpso)) {
             // convert origin to local coordinates

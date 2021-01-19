@@ -12,6 +12,7 @@ mavros_gps_lib::mavros_gps_lib ()
     // init origin
     pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &mavros_gps_lib::pose_callback, this);
     while (ok() && origin.latitude == 0) {
+        ROS_DEBUG_THROTTLE(1, "Waiting for valid GPS...");
         rate.sleep();
         spinOnce();
     }
