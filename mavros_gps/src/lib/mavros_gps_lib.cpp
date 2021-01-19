@@ -30,6 +30,11 @@ bool mavros_gps_lib::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm
     res.pose.pose.position.y = dist * sin(head);
     res.pose.pose.position.z = req.fix.altitude;
 
+    // compute orientation
+    tf2::Quaternion orientation;
+    orientation.setRPY(0, 0, head);
+    res.pose.pose.orientation = tf2::toMsg(orientation);
+
     return true;
 }
 
