@@ -1,29 +1,46 @@
 loop_rate:    1.0 # The frequency in Hz at which to run the control loops.
 wait_for_map: 2.0 # Time in seconds to wait initially for another map provider.
 resolution:   0.05 # Resolution of the grid map representing the area in meter / cell.
-area_x: # The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
-- 6.59157402645
-- -7.96860916213
-- -7.02136208844
-- 7.64370705458
+# The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+
+# Simulation
+area_x:
+- -10
+- 10
+- 10
+- -10
 area_y:
-- -4.6830115322
-- -2.80398142206
-- 5.12817418146
-- 3.13242886854
+- -10
+- -10
+- 10
+- 10
 
-# area_x: # The area in which the SAR takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
-#- -10
-#- 10
-#- 10
-#- -10
-#area_y:
-#- -10
-#- -10
-#- 10
-#- 10
+# Lakeside Area A
+# area_x:
+# - 14.26515
+# - 14.26555
+# - 14.26555
+# - 14.26515
+# area_y:
+# - 46.61315
+# - 46.61315
+# - 46.61285
+# - 46.61285
 
-#CPSwamrm cage at LINKS premises
+# Lakeside campus
+# area_x:
+# - 14.25693
+# - 14.26845
+# - 14.27010
+# - 14.26090
+# area_y:
+# - 46.61693
+# - 46.61563
+# - 46.60820
+# - 46.60653
+
+# CPSwamrm cage at LINKS premises
+# area_x:
 # - 0.9
 # - 0.9
 # - -0.9
@@ -35,13 +52,14 @@ area_y:
 # - -2.7
 
 # CPSwarm arena at DigiSky premises.
-#- 7.61074548
-#- 7.61074548
-#- 7.61083452
-#- 7.61083452
-#area_y:
-#- 45.08387651
-#- 45.08390349
-#- 45.08390349
-#- 45.08387651
-# center 45.08389, 7.61079
+# center: 45.08389, 7.61079
+# area_x:
+# - 7.61074548
+# - 7.61074548
+# - 7.61083452
+# - 7.61083452
+# area_y:
+# - 45.08387651
+# - 45.08390349
+# - 45.08390349
+# - 45.08387651
