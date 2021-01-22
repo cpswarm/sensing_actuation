@@ -47,6 +47,11 @@ bool goal_valid;
 Duration turn_timeout;
 
 /**
+ * @brief The number of missed collision avoidance goal messages after which a regular goal message is accepted again.
+ */
+int ca_timeout;
+
+/**
  * @brief Whether the CPS should turn its front into movement direction or not.
  */
 bool turning;
@@ -65,6 +70,16 @@ bool global;
  * @brief The angle in radian which the yaw of the CPS can vary around the set point.
  */
 double yaw_tolerance;
+
+/**
+ * @brief The last time a goal for collision avoidance has been received.
+ */
+Time ca_update;
+
+/**
+ * @brief The time between the last two receptions of a collision avoidance goal.
+ */
+Duration ca_cycle;
 
 /**
  * @brief Frequency of the control loops.
@@ -221,22 +236,14 @@ void turn ()
     }
 }
 
-/**
- * Callback function for the CPS goal.
- * @param msg The CPS goal in local coordinates.
- */
-void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+void process_goal()
 {
-    // store goal position
-    local_goal = *msg;
-
     // keep orientation if turning is disabled
     if (turning == false)
         local_goal.pose.orientation = pose.pose.orientation;
 
     // calculate new orientation if turning is enabled
     else {
-        // calculate orientation
         tf2::Quaternion orientation;
         orientation.setRPY(0, 0, atan2(local_goal.pose.position.y - pose.pose.position.y, local_goal.pose.position.x - pose.pose.position.x));
         local_goal.pose.orientation = tf2::toMsg(orientation);
@@ -250,6 +257,38 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     // stop publishing velocity set points
     std_msgs::Empty stop_msg;
     stop_vel_pub.publish(stop_msg);
+}
+
+/**
+ * Callback function for the CPS goal.
+ * @param msg The CPS goal in local coordinates.
+ */
+void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+{
+    // check if collision avoidance is active
+    bool ca = ca_update + ca_cycle * double(ca_timeout) < Time::now();
+
+    // store goal position if currently not avoiding a collision 
+    if (ca == false) {
+        local_goal = *msg;
+        process_goal();
+    }
+}
+
+/**
+ * Callback function for the CPS goal during collision avoidance.
+ * @param msg The CPS goal for collision avoidance in local coordinates.
+ */
+void ca_goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+{
+    // store goal position
+    local_goal = *msg;
+    
+    // keep track of last received message
+    ca_cycle = msg->header.stamp - ca_update;
+    ca_update = msg->header.stamp;
+
+    process_goal();
 }
 
 /**
@@ -312,6 +351,7 @@ int main(int argc, char **argv) {
     double d_turn_timeout;
     nh.param(this_node::getName() + "/turn_timeout", d_turn_timeout, 5.0);
     turn_timeout = Duration(d_turn_timeout);
+    nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 10);
     nh.param(this_node::getName() + "/turning", turning, true);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
@@ -322,6 +362,7 @@ int main(int argc, char **argv) {
     // subscribers
     Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber goal_sub = nh.subscribe("pos_controller/goal_position", queue_size, goal_callback);
+    Subscriber ca_goal_sub = nh.subscribe("pos_controller/ca_goal_position", queue_size, ca_goal_callback);
     Subscriber stop_sub = nh.subscribe("pos_controller/stop", queue_size, stop_callback);
     Subscriber state_sub = nh.subscribe < mavros_msgs::State > ("mavros/state", queue_size, state_callback);
 
