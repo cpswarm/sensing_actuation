@@ -270,8 +270,8 @@ void area::init_area ()
 
         // get origin from gps node
         ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
-        get_gps_origin_client.waitForExistence();
         ROS_DEBUG("Wait for get_gps_origin service...");
+        get_gps_origin_client.waitForExistence();
         cpswarm_msgs::GetGpsFix gpso;
         if (get_gps_origin_client.call(gpso)) {
             // convert origin to local coordinates
