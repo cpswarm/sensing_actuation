@@ -12,7 +12,7 @@ mavros_gps_lib::mavros_gps_lib ()
     // init origin
     pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &mavros_gps_lib::pose_callback, this);
     while (ok() && origin.latitude == 0) {
-        ROS_DEBUG_THROTTLE(1, "Waiting for valid GPS...");
+        ROS_DEBUG_ONCE("Waiting for valid GPS...");
         rate.sleep();
         spinOnce();
     }
@@ -219,7 +219,8 @@ void mavros_gps_lib::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
     // store pose as origin class variable
     origin = *msg;
 
-    ROS_INFO("Origin [%f, %f, %.2f]", origin.latitude, origin.longitude, origin.altitude);
+	ROS_DEBUG("Got GPS coordinates");
+    ROS_INFO("Set origin at [%f, %f, %.2f]", origin.latitude, origin.longitude, origin.altitude);
 
     // unsubscribe
     pose_sub.shutdown();
