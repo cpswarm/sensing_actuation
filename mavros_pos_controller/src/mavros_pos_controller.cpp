@@ -4,6 +4,8 @@
 #include <geometry_msgs/PointStamped.h>
 #include <mavros_msgs/State.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
+#include <mavros_msgs/ParamPull.h>
+#include <mavros_msgs/ParamPush.h>
 #include <std_msgs/Empty.h>
 #include "mavros_gps/PoseToTarget.h"
 #include "cpswarm_msgs/Danger.h"
@@ -154,10 +156,10 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
             global_goal.header.stamp = Time::now();
             publisher.publish(global_goal);
 
-            ROS_DEBUG("Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
+            ROS_DEBUG_THROTTLE(1, "Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
         }
         else {
-            ROS_ERROR("Failed to convert global goal");
+            ROS_ERROR_THROTTLE(1, "Failed to convert global goal");
         }
     }
 
@@ -166,7 +168,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         // shift local goal according to origin
         goal.pose.position.x -= origin.position.x;
         goal.pose.position.y -= origin.position.y;
-        ROS_DEBUG("Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
+        ROS_DEBUG_THROTTLE(1, "Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
 
         // publish goal to fcu
         goal.header.stamp = Time::now();
@@ -266,7 +268,7 @@ void process_goal()
 void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     // check if collision avoidance is active
-    bool ca = ca_update + ca_cycle * double(ca_timeout) < Time::now();
+    bool ca = ca_update + ca_cycle * double(ca_timeout) > Time::now();
 
     // store goal position if currently not avoiding a collision 
     if (ca == false) {
@@ -281,6 +283,8 @@ void goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
  */
 void ca_goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
+    ROS_DEBUG_THROTTLE(1, "Collision avoidance");
+
     // store goal position
     local_goal = *msg;
     
@@ -347,6 +351,8 @@ int main(int argc, char **argv) {
     rate = new Rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    double max_velocity;
+    nh.param(this_node::getName() + "/max_velocity", max_velocity, 1.0);
     nh.param(this_node::getName() + "/yaw_tolerance", yaw_tolerance, 0.1);
     double d_turn_timeout;
     nh.param(this_node::getName() + "/turn_timeout", d_turn_timeout, 5.0);
@@ -386,11 +392,45 @@ int main(int argc, char **argv) {
         rate->sleep();
     }
 
+    // set maximum velocity
+    ServiceClient pull_client = nh.serviceClient<mavros_msgs::ParamPull>("mavros/param/pull");
+    ROS_DEBUG("Waiting MAVROS parameter pull service");
+    pull_client.waitForExistence();
+    mavros_msgs::ParamPull pull;
+    if (pull_client.call(pull)) {
+        if (pull.response.success) {
+            ROS_DEBUG("Pulled %d parameters from FCU", pull.response.param_received);
+            nh.setParam("mavros/param/MPC_XY_VEL_MAX", max_velocity);
+            ServiceClient push_client = nh.serviceClient<mavros_msgs::ParamPush>("mavros/param/push");
+            ROS_DEBUG("Waiting MAVROS parameter push service");
+            push_client.waitForExistence();
+            mavros_msgs::ParamPush push;
+            if (push_client.call(push)) {
+                if (push.response.success)
+                    ROS_DEBUG("Pushed %d parameters to FCU", push.response.param_transfered);
+                else
+                    ROS_ERROR("Failed push parameters to FCU, cannot set maximum horizontal velocity!");
+            }
+            else {
+                ROS_ERROR("Failed to push parameters to FCU, cannot set maximum horizontal velocity!");
+            }
+        }
+        else {
+            ROS_ERROR("Failed to pull parameters from FCU, cannot set maximum horizontal velocity!");
+        }
+    }
+    else {
+        ROS_ERROR("Failed to pull parameters from FCU, cannot set maximum horizontal velocity!");
+    }
+
     // service clients
     pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/pose_to_target");
-    if (global)
+    if (global) {
+        ROS_DEBUG("Waiting for pose to target service");
         pose_to_target_client.waitForExistence();
+    }
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
+    ROS_DEBUG("Waiting obstacle detection service");
     danger_client.waitForExistence();
 
     // goal publisher
