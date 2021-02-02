@@ -346,7 +346,7 @@ int main(int argc, char **argv) {
     }
 
     // service clients
-    pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/PoseToTarget");
+    pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/pose_to_target");
     if (global)
         pose_to_target_client.waitForExistence();
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
