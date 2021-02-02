@@ -1,8 +1,10 @@
-loop_rate:    1.0  # The frequency in Hz at which to run the control loops.
-queue_size:   10   # The size of the message queue used for publishing and subscribing to topics.
-wait_for_map: 2.0  # Time in seconds to wait initially for another map provider.
-cell_warn:    1000 # Number of grid cells in the map above which a performance warning is issued.
-resolution:   1.0  # Resolution of the grid map representing the area in meter / cell.
+loop_rate:    1.0   # The frequency in Hz at which to run the control loops.
+queue_size:   10    # The size of the message queue used for publishing and subscribing to topics.
+wait_for_map: 2.0   # Time in seconds to wait initially for another map provider.
+create_map:   false # Whether to create a grid map from the coordinates.
+cell_warn:    1000  # Number of grid cells in the map above which a performance warning is issued.
+resolution:   1.0   # Resolution of the grid map representing the area in meter / cell.
+
 # The area in which the mission takes place. It is a polygon specified by a list of coordinates.
 # Area coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 
@@ -18,17 +20,53 @@ area_y:
 - 10
 - 10
 
-# Lakeside Area A
+# Lakeside basketball court
 # area_x:
-# - 14.26515
-# - 14.26555
-# - 14.26555
-# - 14.26515
+# - 14.26526
+# - 14.26548
+# - 14.26546
+# - 14.26524
 # area_y:
-# - 46.61315
-# - 46.61315
-# - 46.61285
-# - 46.61285
+# - 46.61347
+# - 46.61345
+# - 46.61330
+# - 46.61332
+
+# Lakeside area A
+# area_x:
+# - 14.26578
+# - 14.26586
+# - 14.26764
+# - 14.26758
+# - 14.26306
+# - 14.26309
+# - 14.26488
+# - 14.26501
+# area_y:
+# - 46.61347
+# - 46.61262
+# - 46.61267
+# - 46.61124
+# - 46.61122
+# - 46.61269
+# - 46.61267
+# - 46.61346
+
+# Lakeside area B
+# area_x:
+# - 14.26098
+# - 14.25986
+# - 14.25464
+# - 14.25463
+# - 14.25822
+# - 14.25845
+# area_y:
+# - 46.61579
+# - 46.61113
+# - 46.61119
+# - 46.61501
+# - 46.61500
+# - 46.61576
 
 # Lakeside campus
 # area_x:
