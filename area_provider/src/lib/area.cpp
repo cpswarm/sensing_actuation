@@ -6,6 +6,7 @@ area::area ()
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
 
     // init map publisher
+    nh.param(this_node::getName() + "/create_map", create_map, false);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
@@ -93,7 +94,7 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 nav_msgs::OccupancyGrid area::get_gridmap ()
 {
     // no map existing yet, i.e., no map server
-    if (map_exists == false) {
+    if (map_exists == false && create_map == true) {
         // get coordinates
         double xmin = numeric_limits<double>::max();
         double xmax = numeric_limits<double>::min();
@@ -156,6 +157,8 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
 
 bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 {
+    if (map_exists == false && create_map == false)
+        ROS_WARN("Providing empty map!");
     res.map = get_gridmap();
     return true;
 }
@@ -326,7 +329,10 @@ void area::init_area ()
     }
 
     // publish grid map
-    map_publisher.publish(get_gridmap());
+    if (map_exists || create_map)
+        map_publisher.publish(get_gridmap());
+    else
+        ROS_INFO("Not publishing map");
 }
 
 bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
