@@ -72,6 +72,27 @@ bool mavros_gps_lib::pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm
     return true;
 }
 
+bool mavros_gps_lib::pose_to_geo (cpswarm_msgs::PoseToGeo::Request &req, cpswarm_msgs::PoseToGeo::Response &res)
+{
+    // compute gps coordinates
+    double dist = hypot(req.pose.pose.position.x, req.pose.pose.position.y);
+    double head = atan2(req.pose.pose.position.y, req.pose.pose.position.x);
+    sensor_msgs::NavSatFix fix = goal(origin, dist, head);
+    res.geo.pose.position.latitude = fix.latitude;
+    res.geo.pose.position.longitude = fix.longitude;
+
+    // copy header
+    res.geo.header = req.pose.header;
+
+    // copy altitude
+    res.geo.pose.position.altitude = req.pose.pose.position.z;
+
+    // copy orientation
+    res.geo.pose.orientation = req.pose.pose.orientation;
+
+    return true;
+}
+
 bool mavros_gps_lib::pose_to_target (mavros_gps::PoseToTarget::Request &req, mavros_gps::PoseToTarget::Response &res)
 {
     // compute gps coordinates
