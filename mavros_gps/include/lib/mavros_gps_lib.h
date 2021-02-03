@@ -9,6 +9,7 @@
 #include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/NedToEnu.h"
 #include "cpswarm_msgs/PoseToFix.h"
+#include "cpswarm_msgs/PoseToGeo.h"
 #include "mavros_gps/FixToTarget.h"
 #include "mavros_gps/PoseToTarget.h"
 #include "mavros_gps/TargetToFix.h"
@@ -66,6 +67,14 @@ public:
      * @return Whether the conversion succeeded.
      */
     bool pose_to_fix (cpswarm_msgs::PoseToFix::Request &req, cpswarm_msgs::PoseToFix::Response &res);
+
+    /**
+     * @brief Convert a message from geometry_msgs::PoseStamped to geographic_msgs::GeoPoseStamped.
+     * @param req The local message to convert.
+     * @param res The converted global message.
+     * @return Whether the conversion succeeded.
+     */
+    bool pose_to_geo (cpswarm_msgs::PoseToGeo::Request &req, cpswarm_msgs::PoseToGeo::Response &res);
 
     /**
      * @brief Convert a message from geometry_msgs::PoseStamped to mavros_msgs::GlobalPositionTarget.

@@ -26,6 +26,7 @@ int main (int argc, char** argv)
     ServiceServer pose_to_fix_service = nh.advertiseService("gps/pose_to_fix", &mavros_gps_lib::pose_to_fix, &lib);
     ServiceServer pose_to_target_service = nh.advertiseService("gps/pose_to_target", &mavros_gps_lib::pose_to_target, &lib);
     ServiceServer target_to_fix_service = nh.advertiseService("gps/target_to_fix", &mavros_gps_lib::target_to_fix, &lib);
+    ServiceServer pose_to_geo_service = nh.advertiseService("gps/pose_to_geo", &mavros_gps_lib::pose_to_geo, &lib);
 
     ROS_INFO("GPS - Services are ready");
     spin();

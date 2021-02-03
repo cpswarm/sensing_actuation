@@ -3,9 +3,9 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PointStamped.h>
 #include <mavros_msgs/State.h>
-#include <mavros_msgs/GlobalPositionTarget.h>
+#include <geographic_msgs/GeoPoseStamped.h>
 #include <std_msgs/Empty.h>
-#include "mavros_gps/PoseToTarget.h"
+#include "cpswarm_msgs/PoseToGeo.h"
 #include "cpswarm_msgs/Danger.h"
 
 using namespace std;
@@ -72,9 +72,9 @@ double yaw_tolerance;
 Rate* rate;
 
 /**
- * @brief Service client to get the GPS target from the local pose.
+ * @brief Service client to get the GPS coordinates from the local pose.
  */
-ServiceClient pose_to_target_client;
+ServiceClient pose_to_geo_client;
 
 /**
  * @brief Publisher for the position set point.
@@ -130,16 +130,16 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
     // move cps using gps coordinates
     if (global) {
         // convert local goal to gps coordinates
-        mavros_msgs::GlobalPositionTarget global_goal;
-        mavros_gps::PoseToTarget p2t;
-        p2t.request.pose = goal;
-        if (pose_to_target_client.call(p2t)) {
+        geographic_msgs::GeoPoseStamped global_goal;
+        cpswarm_msgs::PoseToGeo p2g;
+        p2g.request.pose = goal;
+        if (pose_to_geo_client.call(p2g)) {
             // publish goal to fcu
-            global_goal = p2t.response.target;
+            global_goal = p2g.response.geo;
             global_goal.header.stamp = Time::now();
             publisher.publish(global_goal);
 
-            ROS_DEBUG("Publish set point (%f,%f,%.2f,%.2f)", global_goal.latitude, global_goal.longitude, global_goal.altitude, global_goal.yaw);
+            ROS_DEBUG("Publish set point (%f,%f,%.2f)", global_goal.pose.position.latitude, global_goal.pose.position.longitude, global_goal.pose.position.altitude);
         }
         else {
             ROS_ERROR("Failed to convert global goal");
@@ -346,15 +346,15 @@ int main(int argc, char **argv) {
     }
 
     // service clients
-    pose_to_target_client = nh.serviceClient< mavros_gps::PoseToTarget > ("gps/pose_to_target");
+    pose_to_geo_client = nh.serviceClient< cpswarm_msgs::PoseToGeo > ("gps/pose_to_geo");
     if (global)
-        pose_to_target_client.waitForExistence();
+        pose_to_geo_client.waitForExistence();
     ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
     danger_client.waitForExistence();
 
     // goal publisher
     if (global) {
-        publisher = nh.advertise<mavros_msgs::GlobalPositionTarget>("mavros/setpoint_position/global", queue_size, true);
+        publisher = nh.advertise<geographic_msgs::GeoPoseStamped>("mavros/setpoint_position/global", queue_size, true);
     }
     else {
         publisher = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", queue_size, true);

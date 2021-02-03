@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   std_msgs
   geometry_msgs
+  geographic_msgs
   mavros_msgs
   mavros_gps
   cpswarm_msgs
