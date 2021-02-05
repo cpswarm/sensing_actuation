@@ -16,6 +16,14 @@ mavros_gps_lib::mavros_gps_lib ()
         rate.sleep();
         spinOnce();
     }
+
+    // init altitude difference between msl and wgs-84
+    pose_sub = nh.subscribe("mavros/altitude", queue_size, &mavros_gps_lib::altitude_callback, this);
+    while (ok() && altitude_fix == 0) {
+        ROS_DEBUG_ONCE("Waiting for valid altitude...");
+        rate.sleep();
+        spinOnce();
+    }
 }
 
 bool mavros_gps_lib::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm_msgs::FixToPose::Response &res)
@@ -81,11 +89,11 @@ bool mavros_gps_lib::pose_to_geo (cpswarm_msgs::PoseToGeo::Request &req, cpswarm
     res.geo.pose.position.latitude = fix.latitude;
     res.geo.pose.position.longitude = fix.longitude;
 
+    // convert altitude to wgs-84
+    res.geo.pose.position.altitude = req.pose.pose.position.z - altitude_fix;
+
     // copy header
     res.geo.header = req.pose.header;
-
-    // copy altitude
-    res.geo.pose.position.altitude = req.pose.pose.position.z;
 
     // copy orientation
     res.geo.pose.orientation = req.pose.pose.orientation;
@@ -248,4 +256,15 @@ void mavros_gps_lib::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
         // unsubscribe
         pose_sub.shutdown();
     }
+}
+
+void mavros_gps_lib::altitude_callback (const mavros_msgs::Altitude::ConstPtr& msg)
+{
+    // store altitude in class variable
+    altitude_fix = origin.altitude - msg->amsl;
+
+	ROS_DEBUG("Got altitude AMSL %.2f", msg->amsl);
+
+    // unsubscribe
+    altitude_sub.shutdown();
 }
