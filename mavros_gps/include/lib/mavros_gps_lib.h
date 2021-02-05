@@ -5,6 +5,7 @@
 #include <tf2/utils.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
+#include <mavros_msgs/Altitude.h>
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/NedToEnu.h"
@@ -204,6 +205,12 @@ private:
     void pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg);
 
     /**
+     * @brief Callback function to retrieve initial altitude.
+     * @param msg Position received from the CPS.
+     */
+    void altitude_callback (const mavros_msgs::Altitude::ConstPtr& msg);
+
+    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
@@ -214,9 +221,19 @@ private:
     Subscriber pose_sub;
 
     /**
+     * @brief The subscriber to receive the initial altitude of the CPS in MSL.
+     */
+    Subscriber altitude_sub;
+
+    /**
      * @brief The GPS coordinates that where first received when starting this node.
      */
     sensor_msgs::NavSatFix origin;
+
+    /**
+     * @brief The altitude difference between WGS-84 and MSL.
+     */
+    double altitude_fix;
 
     /**
      * @brief The earth radius in meters.
