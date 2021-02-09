@@ -18,7 +18,7 @@ mavros_gps_lib::mavros_gps_lib ()
     }
 
     // init altitude difference between msl and wgs-84
-    pose_sub = nh.subscribe("mavros/altitude", queue_size, &mavros_gps_lib::altitude_callback, this);
+    altitude_sub = nh.subscribe("mavros/altitude", queue_size, &mavros_gps_lib::altitude_callback, this);
     while (ok() && altitude_fix == 0) {
         ROS_DEBUG_ONCE("Waiting for valid altitude...");
         rate.sleep();
