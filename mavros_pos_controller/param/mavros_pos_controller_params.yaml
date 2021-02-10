@@ -3,6 +3,6 @@ queue_size:     1     # The size of the message queue used for publishing and su
 max_velocity:   2.0   # Maximum horizontal velocity in meters per second.
 yaw_tolerance:  0.25  # The angle in radian which the yaw of the CPS can vary around the set point.
 turn_timeout:   5.0   # The time in seconds that the turning is allowed to take.
-ca_timeout:     10    # The number of missed collision avoidance goal messages after which a regular goal message is accepted again.
+ca_timeout:     3     # The number of missed collision avoidance goal messages after which a regular goal message is accepted again.
 turning:        false # Whether the CPS should turn its front into movement direction or not.
 visualize:      true  # Whether to publish the waypoints on a topic for visualization.
