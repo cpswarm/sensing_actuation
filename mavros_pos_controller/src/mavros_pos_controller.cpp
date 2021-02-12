@@ -54,9 +54,9 @@ bool goal_valid;
 Duration turn_timeout;
 
 /**
- * @brief The number of missed collision avoidance goal messages after which a regular goal message is accepted again.
+ * @brief The time in seconds without receiving collision avoidance goal messages after which a regular goal message is accepted again.
  */
-int ca_timeout;
+double ca_timeout;
 
 /**
  * @brief Whether the CPS should turn its front into movement direction or not.
@@ -82,11 +82,6 @@ double yaw_tolerance;
  * @brief The last time a goal for collision avoidance has been received.
  */
 Time ca_update;
-
-/**
- * @brief The time between the last two receptions of a collision avoidance goal.
- */
-Duration ca_cycle;
 
 /**
  * @brief Frequency of the control loops.
@@ -298,8 +293,6 @@ void ca_goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     local_goal_ca = *msg;
 
     // keep track of last received message
-    if (ca_update.isZero() == false)
-        ca_cycle = msg->header.stamp - ca_update;
     ca_update = msg->header.stamp;
 
     process_goal(local_goal_ca);
@@ -367,7 +360,7 @@ int main(int argc, char **argv) {
     double d_turn_timeout;
     nh.param(this_node::getName() + "/turn_timeout", d_turn_timeout, 5.0);
     turn_timeout = Duration(d_turn_timeout);
-    nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 10);
+    nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 1.0);
     nh.param(this_node::getName() + "/turning", turning, true);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
@@ -479,23 +472,19 @@ int main(int argc, char **argv) {
 
             // check if collision avoidance is active
             bool ca = false;
-            if (ca_cycle.isZero() == false)
-                ca = ca_update + ca_cycle * double(ca_timeout) > Time::now();
+            if (ca_update.isZero() == false)
+                ca = ca_update + Duration(ca_timeout) > Time::now();
 
+            // publish set point to perform collision avoidance
             if (ca) {
-                ROS_ERROR("%.2f + %.2f * %.2f > %.2f", ca_update.toSec(), ca_cycle.toSec(), double(ca_timeout), Time::now().toSec());
-
-                // publish set point to perform collision avoidance
                 publish_goal(local_goal_ca);
             }
 
-            // store goal position if currently not avoiding a collision
+            // publish set point to reach original goal
             else {
                 // reset collision avoidance message stats
                 ca_update.fromSec(0);
-                ca_cycle.fromSec(0);
 
-                // publish set point to reach goal
                 publish_goal(local_goal);
             }
 
