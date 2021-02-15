@@ -49,11 +49,6 @@ bool pose_valid;
 bool goal_valid;
 
 /**
- * @brief The time in seconds that the turning is allowed to take.
- */
-Duration turn_timeout;
-
-/**
  * @brief The time in seconds without receiving collision avoidance goal messages after which a regular goal message is accepted again.
  */
 double ca_timeout;
@@ -109,29 +104,6 @@ Publisher stop_vel_pub;
 Publisher wp_pub;
 
 /**
- * @brief Compute the yaw angle from a given pose.
- * @param pose The pose to compute the angle from.
- * @return An angle that represents the orientation of the pose.
- */
-double get_yaw (geometry_msgs::Pose pose)
-{
-    tf2::Quaternion orientation;
-    tf2::fromMsg(pose.orientation, orientation);
-    return tf2::getYaw(orientation);
-}
-
-/**
- * @brief Check whether the CPS has to turn at least by the yaw tolerance to reach the current goal.
- * @param goal The goal to check.
- * @return True, if the goal is far enough away in terms of turning.
- */
-bool enough_yaw (geometry_msgs::PoseStamped goal)
-{
-    double delta_yaw = remainder(get_yaw(pose.pose) - get_yaw(goal.pose), 2*M_PI);
-    return delta_yaw < -yaw_tolerance || yaw_tolerance < delta_yaw;
-}
-
-/**
  * @brief Move the CPS by publishing the goal to the FCU.
  * @param goal The goal to move to.
  */
@@ -169,77 +141,11 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         // shift local goal according to origin
         goal.pose.position.x -= origin.position.x;
         goal.pose.position.y -= origin.position.y;
-        ROS_DEBUG_THROTTLE(1, "Publish set point (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
+        ROS_DEBUG_THROTTLE(1, "Publish set point (%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z);
 
         // publish goal to fcu
         goal.header.stamp = Time::now();
         publisher.publish(goal);
-    }
-}
-
-/**
- * @brief Compute local goal coordinates using distance and direction relative to the current pose.
- * @param distance The distance of the goal from start.
- * @param direction The direction of the goal relative to start. It is in radian, counterclockwise starting from east / x-axis.
- * @return The computed goal position.
- */
-geometry_msgs::PoseStamped compute_goal (double distance, double direction)
-{
-    geometry_msgs::PoseStamped goal;
-
-    // calculate position
-    goal.pose.position.x = pose.pose.position.x + distance * cos(direction);
-    goal.pose.position.y = pose.pose.position.y + distance * sin(direction);
-    goal.pose.position.z = pose.pose.position.z;
-
-    // calculate orientation
-    if (turning) {
-        tf2::Quaternion orientation;
-        orientation.setRPY(0, 0, direction);
-        goal.pose.orientation = tf2::toMsg(orientation);
-    }
-    else
-        goal.pose.orientation = pose.pose.orientation;
-
-    return goal;
-}
-
-/**
- * Turn into direction of goal.
- * @param goal The goal to turn towards.
- */
-void turn (geometry_msgs::PoseStamped goal)
-{
-    // create temporary goal pose for cps
-    geometry_msgs::PoseStamped turn_goal;
-    turn_goal.header.stamp = Time::now();
-
-    // set goal position to previous goal position
-    turn_goal.pose.position = pose.pose.position;
-
-    // set goal orientation to new orientation
-    turn_goal.pose.orientation = goal.pose.orientation;
-
-    // turning start time
-    Time turn_time = Time::now();
-
-    // turn until cps reached goal
-    while (ok() && enough_yaw(goal) && turn_time + turn_timeout > Time::now()) {
-        // send goal to cps controller
-        publish_goal(turn_goal);
-
-        // wait
-        rate->sleep();
-
-        ROS_DEBUG("Turning %.2f --> %.2f", get_yaw(pose.pose), get_yaw(goal.pose));
-
-        // check if reached goal
-        spinOnce();
-    }
-
-    // timeout for turning expired
-    if (enough_yaw(goal) && turn_time + turn_timeout <= Time::now()) {
-        ROS_ERROR("Turning timed out");
     }
 }
 
@@ -260,7 +166,7 @@ void process_goal(geometry_msgs::PoseStamped& goal)
         goal.pose.orientation = tf2::toMsg(orientation);
     }
 
-    ROS_DEBUG("Move to (%.2f,%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z, get_yaw(goal.pose));
+    ROS_DEBUG("Move to (%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z);
 
     // start publishing position set points
     goal_valid = true;
@@ -305,7 +211,7 @@ void ca_goal_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 void pose_callback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     pose = *msg;
-    ROS_DEBUG_THROTTLE(10, "Pose (%.2f,%.2f,%2.f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
+    ROS_DEBUG_THROTTLE(10, "Pose (%.2f,%.2f,%2.f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
     pose_valid = true;
 }
 
@@ -357,9 +263,6 @@ int main(int argc, char **argv) {
     double max_velocity;
     nh.param(this_node::getName() + "/max_velocity", max_velocity, 1.0);
     nh.param(this_node::getName() + "/yaw_tolerance", yaw_tolerance, 0.1);
-    double d_turn_timeout;
-    nh.param(this_node::getName() + "/turn_timeout", d_turn_timeout, 5.0);
-    turn_timeout = Duration(d_turn_timeout);
     nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 1.0);
     nh.param(this_node::getName() + "/turning", turning, true);
     nh.param(this_node::getName() + "/visualize", visualize, false);
@@ -453,23 +356,6 @@ int main(int argc, char **argv) {
 
         // only publish set point if a goal has been received
         if (goal_valid) {
-            // turn nose into movement direction, if required
-            if (turning)
-                turn(local_goal);
-
-            // check if dangerously close to obstacle
-            // cpswarm_msgs::Danger danger;
-            // if (danger_client.call(danger) == false) {
-            //     ROS_ERROR_THROTTLE(1, "Failed to check if obstacle near by, stop moving!");
-            //     local_goal = pose;
-            // }
-
-            // // there are obstacles dangerously close, back off
-            // else if (danger.response.danger) {
-            //     ROS_ERROR_THROTTLE(1, "Obstacle too close, backoff!");
-            //     local_goal = compute_goal(danger.response.backoff, danger.response.direction + get_yaw(pose.pose));
-            // }
-
             // check if collision avoidance is active
             bool ca = false;
             if (ca_update.isZero() == false)
