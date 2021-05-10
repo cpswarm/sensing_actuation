@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id" default="1" />
+    <arg name="log_output" default="screen" />
+
+    <!-- Battery monitor node -->
+    <node pkg="mavros_battery_monitor" type="mavros_battery_monitor" name="mavros_battery_monitor_$(arg id)" output="$(arg log_output)">
+        <rosparam file="$(find mavros_battery_monitor)/param/mavros_battery_monitor.yaml" command="load" />
+        <rosparam file="$(find mavros_battery_monitor)/param/charging_points.yaml" command="load" />
+        <rosparam file="$(find mavros_battery_monitor)/param/battery_lut.yaml" command="load" />
+    </node>
+</launch>
