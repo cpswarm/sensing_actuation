@@ -2,7 +2,8 @@
 
 area::area ()
 {
-    // grid map resolution
+    // read parameters
+    nh.param(this_node::getName() + "/cell_warn", cell_warn, 1000);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
 
     // init map publisher
@@ -111,6 +112,10 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         }
         int x = int(ceil((xmax - xmin) / resolution));
         int y = int(ceil((ymax - ymin) / resolution));
+
+        // warn about large grids
+        if (x*y > cell_warn)
+            ROS_WARN("Given coordinates seem wrong, grid map extremley large: %d cells!", x*y);
 
         // generate grid map data
         cpswarm_msgs::OutOfBounds::Request req;

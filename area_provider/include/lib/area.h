@@ -149,6 +149,11 @@ private:
     geometry_msgs::Point origin;
 
     /**
+     * @brief Number of grid cells in the map above which a performance warning is issued.
+     */
+    int cell_warn;
+
+    /**
      * @brief Resolution of the grid map representing the area in meter / cell.
      */
     double resolution;
