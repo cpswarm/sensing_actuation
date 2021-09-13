@@ -216,13 +216,15 @@ double mavros_gps_lib::yaw (mavros_msgs::GlobalPositionTarget start, mavros_msgs
 
 void mavros_gps_lib::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
-    // store pose as origin class variable
-    origin = *msg;
+    ROS_DEBUG("Got GPS coordinates [%f, %f, %.2f]", msg->latitude, msg->longitude, msg->altitude);
 
-	ROS_DEBUG("Got GPS coordinates");
-    ROS_INFO("Set origin at [%f, %f, %.2f]", origin.latitude, origin.longitude, origin.altitude);
+    if (msg->latitude != 0) {
+        // store pose as origin class variable
+        origin = *msg;
 
-    // unsubscribe
-    if (origin.latitude != 0)
+        ROS_INFO("Set origin at [%f, %f, %.2f]", origin.latitude, origin.longitude, origin.altitude);
+
+        // unsubscribe
         pose_sub.shutdown();
+    }
 }
