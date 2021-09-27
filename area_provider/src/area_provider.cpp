@@ -1,4 +1,3 @@
-#include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 #include "lib/area.h"
 

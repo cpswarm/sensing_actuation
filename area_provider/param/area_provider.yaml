@@ -1,8 +1,10 @@
 loop_rate:    1.0  # The frequency in Hz at which to run the control loops.
+queue_size:   10   # The size of the message queue used for publishing and subscribing to topics.
 wait_for_map: 2.0  # Time in seconds to wait initially for another map provider.
 cell_warn:    1000 # Number of grid cells in the map above which a performance warning is issued.
 resolution:   1.0  # Resolution of the grid map representing the area in meter / cell.
-# The area in which the mission takes place. It is a polygon specified by a list of coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+# The area in which the mission takes place. It is a polygon specified by a list of coordinates.
+# Area coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
 
 # Simulation
 area_x:

@@ -1,0 +1,20 @@
+actions: []
+authors: Micha Sende <sende@lakeside-labs.com>
+brief: ''
+bugtracker: ''
+depends:
+- geometry_msgs
+- cpswarm_msgs
+- rostest
+- catkin
+- roscpp
+- nav_msgs
+description: A node that provides services to access the area of the mission in local
+  coordinates.
+license: Apache License 2.0
+maintainers: Micha Sende <sende@lakeside-labs.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''
