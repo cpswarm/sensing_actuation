@@ -36,7 +36,7 @@ bool mavros_gps_lib::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm
     double head = ned_to_enu(yaw(origin, req.fix));
     res.pose.pose.position.x = dist * cos(head);
     res.pose.pose.position.y = dist * sin(head);
-    res.pose.pose.position.z = req.fix.altitude;
+    res.pose.pose.position.z = req.fix.altitude - origin.altitude;
 
     // compute orientation
     tf2::Quaternion orientation;
