@@ -4,8 +4,6 @@
 #include <geometry_msgs/PointStamped.h>
 #include <mavros_msgs/State.h>
 #include <geographic_msgs/GeoPoseStamped.h>
-#include <mavros_msgs/ParamPull.h>
-#include <mavros_msgs/ParamPush.h>
 #include <std_msgs/Empty.h>
 #include "cpswarm_msgs/PoseToGeo.h"
 #include "cpswarm_msgs/Danger.h"
@@ -295,37 +293,6 @@ int main(int argc, char **argv) {
         ROS_DEBUG_ONCE("Waiting for valid pose");
         spinOnce();
         rate->sleep();
-    }
-
-    // set maximum velocity
-    ServiceClient pull_client = nh.serviceClient<mavros_msgs::ParamPull>("mavros/param/pull");
-    ROS_DEBUG("Waiting MAVROS parameter pull service");
-    pull_client.waitForExistence();
-    mavros_msgs::ParamPull pull;
-    if (pull_client.call(pull)) {
-        if (pull.response.success) {
-            ROS_DEBUG("Pulled %d parameters from FCU", pull.response.param_received);
-            nh.setParam("mavros/param/MPC_XY_VEL_MAX", max_velocity);
-            ServiceClient push_client = nh.serviceClient<mavros_msgs::ParamPush>("mavros/param/push");
-            ROS_DEBUG("Waiting MAVROS parameter push service");
-            push_client.waitForExistence();
-            mavros_msgs::ParamPush push;
-            if (push_client.call(push)) {
-                if (push.response.success)
-                    ROS_DEBUG("Pushed %d parameters to FCU", push.response.param_transfered);
-                else
-                    ROS_ERROR("Failed push parameters to FCU, cannot set maximum horizontal velocity!");
-            }
-            else {
-                ROS_ERROR("Failed to push parameters to FCU, cannot set maximum horizontal velocity!");
-            }
-        }
-        else {
-            ROS_ERROR("Failed to pull parameters from FCU, cannot set maximum horizontal velocity!");
-        }
-    }
-    else {
-        ROS_ERROR("Failed to pull parameters from FCU, cannot set maximum horizontal velocity!");
     }
 
     // service clients
