@@ -1,14 +1,12 @@
 # area_provider
 
-This package provides services to access the area of the mission in local coordinates. It is part of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation). The basis for these services is a map of the mission area which can be provided in three ways:
+This package provides services to access the area of the mission in local coordinates. It is part of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation). The basis for these services is a map of the mission area which can be provided in two ways:
 
-1. Map server: If a [map server](https://wiki.ros.org/map_server)  is running its map is used.
+1. Map server: If a [map server](https://wiki.ros.org/map_server) is running, its map is used.
 
-2. External coordinates: If no map server is running but an external file with a list of coordinates is specified, it is used to create the map.
+2. Coordinates: Otherwise, the coordinates given in the parameter file of the area provider are used to create the map.
 
-3. Internal coordinates: Otherwise, the coordinates given in the parameter file of the area provider are used to create the map.
-
-If none of these sources is available the area provider will not work.
+If both sources are unavailable the area provider will not work.
 
 ## Dependencies
 This package depends on the following message definitions:
@@ -91,8 +89,6 @@ The `area_provider` provides several services that allow to access the mission a
   Number of grid cells in the map above which a performance warning is issued. Only relevant if no map is provided by the map server but created by this node.
 * `resolution` (real, default: `1.0`)
   Resolution of the grid map created from the given polygon coordinates representing the area in meter / cell.
-* `area_file` (string, default: )
-  An external file that specifies the mission area polygon as a list of coordinates in _TODO_ format.
 * `area_x` (real list, default: `[-10, 10, 10, -10]`)
   X-coordinates/longitudes that specify the mission area polygon. Make sure they are given in the same order as `area_y`.
 * `area_y` (real list, default: `[-10, -10, 10, 10]`)

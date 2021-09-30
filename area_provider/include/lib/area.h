@@ -52,8 +52,8 @@ public:
     bool get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
-     * @brief Generate a grid map the the given area coordinates.
-     * @return An empty grid map that represents the area.
+     * @brief Generate a grid map from the given area coordinates.
+     * @return A grid map that represents the area.
      */
     nav_msgs::OccupancyGrid get_gridmap ();
 
