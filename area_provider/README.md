@@ -1,12 +1,6 @@
 # area_provider
 
-This package provides services to access the area of the mission in local coordinates. It is part of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation). The basis for these services is a map of the mission area which can be provided in two ways:
-
-1. Map server: If a [map server](https://wiki.ros.org/map_server) is running, its map is used.
-
-2. Coordinates: Otherwise, the coordinates given in the parameter file of the area provider are used to create the map.
-
-If both sources are unavailable the area provider will not work.
+This package provides services to access the area of the mission and regions of interest (ROIs) in local coordinates. It is part of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation).
 
 ## Dependencies
 This package depends on the following message definitions:
@@ -45,8 +39,15 @@ In the `param` subdirectory there is the parameter file `area_provider.yaml` tha
 
 ## Nodes
 
-### area_provider
-The `area_provider` provides several services that allow to access the mission area as map and perform several spatial operations. For more details about theses services see below. If no mission area can be retrieved, this node will issue a fatal error and shutdown.
+### ma_services
+The `area_provider` provides several services that allow to access the mission area as map and perform several spatial operations. For more details about theses services see below. The basis for these services is a map of the mission area which can be provided in two ways:
+
+1. Map server: If a [map server](https://wiki.ros.org/map_server) is running, its map is used.
+
+2. Coordinates: Otherwise, the coordinates given in the `ma.yaml` parameter file are used to create the map.
+
+If both sources are unavailable the `ma_services` will not work.
+If no mission area can be retrieved, this node will issue a fatal error and shutdown.
 
 #### Subscribed Topics
 * `map` ([nav_msgs/OccupancyGrid](https://docs.ros.org/en/api/nav_msgs/html/msg/OccupancyGrid.html))

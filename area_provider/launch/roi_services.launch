@@ -7,12 +7,12 @@
     <arg name="y" default="0" />
     <arg name="output" default="log" />
 
-    <!-- Area provider -->
-    <node pkg="area_provider" type="area_provider" name="area_provider_$(arg id)" output="$(arg output)" required="true">
+    <!-- ROI services -->
+    <node pkg="area_provider" type="roi_services" name="rois_$(arg id)" output="$(arg output)" required="true">
         <param name="pos_type" value="$(arg pos_type)" />
         <param name="x" value="$(arg x)" />
         <param name="y" value="$(arg y)" />
-        <rosparam file="$(find area_provider)/param/area_provider.yaml" command="load" />
+        <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
     </node>
 
 </launch>

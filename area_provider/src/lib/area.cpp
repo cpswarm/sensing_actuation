@@ -12,33 +12,19 @@ area::area ()
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
 
-    // subscribe to map
-    map_exists = false;
-    map_subscriber = nh.subscribe("map", queue_size, &area::map_callback, this);
-
-    // wait a bit to see if there is a map provided by another node
-    double loop_rate;
-    nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.0);
-    Rate rate(loop_rate);
-    double wait_for_map;
-    nh.param(this_node::getName() + "/wait_for_map", wait_for_map, 2.0);
-    Time start = Time::now();
-    while (ok() && Time::now() < start + Duration(wait_for_map)) {
-        spinOnce();
-        rate.sleep();
-    }
-
-    // if there is no map, initialize area from coordinates
-    if (map_exists == false)
-        init_area();
+    // publish grid map
+    if (map_exists || create_map)
+        map_publisher.publish(get_gridmap());
+    else
+        ROS_INFO("Not publishing map");
 }
 
-bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res)
+double area::closest_bound (geometry_msgs::Point point, vector<geometry_msgs::Point> coords)
 {
     // use origin
-    if (req.point.x == 0 && req.point.y == 0) {
-        req.point.x = origin.x;
-        req.point.y = origin.y;
+    if (point.x == 0 && point.y == 0) {
+        point.x = origin.x;
+        point.y = origin.y;
     }
 
     // find minimal distance to any area bound
@@ -52,7 +38,7 @@ bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs
         p2.y = coords[(i+1)%coords.size()].y;
 
         // minimal distance to line connecting the two points
-        double dist = abs((p2.y - p1.y) * req.point.x - (p2.x - p1.x) * req.point.y + p2.x * p1.y - p2.y * p1.x) / hypot(p2.x - p1.x, p2.y - p1.y);
+        double dist = abs((p2.y - p1.y) * point.x - (p2.x - p1.x) * point.y + p2.x * p1.y - p2.y * p1.x) / hypot(p2.x - p1.x, p2.y - p1.y);
 
         // found smaller distance
         if (res.dist == 0 || dist < res.dist) {
@@ -239,107 +225,6 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
     return true;
 }
 
-void area::init_area ()
-{
-    // read area coordinates
-    vector<double> area_x;
-    vector<double> area_y;
-    nh.getParam(this_node::getName() + "/area_x", area_x);
-    nh.getParam(this_node::getName() + "/area_y", area_y);
-    if (map_exists == false && (area_x.size() != area_y.size() || area_x.size() < 3)) {
-        ROS_FATAL("AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...");
-        shutdown();
-    }
-    vector<pair<double,double>> raw_coords;
-    for (int i = 0; i < area_x.size(); ++i)
-        raw_coords.emplace_back(area_x[i], area_y[i]);
-
-    // global positioning
-    string pos_type = "global";
-    nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
-    bool global = pos_type == "local" ? false : true;
-    if (global) {
-        // service client for converting GPS to local coordinates
-        ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
-        ROS_DEBUG("Wait for fix_to_pose service...");
-        fix_to_pose_client.waitForExistence();
-        cpswarm_msgs::FixToPose f2p;
-
-        // convert given area to local coordinates
-        for (int i = 0; i < raw_coords.size(); ++i) {
-            f2p.request.fix.longitude = raw_coords[i].first;
-            f2p.request.fix.latitude = raw_coords[i].second;
-            if (fix_to_pose_client.call(f2p)) {
-                coords.push_back(f2p.response.pose.pose.position);
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
-        }
-
-        // get origin from gps node
-        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
-        ROS_DEBUG("Wait for get_gps_origin service...");
-        get_gps_origin_client.waitForExistence();
-        cpswarm_msgs::GetGpsFix gpso;
-        if (get_gps_origin_client.call(gpso)) {
-            // convert origin to local coordinates
-            f2p.request.fix = gpso.response.fix;
-            if (fix_to_pose_client.call(f2p)) {
-                origin = f2p.response.pose.pose.position;
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
-        }
-        else
-            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
-    }
-
-    // local positioning
-    else {
-        for (int i = 0; i < raw_coords.size(); ++i) {
-            // copy given area coordinates
-            geometry_msgs::Point p;
-            p.x = raw_coords[i].first;
-            p.y = raw_coords[i].second;
-            coords.push_back(p);
-        }
-
-        // read origin from parameters
-        double x,y;
-        nh.param(this_node::getName() + "/x", x, 0.0);
-        nh.param(this_node::getName() + "/y", y, 0.0);
-        origin.x = x;
-        origin.y = y;
-    }
-
-    // no coordinates given, extract from map
-    if (map_exists && coords.size() < 3) {
-        geometry_msgs::Point c;
-
-        // bottom left
-        c = map.info.origin.position;
-        coords.push_back(c);
-
-        // bottom right
-        c.x += map.info.width * map.info.resolution;
-        coords.push_back(c);
-
-        // top right
-        c.y += map.info.height * map.info.resolution;
-        coords.push_back(c);
-
-        // top left
-        c.x = map.info.origin.position.x;
-        coords.push_back(c);
-    }
-
-    // publish grid map
-    if (map_exists || create_map)
-        map_publisher.publish(get_gridmap());
-    else
-        ROS_INFO("Not publishing map");
-}
-
 bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
 {
     // >0 for p2 left of the line through p0 and p1
@@ -354,17 +239,4 @@ bool area::is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_
     // =0 for p2 on the line
     // <0 for p2 right of the line
     return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) < 0;
-}
-
-void area::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
-{
-    // store map
-    map = *msg;
-    map_exists = true;
-
-    // use only initial map
-    map_subscriber.shutdown();
-
-    // initialize area coordinates
-    init_area();
 }

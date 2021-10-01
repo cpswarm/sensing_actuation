@@ -125,6 +125,14 @@ add_library(
   area
   src/lib/area.cpp
 )
+add_library(
+  ma
+  src/lib/ma.cpp
+)
+add_library(
+  roi
+  src/lib/roi.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -135,8 +143,12 @@ add_library(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
-  ${PROJECT_NAME}
-  src/${PROJECT_NAME}.cpp
+  ma_services
+  src/ma_services.cpp
+)
+add_executable(
+  roi_services
+  src/roi_services.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -147,12 +159,28 @@ add_executable(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(ma_services ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(roi_services ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  ${PROJECT_NAME}
+  ma
   area
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  roi
+  area
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  ma_services
+  ma
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  roi_services
+  roi
   ${catkin_LIBRARIES}
 )
 
