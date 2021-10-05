@@ -1,7 +1,10 @@
 #ifndef ROIS_H
 #define ROIS_H
 
+#include <fstream>
+#include <filesystem>
 #include <nlohmann/json.hpp>
+#include <ros/package.h>
 #include "lib/roi.h"
 
 using json = nlohmann::json;

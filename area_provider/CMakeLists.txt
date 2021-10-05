@@ -2,13 +2,14 @@ cmake_minimum_required(VERSION 3.0)
 project(area_provider)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslib
   geometry_msgs
   nav_msgs
   cpswarm_msgs
@@ -17,6 +18,17 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+include(FetchContent)
+
+FetchContent_Declare(json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG v3.10.2)
+
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+  FetchContent_Populate(json)
+  add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -133,6 +145,10 @@ add_library(
   roi
   src/lib/roi.cpp
 )
+add_library(
+  rois
+  src/lib/rois.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -174,13 +190,19 @@ target_link_libraries(
   ${catkin_LIBRARIES}
 )
 target_link_libraries(
+  rois
+  roi
+  ${catkin_LIBRARIES}
+  nlohmann_json::nlohmann_json
+)
+target_link_libraries(
   ma_services
   ma
   ${catkin_LIBRARIES}
 )
 target_link_libraries(
   roi_services
-  roi
+  rois
   ${catkin_LIBRARIES}
 )
 

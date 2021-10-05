@@ -5,26 +5,27 @@ area::area ()
     // read parameters
     nh.param(this_node::getName() + "/cell_warn", cell_warn, 1000);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
-
-    // init map publisher
     nh.param(this_node::getName() + "/create_map", create_map, false);
-    int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
 
-    // publish grid map
-    if (map_exists || create_map)
-        map_publisher.publish(get_gridmap());
-    else
-        ROS_INFO("Not publishing map");
+    // check of global (gps) coordinates are used
+    string pos_type = "global";
+    nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
+    global = pos_type == "local" ? false : true;
+
+    // service client for converting gps to local coordinates
+    if (global) {
+        fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+        ROS_DEBUG("Wait for fix_to_pose service...");
+        fix_to_pose_client.waitForExistence();
+    }
 }
 
-double area::closest_bound (geometry_msgs::Point point, vector<geometry_msgs::Point> coords)
+bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res)
 {
     // use origin
-    if (point.x == 0 && point.y == 0) {
-        point.x = origin.x;
-        point.y = origin.y;
+    if (req.point.x == 0 && req.point.y == 0) {
+        req.point.x = origin.x;
+        req.point.y = origin.y;
     }
 
     // find minimal distance to any area bound
@@ -38,7 +39,7 @@ double area::closest_bound (geometry_msgs::Point point, vector<geometry_msgs::Po
         p2.y = coords[(i+1)%coords.size()].y;
 
         // minimal distance to line connecting the two points
-        double dist = abs((p2.y - p1.y) * point.x - (p2.x - p1.x) * point.y + p2.x * p1.y - p2.y * p1.x) / hypot(p2.x - p1.x, p2.y - p1.y);
+        double dist = abs((p2.y - p1.y) * req.point.x - (p2.x - p1.x) * req.point.y + p2.x * p1.y - p2.y * p1.x) / hypot(p2.x - p1.x, p2.y - p1.y);
 
         // found smaller distance
         if (res.dist == 0 || dist < res.dist) {
@@ -223,6 +224,57 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
         res.out = false;
 
     return true;
+}
+
+void area::global_to_local ()
+{
+    cpswarm_msgs::FixToPose f2p;
+
+    // convert given area to local coordinates
+    vector<geometry_msgs::Point> local;
+    for (auto c : coords) {
+        f2p.request.fix.longitude = c.x;
+        f2p.request.fix.latitude = c.y;
+        if (fix_to_pose_client.call(f2p)) {
+            local.push_back(f2p.response.pose.pose.position);
+        }
+        else
+            ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
+    }
+    coords = local;
+}
+
+void area::set_origin ()
+{
+    if (global) {
+        cpswarm_msgs::FixToPose f2p;
+
+        // get origin from gps node
+        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
+        ROS_DEBUG("Wait for get_gps_origin service...");
+        get_gps_origin_client.waitForExistence();
+        cpswarm_msgs::GetGpsFix gpso;
+        if (get_gps_origin_client.call(gpso)) {
+            // convert origin to local coordinates
+            f2p.request.fix = gpso.response.fix;
+            if (fix_to_pose_client.call(f2p)) {
+                origin = f2p.response.pose.pose.position;
+            }
+            else
+                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
+        }
+        else
+            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
+    }
+
+    else {
+        // read origin from parameters
+        double x,y;
+        nh.param(this_node::getName() + "/x", x, 0.0);
+        nh.param(this_node::getName() + "/y", y, 0.0);
+        origin.x = x;
+        origin.y = y;
+    }
 }
 
 bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)

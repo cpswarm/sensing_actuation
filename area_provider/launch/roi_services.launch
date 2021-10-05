@@ -13,6 +13,7 @@
         <param name="x" value="$(arg x)" />
         <param name="y" value="$(arg y)" />
         <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
+        <rosparam file="$(find area_provider)/param/roi.yaml" command="load" />
     </node>
 
 </launch>

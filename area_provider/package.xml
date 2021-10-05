@@ -49,10 +49,15 @@
     <!--   <doc_depend>doxygen</doc_depend> -->
     <buildtool_depend>catkin</buildtool_depend>
 
+    <depend>fstream</depend>
+    <depend>filesystem</depend>
+    <depend>nlohmann_json</depend>
     <depend>roscpp</depend>
+    <depend>roslib</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <exec_depend>mavros_gps</exec_depend>
 
     <test_depend>rostest</test_depend>
 

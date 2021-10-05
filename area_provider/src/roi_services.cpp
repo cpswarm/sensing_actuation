@@ -15,6 +15,9 @@ int main(int argc, char **argv)
     init(argc, argv, "rois");
     NodeHandle nh;
 
+    // roi library
+    rois rois_lib;
+
     // advertise services
     // TODO: what services are actually required?
 

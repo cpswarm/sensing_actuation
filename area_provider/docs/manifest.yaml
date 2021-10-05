@@ -3,14 +3,15 @@ authors: Micha Sende <sende@lakeside-labs.com>
 brief: ''
 bugtracker: ''
 depends:
-- geometry_msgs
-- cpswarm_msgs
-- rostest
 - catkin
-- roscpp
+- roslib
+- rostest
+- geometry_msgs
 - nav_msgs
-description: A node that provides services to access the area of the mission in local
-  coordinates.
+- roscpp
+- cpswarm_msgs
+description: A node that provides services to access the area of the mission and regions
+  of interest (ROIs) in local coordinates.
 license: Apache License 2.0
 maintainers: Micha Sende <sende@lakeside-labs.com>
 msgs: []

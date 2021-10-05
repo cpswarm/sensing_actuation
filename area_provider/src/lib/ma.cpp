@@ -2,6 +2,11 @@
 
 ma::ma ()
 {
+    // init map publisher
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
+
     // subscribe to map
     map_exists = false;
     map_subscriber = nh.subscribe("map", queue_size, &ma::map_callback, this);
@@ -26,8 +31,22 @@ ma::ma ()
         map_to_coords();
 
     // if there is no map, import coordinates
-    else
+    else {
         read_coords();
+
+        // convert global coordinates
+        if (global) {
+            global_to_local ();
+        }
+
+        set_origin();
+    }
+
+    // publish grid map
+    if (map_exists || create_map)
+        map_publisher.publish(get_gridmap());
+    else
+        ROS_INFO("Not publishing map");
 }
 
 void ma::map_to_coords ()
@@ -64,57 +83,12 @@ void ma::read_coords ()
         shutdown();
     }
 
-    // global positioning
-    string pos_type = "global";
-    nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
-    bool global = pos_type == "local" ? false : true;
-    if (global) {
-        // service client for converting GPS to local coordinates
-        ServiceClient fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
-        ROS_DEBUG("Wait for fix_to_pose service...");
-        fix_to_pose_client.waitForExistence();
-        cpswarm_msgs::FixToPose f2p;
-
-        // convert given area to local coordinates
-        for (int i = 0; i < area_x.size(); ++i) {
-            f2p.request.fix.longitude = area_x[i];
-            f2p.request.fix.latitude = area_y[i];
-            if (fix_to_pose_client.call(f2p)) {
-                coords.push_back(f2p.response.pose.pose.position);
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
-        }
-
-        // get origin from gps node
-        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
-        ROS_DEBUG("Wait for get_gps_origin service...");
-        get_gps_origin_client.waitForExistence();
-        cpswarm_msgs::GetGpsFix gpso;
-        if (get_gps_origin_client.call(gpso)) {
-            // convert origin to local coordinates
-            f2p.request.fix = gpso.response.fix;
-            if (fix_to_pose_client.call(f2p)) {
-                origin = f2p.response.pose.pose.position;
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
-        }
-        else
-            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
-    }
-
-    // local positioning
-    else {
-        for (int i = 0; i < area_x.size(); ++i)
-            coords.emplace_back(area_x[i], area_y[i], 0);
-
-        // read origin from parameters
-        double x,y;
-        nh.param(this_node::getName() + "/x", x, 0.0);
-        nh.param(this_node::getName() + "/y", y, 0.0);
-        origin.x = x;
-        origin.y = y;
+    // store area coordinates in right format
+    for (int i = 0; i < area_x.size(); ++i) {
+        geometry_msgs::Point c;
+        c.x = area_x[i];
+        c.y = area_y[i];
+        coords.push_back(c);
     }
 }
 

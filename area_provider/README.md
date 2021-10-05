@@ -16,14 +16,16 @@ The following packages of the [sensing and actuation library](https://github.com
 Further required packages are:
 * [roscpp](https://wiki.ros.org/roscpp/)
 
-## Execution
-Run the launch file
-```
-roslaunch area_provider area_provider.launch
-```
-to launch the `area_provider` node.
+The ROI services depend on following external libraries:
+* [fstream](https://en.cppreference.com/w/cpp/header/fstream)
+* [filesystem](https://en.cppreference.com/w/cpp/filesystem)
+* [nlohmann/json](https://github.com/nlohmann/json) (gets installed automatically)
+* [roslib](https://wiki.ros.org/roslib)
 
-The launch file can be configured with following parameters:
+## Execution
+This package contains two launch files that allow to launch the mission area services and the ROI services.
+
+Both launch files can be configured with following parameters:
 * `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
 * `pos_type` (string, default: `local`)
@@ -35,19 +37,37 @@ The launch file can be configured with following parameters:
 * `output` (string, default: `log`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
-In the `param` subdirectory there is the parameter file `area_provider.yaml` that allows to configure the behavior of the `area_provider` node.
+In the `param` subdirectory there is the parameter file `area.yaml` that allows to configure the behavior common to both services.
+
+### Mission Area Services
+Run the launch file
+```
+roslaunch area_provider ma_services.launch
+```
+to launch the `ma_services` node.
+
+In the `param` subdirectory there is the parameter file `ma.yaml` that allows to configure the behavior of the `ma_services` node.
+
+### ROI Services
+Run the launch file
+```
+roslaunch area_provider roi_services.launch
+```
+to launch the `roi_services` node.
+
+In the `param` subdirectory there is the parameter file `roi.yaml` that allows to configure the behavior of the `roi_services` node.
 
 ## Nodes
+Both nodes provide several services that allow to access the mission area and the ROIs as map and perform several spatial operations. For more details about theses services see below.
 
 ### ma_services
-The `area_provider` provides several services that allow to access the mission area as map and perform several spatial operations. For more details about theses services see below. The basis for these services is a map of the mission area which can be provided in two ways:
+The basis for the mission area services is a map of the mission area which can be provided in two ways:
 
 1. Map server: If a [map server](https://wiki.ros.org/map_server) is running, its map is used.
 
 2. Coordinates: Otherwise, the coordinates given in the `ma.yaml` parameter file are used to create the map.
 
-If both sources are unavailable the `ma_services` will not work.
-If no mission area can be retrieved, this node will issue a fatal error and shutdown.
+If both sources are unavailable the `ma_services`, this node will issue a fatal error and shutdown.
 
 #### Subscribed Topics
 * `map` ([nav_msgs/OccupancyGrid](https://docs.ros.org/en/api/nav_msgs/html/msg/OccupancyGrid.html))
@@ -84,16 +104,41 @@ If no mission area can be retrieved, this node will issue a fatal error and shut
   The frequency in Hz at which to run the control loops.
 * `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~wait_for_map` (real, default: `2.0`)
-  Time in seconds to wait initially for another map provider. If this timeout expires, no map server is assumed to be available and the map is constructed from another source.
+* `~create_map` (boolean, default: `false`)
+  Whether to create a grid map from the coordinates.
 * `~cell_warn` (integer, default: `1000`)
   Number of grid cells in the map above which a performance warning is issued. Only relevant if no map is provided by the map server but created by this node.
-* `resolution` (real, default: `1.0`)
+* `~resolution` (real, default: `1.0`)
   Resolution of the grid map created from the given polygon coordinates representing the area in meter / cell.
-* `area_x` (real list, default: `[-10, 10, 10, -10]`)
+* `~wait_for_map` (real, default: `2.0`)
+  Time in seconds to wait initially for another map provider. If this timeout expires, no map server is assumed to be available and the map is constructed from another source.
+* `~area_x` (real list, default: `[-10, 10, 10, -10]`)
   X-coordinates/longitudes that specify the mission area polygon. Make sure they are given in the same order as `area_y`.
-* `area_y` (real list, default: `[-10, -10, 10, 10]`)
+* `~area_y` (real list, default: `[-10, -10, 10, 10]`)
   Y-coordinates/latitudes that specify the mission area polygon. Make sure they are given in the same order as `area_x`.
+
+### roi_services
+The basis for the ROI services are maps of the ROIs which are provided through several JSON files in a specified directory. The JSON files must follow the definition of the [qGroundControl plan file format](https://dev.qgroundcontrol.com/master/en/file_formats/plan.html). These files are imported and the corresponding ROIs are labeled by consecutive numbers.
+
+#### Services Called
+* `gps/fix_to_pose` ([cpswarm_msgs/FixToPose](https://cpswarm.github.io/cpswarm_msgs/html/srv/FixToPose.html))
+  Convert a [sensor_msgs/NavSatFix](https://docs.ros.org/en/api/sensor_msgs/html/msg/NavSatFix.html) message to a [geometry_msgs/PoseStamped](https://docs.ros.org/en/api/geometry_msgs/html/msg/PoseStamped.html) message.
+* `gps/get_gps_origin` ([cpswarm_msgs/GetGpsFix](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetGpsFix.html))
+  Get the GPS coordinates of the point at which the CPS started.
+
+#### Parameters
+* `~loop_rate` (real, default: `1.5`)
+  The frequency in Hz at which to run the control loops.
+* `~queue_size` (integer, default: `10`)
+  The size of the message queue used for publishing and subscribing to topics.
+* `~create_map` (boolean, default: `false`)
+  Whether to create a grid map from the coordinates.
+* `~cell_warn` (integer, default: `1000`)
+  Number of grid cells in the map above which a performance warning is issued. Only relevant if no map is provided by the map server but created by this node.
+* `~resolution` (real, default: `1.0`)
+  Resolution of the grid map created from the given polygon coordinates representing the area in meter / cell.
+* `~roi_dir` (string, default: )
+  The directory relative to this package where to look for the ROI files.
 
 ## Code API
 [area_provider package code API documentation](https://cpswarm.github.io/sensing_actuation/area_provider/docs/html/files.html)

@@ -2,7 +2,10 @@
 
 roi::roi (vector<geometry_msgs::Point> raw_coords)
 {
-    // TODO:
-    // * convert gps coordinates (if needed)
-    // * reduce code redundancy for import
+    coords = raw_coords;
+
+    if (global)
+        global_to_local();
+
+    set_origin();
 }
