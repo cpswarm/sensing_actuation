@@ -76,3 +76,8 @@ rois::rois ()
         ROS_ERROR("No ROIs specified!");
     }
 }
+
+map<int,roi> rois::get_rois ()
+{
+    return regions;
+}

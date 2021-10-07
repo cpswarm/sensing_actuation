@@ -19,7 +19,10 @@ int main(int argc, char **argv)
     rois rois_lib;
 
     // advertise services
-    // TODO: what services are actually required?
+    for (auto roi : rois_lib.get_rois()) {
+        area &lib = roi.second;
+        ServiceServer get_distance_service  = nh.advertiseService("roi_" + to_string(roi.first) + "/get_distance",  &area::get_distance, &lib);
+    }
 
     ROS_DEBUG("ROI_PROV - ROI services are ready");
     spin();

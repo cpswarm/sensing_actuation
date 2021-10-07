@@ -20,6 +20,12 @@ public:
      */
     rois ();
 
+    /**
+     * @brief Get all ROIs managed by this class.
+     * @return Each ROI together with its unique ID.
+     */
+    map<int,roi> get_rois ();
+
 private:
     /**
      * @brief A node handle for the main ROS node.
