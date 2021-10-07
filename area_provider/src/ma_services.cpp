@@ -20,9 +20,9 @@ int main(int argc, char **argv)
     area &lib = ma_lib;
 
     // advertise services
-    ServiceServer closest_bound_service = nh.advertiseService("area/closest_bound", &area::closest_bound, &lib);
     ServiceServer get_area_service      = nh.advertiseService("area/get_area",      &area::get_area, &lib);
     ServiceServer get_center_service    = nh.advertiseService("area/get_center",    &area::get_center, &lib);
+    ServiceServer get_distance_service  = nh.advertiseService("area/get_distance",  &area::get_distance, &lib);
     ServiceServer get_map_service       = nh.advertiseService("area/get_map",       &area::get_map, &lib);
     ServiceServer get_origin_service    = nh.advertiseService("area/get_origin",    &area::get_origin, &lib);
     ServiceServer get_rotation_service  = nh.advertiseService("area/get_rotation",  &area::get_rotation, &lib);

@@ -7,11 +7,11 @@
 #include <nav_msgs/GetMap.h>
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/GetGpsFix.h"
-#include "cpswarm_msgs/ClosestBound.h"
 #include "cpswarm_msgs/GetPoints.h"
 #include "cpswarm_msgs/GetPoint.h"
 #include "cpswarm_msgs/GetDouble.h"
 #include "cpswarm_msgs/OutOfBounds.h"
+#include "lsl_msgs/GetDist.h"
 
 using namespace std;
 using namespace ros;
@@ -28,14 +28,6 @@ public:
     area ();
 
     /**
-     * @brief Find the closest area bound to a given point.
-     * @param req The point for which to find the closest bound.
-     * @param res The coordinates of the bound and the perpendicular distance to the given point.
-     * @return Whether request succeeded.
-     */
-    bool closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res);
-
-    /**
      * @brief Return the area coordinates.
      * @param req Empty request.
      * @param res A vector of points that defines the bounding polygon coordinates.
@@ -50,6 +42,14 @@ public:
      * @return Whether request succeeded.
      */
     bool get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
+
+    /**
+     * @brief Return the distance of a given point to the area boundary (outside or inside the area). Based on https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon.
+     * @param req The coordinates of the point to check. If it is empty (0,0), the area origin is used.
+     * @param res The coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
+     * @return Whether request succeeded.
+     */
+    bool get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res);
 
     /**
      * @brief Generate a grid map from the given area coordinates.

@@ -57,6 +57,7 @@
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <depend>lsl_msgs</depend>
     <exec_depend>mavros_gps</exec_depend>
 
     <test_depend>rostest</test_depend>

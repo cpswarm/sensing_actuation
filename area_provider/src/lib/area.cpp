@@ -20,47 +20,6 @@ area::area ()
     }
 }
 
-bool area::closest_bound (cpswarm_msgs::ClosestBound::Request &req, cpswarm_msgs::ClosestBound::Response &res)
-{
-    // use origin
-    if (req.point.x == 0 && req.point.y == 0) {
-        req.point.x = origin.x;
-        req.point.y = origin.y;
-    }
-
-    // find minimal distance to any area bound
-    for (int i = 0; i < coords.size(); ++i) {
-        // coordinates of two neighboring polygon points
-        geometry_msgs::Point p1;
-        p1.x = coords[i].x;
-        p1.y = coords[i].y;
-        geometry_msgs::Point p2;
-        p2.x = coords[(i+1)%coords.size()].x;
-        p2.y = coords[(i+1)%coords.size()].y;
-
-        // minimal distance to line connecting the two points
-        double dist = abs((p2.y - p1.y) * req.point.x - (p2.x - p1.x) * req.point.y + p2.x * p1.y - p2.y * p1.x) / hypot(p2.x - p1.x, p2.y - p1.y);
-
-        // found smaller distance
-        if (res.dist == 0 || dist < res.dist) {
-            // return indexes
-            res.index.clear();
-            res.index.push_back(i);
-            res.index.push_back((i+1) % coords.size());
-
-            // return actual coordinates
-            res.coords.clear();
-            res.coords.push_back(p1);
-            res.coords.push_back(p2);
-
-            // return distance
-            res.dist = dist;
-        }
-    }
-
-    return true;
-}
-
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
     res.points = coords;
@@ -76,6 +35,87 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
     }
     res.point.x /= coords.size();
     res.point.y /= coords.size();
+    return true;
+}
+
+bool area::get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res)
+{
+    // point to check
+    geometry_msgs::Point p0;
+
+    // use origin
+    if (req.point.x == 0 && req.point.y == 0) {
+        p0.x = origin.x;
+        p0.y = origin.y;
+    }
+
+    // use given point
+    else {
+        p0.x = req.point.x;
+        p0.y = req.point.y;
+    }
+
+    // find minimal distance to any area bound
+    for (int i = 0; i < coords.size(); ++i) {
+        // coordinates of two neighboring polygon points
+        geometry_msgs::Point p1;
+        p1.x = coords[i].x;
+        p1.y = coords[i].y;
+        geometry_msgs::Point p2;
+        p2.x = coords[(i+1)%coords.size()].x;
+        p2.y = coords[(i+1)%coords.size()].y;
+
+        // minimal distance to line connecting the two points
+        geometry_msgs::Point p02;
+        p02.x = p2.x - p0.x;
+        p02.y = p2.y - p0.y;
+        geometry_msgs::Point p12;
+        p12.x = p2.x - p1.x;
+        p12.y = p2.y - p1.y;
+        geometry_msgs::Point p10;
+        p10.x = p0.x - p1.x;
+        p10.y = p0.y - p1.y;
+        double dot = p12.x * p10.x + p12.y * p10.y;
+        double dis = hypot(p12.x, p12.y);
+        double r = dot / dis / dis;
+
+        double dist;
+        geometry_msgs::Point closest;
+
+        // p1 is closest point
+        if (r < 0) {
+            closest = p1;
+            dist = hypot(p10.x, p10.y);
+        }
+        // p2 is closest point
+        else if (r > 1) {
+            closest = p2;
+            dist = hypot(p02.x, p02.y);
+        }
+        // closest point is between p1 and p2
+        else {
+            dist = sqrt((p10.x*p10.x + p10.y*p10.y) - pow(r * hypot(p12.x, p12.y), 2));
+            double d = sqrt(hypot(p10.x, p10.y) - dist*dist);
+            double d12 = hypot(p12.x, p12.y);
+            closest.x = p1.x + p12.x / d12 * d;
+            closest.y = p1.y + p12.y / d12 * d;
+        }
+
+        // found smaller distance
+        if (res.distance == 0 || dist < res.distance) {
+            // return closest point
+            res.closest_point = closest;
+
+            // return line segment
+            res.closest_line.clear();
+            res.closest_line.push_back(p1);
+            res.closest_line.push_back(p2);
+
+            // return distance
+            res.distance = dist;
+        }
+    }
+
     return true;
 }
 
