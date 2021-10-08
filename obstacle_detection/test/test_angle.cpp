@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "angle.h"
+#include "lib/angle.h"
 
 /**
  * @brief Test the angle helper library constructors.

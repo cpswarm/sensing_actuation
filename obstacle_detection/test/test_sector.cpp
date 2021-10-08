@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "sector.h"
+#include "lib/sector.h"
 
 /**
  * @brief Test the sector helper library center function.
