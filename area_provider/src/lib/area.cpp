@@ -40,6 +40,8 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 
 bool area::get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res)
 {
+    bool init = true;
+
     // point to check
     geometry_msgs::Point p0;
 
@@ -95,14 +97,14 @@ bool area::get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Res
         // closest point is between p1 and p2
         else {
             dist = sqrt((p10.x*p10.x + p10.y*p10.y) - pow(r * hypot(p12.x, p12.y), 2));
-            double d = sqrt(hypot(p10.x, p10.y) - dist*dist);
+            double d1c = sqrt((p10.x*p10.x + p10.y*p10.y) - dist*dist); // distance from p1 to closest point
             double d12 = hypot(p12.x, p12.y);
-            closest.x = p1.x + p12.x / d12 * d;
-            closest.y = p1.y + p12.y / d12 * d;
+            closest.x = p1.x + p12.x / d12 * d1c;
+            closest.y = p1.y + p12.y / d12 * d1c;
         }
 
         // found smaller distance
-        if (res.distance == 0 || dist < res.distance) {
+        if (init || dist < res.distance) {
             // return closest point
             res.closest_point = closest;
 
@@ -113,6 +115,8 @@ bool area::get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Res
 
             // return distance
             res.distance = dist;
+
+            init = false;
         }
     }
 
