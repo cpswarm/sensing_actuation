@@ -9,7 +9,7 @@
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find area_provider)/test/rosconsole.config" />
 
     <!-- Mission area services -->
-    <node pkg="area_provider" type="ma_services" name="test_area" output="screen" required="true">
+    <node pkg="area_provider" type="ma_services" name="ma_services" output="screen" required="true">
         <param name="pos_type" value="$(arg pos_type)" />
         <param name="x" value="$(arg x)" />
         <param name="y" value="$(arg y)" />

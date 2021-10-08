@@ -8,7 +8,7 @@ using namespace ros;
 /**
  * @brief Test the area library distance calculation.
  */
-TEST (UnitTestArea, testDist)
+TEST (NodeTestArea, testDist)
 {
     // create service client
     NodeHandle nh;
