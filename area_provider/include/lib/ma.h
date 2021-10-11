@@ -27,6 +27,7 @@ private:
 
     /**
      * @brief Callback function to receive map updates.
+     * @param msg Pointer to the map message.
      */
     void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg);
 

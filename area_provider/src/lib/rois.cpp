@@ -2,13 +2,42 @@
 
 rois::rois ()
 {
+    // get rois from incoming event messages
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
+
+    // import rois from files
+    from_file();
+}
+
+map<int,roi> rois::get_rois ()
+{
+    return regions;
+}
+
+void rois::add_roi (vector<geometry_msgs::Point> coords)
+{
+    if (coords.size() > 3) {
+        roi roi(coords);
+        ROS_INFO("Added ROI #%lu: %lu coordinates", regions.size(), coords.size());
+        regions.emplace(regions.size(), roi);
+    }
+
+    else {
+        ROS_ERROR("Cannot add ROI %lu, not enough coordinates: %lu", regions.size(), coords.size());
+    }
+}
+
+void rois::from_file ()
+{
     // directory with roi coodinate files
     string roi_dir_str = "";
     nh.param(this_node::getName() + "/roi_dir", roi_dir_str, roi_dir_str);
 
     // no roi files
     if (roi_dir_str.empty()) {
-        ROS_ERROR("No directory for ROI files given!");
+        ROS_INFO("No directory for ROI files given!");
         return;
     }
 
@@ -55,11 +84,8 @@ rois::rois ()
                 }
 
                 // create roi object
-                if (coords.size()) {
-                    roi roi(coords);
-                    ROS_INFO("Added ROI #%lu from %s: %lu coordinates", regions.size(), roi_file_name.c_str(), coords.size());
-                    regions.emplace(regions.size(), roi);
-                }
+                ROS_INFO("Add ROI #%lu from file %s", regions.size(), roi_file_name.c_str());
+                add_roi(coords);
             }
 
             catch (json::exception &e) {
@@ -73,11 +99,13 @@ rois::rois ()
     }
 
     if (regions.size() < 1) {
-        ROS_ERROR("No ROIs specified!");
+        ROS_INFO("No ROIs specified in %s!", roi_dir_str.c_str());
     }
 }
 
-map<int,roi> rois::get_rois ()
+void rois::roi_callback (const lsl_msgs::PointArrayEvent::ConstPtr& event)
 {
-    return regions;
+    // create roi object
+    ROS_INFO("Received ROI #%lu from swarm member %s", regions.size(), event->swarmio.node.c_str());
+    add_roi(event->points);
 }
