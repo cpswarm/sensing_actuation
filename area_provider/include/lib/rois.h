@@ -22,6 +22,14 @@ public:
     rois ();
 
     /**
+     * @brief Return the closest ROI.
+     * @param req The coordinates of the point to check.
+     * @param res For the closest ROI, the coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
+     * @return Whether request succeeded.
+     */
+    bool get_closest (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res);
+
+    /**
      * @brief Get all ROIs managed by this class.
      * @return Each ROI together with its unique ID.
      */

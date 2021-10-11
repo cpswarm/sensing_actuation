@@ -11,6 +11,24 @@ rois::rois ()
     from_file();
 }
 
+bool rois::get_closest (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res)
+{
+    lsl_msgs::GetDist::Response closest;
+    lsl_msgs::GetDist::Response response;
+
+    for (auto roi : regions) {
+        if (roi.second.get_distance(req, response))
+            if (closest.closest_line.size() <= 0 || response.distance < closest.distance)
+                closest = response;
+        else
+            ROS_ERROR("Failed to retrieve distance for ROI %d!", roi.first);
+    }
+
+    res = closest;
+
+    return true;
+}
+
 map<int,roi> rois::get_rois ()
 {
     return regions;

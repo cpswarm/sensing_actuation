@@ -18,10 +18,13 @@ int main(int argc, char **argv)
     // roi library
     rois rois_lib;
 
-    // advertise services
+    // advertise services general for all rois
+    ServiceServer get_closest_service  = nh.advertiseService("rois/get_closest",  &rois::get_closest, &rois_lib);
+
+    // advertise services per roi
     for (auto roi : rois_lib.get_rois()) {
         area &lib = roi.second;
-        ServiceServer get_distance_service  = nh.advertiseService("roi_" + to_string(roi.first) + "/get_distance",  &area::get_distance, &lib);
+        ServiceServer get_distance_service  = nh.advertiseService("rois/roi_" + to_string(roi.first) + "/get_distance",  &area::get_distance, &lib);
     }
 
     ROS_DEBUG("ROI_PROV - ROI services are ready");
