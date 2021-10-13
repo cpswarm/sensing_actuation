@@ -205,11 +205,10 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-    target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_${PROJECT_NAME} test/test_${PROJECT_NAME}.test test/test_${PROJECT_NAME}.cpp)
+  if(TARGET test_${PROJECT_NAME})
+    target_link_libraries(test_${PROJECT_NAME} ${catkin_LIBRARIES})
   endif()
 endif()
 
