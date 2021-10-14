@@ -209,6 +209,8 @@ if(CATKIN_ENABLE_TESTING)
   add_rostest_gtest(test_${PROJECT_NAME} test/test_${PROJECT_NAME}.test test/test_${PROJECT_NAME}.cpp)
   if(TARGET test_${PROJECT_NAME})
     target_link_libraries(test_${PROJECT_NAME} ${catkin_LIBRARIES})
+    add_executable(fake_gps test/fake_gps.cpp)
+    target_link_libraries(fake_gps ${catkin_LIBRARIES})
   endif()
 endif()
 
