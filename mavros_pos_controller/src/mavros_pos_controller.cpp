@@ -257,8 +257,6 @@ int main(int argc, char **argv) {
     rate = new Rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    double max_velocity;
-    nh.param(this_node::getName() + "/max_velocity", max_velocity, 1.0);
     nh.param(this_node::getName() + "/yaw_tolerance", yaw_tolerance, 0.1);
     nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 1.0);
     nh.param(this_node::getName() + "/turning", turning, true);
