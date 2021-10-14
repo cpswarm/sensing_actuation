@@ -1,6 +1,7 @@
 #ifndef MAVROS_GPS_LIB_H
 #define MAVROS_GPS_LIB_H
 
+#include <math.h>
 #include "GeographicLib/Geoid.hpp"
 #include <ros/ros.h>
 #include <tf2/utils.h>
@@ -167,6 +168,15 @@ private:
     double ned_to_enu(double yaw) const;
 
     /**
+     * @brief Round a floating point value to a given number of decimals.
+     *
+     * @param number The value to round.
+     * @param precision The number of decimals.
+     * @return double The rounded value.
+     */
+    double round(double number, int precision);
+
+    /**
      * @brief Convert a message from mavros_msgs::GlobalPositionTarget to sensor_msgs::NavSatFix.
      * @param target The message to convert.
      * @return The converted message.
@@ -230,6 +240,11 @@ private:
      * @brief The earth radius in meters.
      */
     const long R = 6378137;
+
+    /**
+     * @brief Number of decimals to create when converting to meters.
+     */
+    int precision;
 
     /**
      * @brief The geoid dataset for conversion between AMSL and WGS-84.

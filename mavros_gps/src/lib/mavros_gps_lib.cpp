@@ -8,6 +8,7 @@ mavros_gps_lib::mavros_gps_lib () : geoid("egm96-5", "", true, true)
     Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/precision", precision, 2);
 
     // init origin
     pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &mavros_gps_lib::pose_callback, this);
@@ -26,8 +27,8 @@ bool mavros_gps_lib::fix_to_pose (cpswarm_msgs::FixToPose::Request &req, cpswarm
     // compute local coordinates
     double dist = this->dist(origin, req.fix);
     double head = ned_to_enu(yaw(origin, req.fix));
-    res.pose.pose.position.x = dist * cos(head);
-    res.pose.pose.position.y = dist * sin(head);
+    res.pose.pose.position.x = round(dist * cos(head), precision);
+    res.pose.pose.position.y = round(dist * sin(head), precision);
     res.pose.pose.position.z = req.fix.altitude - origin.altitude;
 
     // compute orientation
@@ -191,6 +192,13 @@ sensor_msgs::NavSatFix mavros_gps_lib::goal (mavros_msgs::GlobalPositionTarget s
 double mavros_gps_lib::ned_to_enu (double yaw) const
 {
     return remainder(2 * M_PI - yaw + M_PI / 2, 2*M_PI);
+}
+
+double mavros_gps_lib::round(double number, int precision)
+{
+    double rounded = number * pow(10.0, double(precision));
+    rounded = std::round(rounded);
+    return rounded * pow(10.0, double(-precision));
 }
 
 sensor_msgs::NavSatFix mavros_gps_lib::target_to_fix (mavros_msgs::GlobalPositionTarget target) const
