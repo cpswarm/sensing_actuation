@@ -226,7 +226,7 @@ double mavros_gps_lib::yaw (sensor_msgs::NavSatFix start, sensor_msgs::NavSatFix
     // compute initial yaw
     double dx = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1);
     double dy = sin(lon2 - lon1) * cos(lat2);
-    return atan2(dy, dx) + M_PI;
+    return atan2(dy, dx);
 }
 
 double mavros_gps_lib::yaw (sensor_msgs::NavSatFix start, mavros_msgs::GlobalPositionTarget goal) const
