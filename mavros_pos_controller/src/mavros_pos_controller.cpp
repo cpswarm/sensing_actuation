@@ -299,10 +299,6 @@ int main(int argc, char **argv) {
         ROS_DEBUG("Waiting for pose to target service");
         pose_to_geo_client.waitForExistence();
     }
-    ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
-    ROS_DEBUG("Waiting obstacle detection service");
-    danger_client.waitForExistence();
-
 
     // goal publisher
     if (global) {
