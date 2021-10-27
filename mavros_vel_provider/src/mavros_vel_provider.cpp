@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     // init velocity subscriber
     string vel_topic;
     if (global) {
-        vel_topic = "mavros/global_position/gp_vel";
+        vel_topic = "mavros/global_position/raw/gps_vel";
     }
     else {
         vel_topic = "mavros/local_position/velocity_local";
