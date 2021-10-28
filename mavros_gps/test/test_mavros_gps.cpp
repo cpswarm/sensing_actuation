@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "cpswarm_msgs/FixToPose.h"
+#include "cpswarm_msgs/GeoToPose.h"
 #include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/NedToEnu.h"
 #include "cpswarm_msgs/PoseToFix.h"
@@ -79,6 +80,49 @@ TEST (NodeTestMavrosGps, testFixToTarget)
         EXPECT_FLOAT_EQ(f2t.response.target.longitude, fix.longitude);
         EXPECT_FLOAT_EQ(f2t.response.target.altitude, fix.altitude);
         EXPECT_FLOAT_EQ(f2t.response.target.yaw, f2t.request.yaw);
+    }
+    else {
+        ADD_FAILURE();
+    }
+}
+
+/**
+ * @brief Test the service gps/geo_to_pose.
+ *
+ * Calculations based on https://gps-coordinates.org/distance-between-coordinates.php and https://geographiclib.sourceforge.io/cgi-bin/GeoidEval?input=46.612918+14.265227.
+ */
+TEST (NodeTestMavrosGps, testGeoToPose)
+{
+    // create service client
+    NodeHandle nh;
+    ServiceClient g2p_client = nh.serviceClient<cpswarm_msgs::GeoToPose>("gps/geo_to_pose");
+    g2p_client.waitForExistence(Duration(5.0));
+    cpswarm_msgs::GeoToPose g2p;
+
+    // test service
+    geographic_msgs::GeoPoseStamped pose;
+    pose.header.seq = 123;
+    pose.header.stamp = Time(456);
+    pose.header.frame_id = "foo";
+    pose.pose.position.latitude = 46.614918;
+    pose.pose.position.longitude = 14.268227;
+    pose.pose.position.altitude = 789;
+    pose.pose.orientation.x = 0.123;
+    pose.pose.orientation.y = 0.234;
+    pose.pose.orientation.z = 0.345;
+    pose.pose.orientation.w = 0.456;
+    g2p.request.geo = pose;
+    if (g2p_client.call(g2p)) {
+        EXPECT_EQ(g2p.response.pose.header.seq, pose.header.seq);
+        EXPECT_EQ(g2p.response.pose.header.stamp, pose.header.stamp);
+        EXPECT_EQ(g2p.response.pose.header.frame_id, pose.header.frame_id);
+        EXPECT_NEAR(g2p.response.pose.pose.position.x, 229.15, 0.5);
+        EXPECT_NEAR(g2p.response.pose.pose.position.y, 222.39, 0.5);
+        EXPECT_NEAR(g2p.response.pose.pose.position.z, pose.pose.position.altitude+47.5-500, 0.5);
+        EXPECT_EQ(g2p.response.pose.pose.orientation.x, pose.pose.orientation.x);
+        EXPECT_EQ(g2p.response.pose.pose.orientation.y, pose.pose.orientation.y);
+        EXPECT_EQ(g2p.response.pose.pose.orientation.z, pose.pose.orientation.z);
+        EXPECT_EQ(g2p.response.pose.pose.orientation.w, pose.pose.orientation.w);
     }
     else {
         ADD_FAILURE();
@@ -223,7 +267,7 @@ TEST (NodeTestMavrosGps, testPoseToFix)
 /**
  * @brief Test the service gps/pose_to_geo.
  *
- * Calculations based on https://gps-coordinates.org/distance-between-coordinates.php and https://geographiclib.sourceforge.io/cgi-bin/GeoidEval?input=46.6150224+14.2668373&option=Submit.
+ * Calculations based on https://gps-coordinates.org/distance-between-coordinates.php and https://geographiclib.sourceforge.io/cgi-bin/GeoidEval?input=46.6150224+14.2668373.
  */
 TEST (NodeTestMavrosGps, testPoseToGeo)
 {
