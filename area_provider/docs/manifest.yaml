@@ -1,0 +1,21 @@
+actions: []
+authors: Micha Sende <sende@lakeside-labs.com>
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roslib
+- rostest
+- geometry_msgs
+- nav_msgs
+- roscpp
+- cpswarm_msgs
+description: A node that provides services to access the area of the mission and regions
+  of interest (ROIs) in local coordinates.
+license: Apache License 2.0
+maintainers: Micha Sende <sende@lakeside-labs.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

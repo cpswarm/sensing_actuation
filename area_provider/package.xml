@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>area_provider</name>
-    <version>1.0.0</version>
-    <description>A node that provides services to access the area of the mission in local coordinates.</description>
+    <version>2.0.0</version>
+    <description>A node that provides services to access the area of the mission and regions of interest (ROIs) in local coordinates.</description>
 
     <!-- One maintainer tag required, multiple allowed, one person per tag -->
     <!-- Example:  -->
@@ -19,7 +19,7 @@
     <!-- Url tags are optional, but multiple are allowed, one per tag -->
     <!-- Optional attribute type can be: website, bugtracker, or repository -->
     <!-- Example: -->
-    <!-- <url type="website">http://wiki.ros.org/area_provider</url> -->
+    <!-- <url type="website">http://wiki.ros.org/mission_area</url> -->
 
 
     <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -49,11 +49,15 @@
     <!--   <doc_depend>doxygen</doc_depend> -->
     <buildtool_depend>catkin</buildtool_depend>
 
+    <depend>fstream</depend>
+    <depend>filesystem</depend>
+    <depend>nlohmann_json</depend>
     <depend>roscpp</depend>
-    <depend>tf2_ros</depend>
+    <depend>roslib</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <exec_depend>mavros_gps</exec_depend>
 
     <test_depend>rostest</test_depend>
 

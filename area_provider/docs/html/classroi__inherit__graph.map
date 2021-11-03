@@ -1,0 +1,4 @@
+<map id="roi" name="roi">
+<area shape="rect" id="node1" title="A class that holds a region of interest (ROI)." alt="" coords="11,80,50,107"/>
+<area shape="rect" id="node2" href="$classarea.html" title="A class that holds the an area and offers related services." alt="" coords="5,5,56,32"/>
+</map>

@@ -8,6 +8,7 @@ add_compile_options(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp genmsg sensor_msgs mavros_msgs cpswarm_msgs)
+find_package(GeographicLib REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,6 +118,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${GeographicLib_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -153,6 +155,10 @@ add_executable(
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(
+  ${PROJECT_NAME}_lib
+  ${GeographicLib_LIBRARIES}
+)
 target_link_libraries(
   ${PROJECT_NAME}
   ${PROJECT_NAME}_lib
@@ -199,11 +205,12 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-    target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_${PROJECT_NAME} test/test_${PROJECT_NAME}.test test/test_${PROJECT_NAME}.cpp)
+  if(TARGET test_${PROJECT_NAME})
+    target_link_libraries(test_${PROJECT_NAME} ${catkin_LIBRARIES})
+    add_executable(fake_gps test/fake_gps.cpp)
+    target_link_libraries(fake_gps ${catkin_LIBRARIES})
   endif()
 endif()
 

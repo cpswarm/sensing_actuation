@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="pos_type" default="local" />
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find area_provider)/test/rosconsole.config" />
+
+    <!-- Mission area services -->
+    <node pkg="area_provider" type="ma_services" name="ma_services" output="screen" required="true">
+        <param name="pos_type" value="$(arg pos_type)" />
+        <param name="x" value="$(arg x)" />
+        <param name="y" value="$(arg y)" />
+        <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
+        <rosparam file="$(find area_provider)/param/ma.yaml" command="load" />
+        <rosparam file="$(find area_provider)/test/test_area_local.yaml" command="load" />
+    </node>
+
+    <!-- Node unit test area services -->
+    <test pkg="area_provider" type="area_test" test-name="area_test" required="true" />
+
+</launch>

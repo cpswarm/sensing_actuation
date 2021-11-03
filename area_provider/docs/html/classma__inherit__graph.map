@@ -1,0 +1,4 @@
+<map id="ma" name="ma">
+<area shape="rect" id="node1" title="A class that holds the mission area, i.e., the area in which CPSs are allowed to move." alt="" coords="9,80,52,107"/>
+<area shape="rect" id="node2" href="$classarea.html" title="A class that holds the an area and offers related services." alt="" coords="5,5,56,32"/>
+</map>

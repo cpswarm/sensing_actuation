@@ -68,7 +68,7 @@ void global_pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
     f2p.request.fix = *msg;
     if (fix_to_pose_client.call(f2p)) {
         pose = f2p.response.pose;
-        ROS_DEBUG("Converted global position %f,%f to local position %f,%f / %f,%f,%f,%f", msg->longitude, msg->latitude, pose.pose.position.x, pose.pose.position.y, pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z, pose.pose.orientation.w);
+        ROS_DEBUG("Converted global position %f,%f,%f to local position %f,%f,%f / %f,%f,%f,%f", msg->longitude, msg->latitude, msg->altitude, pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z, pose.pose.orientation.w);
     }
     else
         ROS_ERROR("POS_PROV - Failed to convert global pose");
