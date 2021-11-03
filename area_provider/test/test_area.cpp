@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <ros/ros.h>
-#include "lsl_msgs/GetDist.h"
+#include "cpswarm_msgs/GetDist.h"
 
 using namespace std;
 using namespace ros;
@@ -12,9 +12,9 @@ TEST (NodeTestArea, testDist)
 {
     // create service client
     NodeHandle nh;
-    ServiceClient dist_client = nh.serviceClient<lsl_msgs::GetDist>("area/get_distance");
+    ServiceClient dist_client = nh.serviceClient<cpswarm_msgs::GetDist>("area/get_distance");
     dist_client.waitForExistence(Duration(5.0));
-    lsl_msgs::GetDist gd;
+    cpswarm_msgs::GetDist gd;
     geometry_msgs::Point point;
 
     // test empty point

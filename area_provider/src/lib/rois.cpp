@@ -11,10 +11,10 @@ rois::rois ()
     from_file();
 }
 
-bool rois::get_closest (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res)
+bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
 {
-    lsl_msgs::GetDist::Response closest;
-    lsl_msgs::GetDist::Response response;
+    cpswarm_msgs::GetDist::Response closest;
+    cpswarm_msgs::GetDist::Response response;
 
     for (auto roi : regions) {
         if (roi.second.get_distance(req, response))
@@ -121,7 +121,7 @@ void rois::from_file ()
     }
 }
 
-void rois::roi_callback (const lsl_msgs::PointArrayEvent::ConstPtr& event)
+void rois::roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event)
 {
     // create roi object
     ROS_INFO("Received ROI #%lu from swarm member %s", regions.size(), event->swarmio.node.c_str());

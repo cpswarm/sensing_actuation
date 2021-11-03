@@ -38,7 +38,7 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
     return true;
 }
 
-bool area::get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res)
+bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
 {
     bool init = true;
 

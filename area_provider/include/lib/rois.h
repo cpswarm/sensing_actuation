@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <ros/package.h>
-#include <lsl_msgs/PointArrayEvent.h>
+#include <cpswarm_msgs/PointArrayEvent.h>
 #include "lib/roi.h"
 
 using json = nlohmann::json;
@@ -27,7 +27,7 @@ public:
      * @param res For the closest ROI, the coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
      * @return Whether request succeeded.
      */
-    bool get_closest (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res);
+    bool get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res);
 
     /**
      * @brief Get all ROIs managed by this class.
@@ -51,7 +51,7 @@ private:
      * @brief Receive ROI coordinates from an event message.
      * @param event A pointer to the event holding a vector of coordinates (points).
      */
-    void roi_callback (const lsl_msgs::PointArrayEvent::ConstPtr& event);
+    void roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event);
 
     /**
      * @brief A node handle for the main ROS node.

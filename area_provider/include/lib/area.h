@@ -11,7 +11,7 @@
 #include "cpswarm_msgs/GetPoint.h"
 #include "cpswarm_msgs/GetDouble.h"
 #include "cpswarm_msgs/OutOfBounds.h"
-#include "lsl_msgs/GetDist.h"
+#include "cpswarm_msgs/GetDist.h"
 
 using namespace std;
 using namespace ros;
@@ -49,7 +49,7 @@ public:
      * @param res The coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
      * @return Whether request succeeded.
      */
-    bool get_distance (lsl_msgs::GetDist::Request &req, lsl_msgs::GetDist::Response &res);
+    bool get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res);
 
     /**
      * @brief Generate a grid map from the given area coordinates.
