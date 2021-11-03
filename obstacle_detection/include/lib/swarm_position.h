@@ -34,7 +34,7 @@ public:
     double danger () const;
 
     /**
-     * @brief Get the absolute sector occupied by other CPSs with added saftey bearing.
+     * @brief Get the absolute sector occupied by other CPSs with added safety bearing.
      * @return The inflated occupied sector.
      */
     sector inflated_region () const;

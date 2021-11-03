@@ -1,0 +1,11 @@
+# The locations of the charging points, given as two separate lists of local x-coordinates and y-coordinates. Make sure they are given in the same order. The charging point IDs are the list indexes.
+charging_points_x:
+- 0
+- 1
+- 2
+- 8
+charging_points_y:
+- 0
+- 2
+- 7
+- -7

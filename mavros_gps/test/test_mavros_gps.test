@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find area_provider)/test/rosconsole.config" />
+
+    <!-- GPS node -->
+    <node pkg="mavros_gps" type="mavros_gps" name="mavros_gps" output="screen" required="true">
+        <rosparam file="$(find mavros_gps)/param/mavros_gps.yaml" command="load" />
+    </node>
+
+    <!-- Fake GPS publisher -->
+    <node pkg="mavros_gps" type="fake_gps" name="fake_gps" output="screen" required="true" />
+
+    <!-- Node unit test GPS services -->
+    <test pkg="mavros_gps" type="test_mavros_gps" test-name="test_mavros_gps" required="true" />
+
+</launch>

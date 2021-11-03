@@ -1,0 +1,5 @@
+loop_rate:  5.0   # The frequency in Hz at which to run the swarm behavior loops.
+queue_size: 10    # The size of the message queue used for publishing and subscribing to topics.
+simulation: false # Whether to simulate the battery.
+run_time:   600   # Run time of the CPS in seconds. This is the average time the CPS can operate with a single battery charge.
+spare_time: 60    # Spare time in seconds to keep as reserve when calculating the remaining run time.

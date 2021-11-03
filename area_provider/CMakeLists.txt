@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.0)
 project(area_provider)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  tf2_ros
+  roslib
   geometry_msgs
   nav_msgs
   cpswarm_msgs
@@ -18,6 +18,17 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+include(FetchContent)
+
+FetchContent_Declare(json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG v3.10.2)
+
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+  FetchContent_Populate(json)
+  add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -126,6 +137,18 @@ add_library(
   area
   src/lib/area.cpp
 )
+add_library(
+  ma
+  src/lib/ma.cpp
+)
+add_library(
+  roi
+  src/lib/roi.cpp
+)
+add_library(
+  rois
+  src/lib/rois.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -136,8 +159,12 @@ add_library(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
-  ${PROJECT_NAME}
-  src/${PROJECT_NAME}.cpp
+  ma_services
+  src/ma_services.cpp
+)
+add_executable(
+  roi_services
+  src/roi_services.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -148,12 +175,34 @@ add_executable(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(ma_services ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(roi_services ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  ${PROJECT_NAME}
+  ma
   area
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  roi
+  area
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  rois
+  roi
+  ${catkin_LIBRARIES}
+  nlohmann_json::nlohmann_json
+)
+target_link_libraries(
+  ma_services
+  ma
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  roi_services
+  rois
   ${catkin_LIBRARIES}
 )
 
@@ -197,12 +246,11 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  #catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  #if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-  #  target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
-  #endif()
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(area_test test/test_area_local.test test/test_area.cpp)
+  if(TARGET area_test)
+    target_link_libraries(area_test ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests
