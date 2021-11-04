@@ -21,6 +21,7 @@ int main (int argc, char** argv)
     // advertise services
     ServiceServer fix_to_pose_service = nh.advertiseService("gps/fix_to_pose", &mavros_gps_lib::fix_to_pose, &lib);
     ServiceServer fix_to_target_service = nh.advertiseService("gps/fix_to_target", &mavros_gps_lib::fix_to_target, &lib);
+    ServiceServer geo_to_pose_service = nh.advertiseService("gps/geo_to_pose", &mavros_gps_lib::geo_to_pose, &lib);
     ServiceServer get_gps_origin_service = nh.advertiseService("gps/get_gps_origin", &mavros_gps_lib::get_gps_origin, &lib);
     ServiceServer ned_to_enu_service = nh.advertiseService("gps/ned_to_enu", &mavros_gps_lib::ned_to_enu, &lib);
     ServiceServer pose_to_fix_service = nh.advertiseService("gps/pose_to_fix", &mavros_gps_lib::pose_to_fix, &lib);

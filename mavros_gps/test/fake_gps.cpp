@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
 
@@ -27,9 +26,9 @@ int main (int argc, char** argv)
     fix.header.frame_id = "base_link";
     fix.status.status = 0;
     fix.status.service = 1;
-    fix.latitude = atof(getenv("PX4_HOME_LAT"));
-    fix.longitude = atof(getenv("PX4_HOME_LON"));
-    fix.altitude = 535.818834616929;
+    fix.latitude = 46.612918;
+    fix.longitude = 14.265227;
+    fix.altitude = 500;
     fix.position_covariance = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     fix.position_covariance_type = 2;
 

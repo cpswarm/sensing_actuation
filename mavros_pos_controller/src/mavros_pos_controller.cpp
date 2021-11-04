@@ -126,10 +126,10 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
             global_goal = p2g.response.geo;
             global_goal.header.stamp = Time::now();
             publisher.publish(global_goal);
-            ROS_DEBUG_THROTTLE(1, "Publish set point (%f,%f,%.2f)", global_goal.pose.position.latitude, global_goal.pose.position.longitude, global_goal.pose.position.altitude);
+            ROS_DEBUG_THROTTLE(10, "Publish set point (%f,%f,%.2f)", global_goal.pose.position.latitude, global_goal.pose.position.longitude, global_goal.pose.position.altitude);
         }
         else {
-            ROS_ERROR_THROTTLE(1, "Failed to convert global goal");
+            ROS_ERROR_THROTTLE(10, "Failed to convert global goal");
         }
     }
 
@@ -138,7 +138,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
         // shift local goal according to origin
         goal.pose.position.x -= origin.position.x;
         goal.pose.position.y -= origin.position.y;
-        ROS_DEBUG_THROTTLE(1, "Publish set point (%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z);
+        ROS_DEBUG_THROTTLE(10, "Publish set point (%.2f,%.2f,%.2f)", goal.pose.position.x, goal.pose.position.y, goal.pose.position.z);
 
         // publish goal to fcu
         goal.header.stamp = Time::now();
@@ -257,8 +257,6 @@ int main(int argc, char **argv) {
     rate = new Rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    double max_velocity;
-    nh.param(this_node::getName() + "/max_velocity", max_velocity, 1.0);
     nh.param(this_node::getName() + "/yaw_tolerance", yaw_tolerance, 0.1);
     nh.param(this_node::getName() + "/ca_timeout", ca_timeout, 1.0);
     nh.param(this_node::getName() + "/turning", turning, true);
@@ -301,9 +299,6 @@ int main(int argc, char **argv) {
         ROS_DEBUG("Waiting for pose to geo service");
         pose_to_geo_client.waitForExistence();
     }
-    ServiceClient danger_client = nh.serviceClient<cpswarm_msgs::Danger>("obstacle_detection/danger");
-    ROS_DEBUG("Waiting obstacle detection service");
-    danger_client.waitForExistence();
 
     // goal publisher
     if (global) {
@@ -329,6 +324,7 @@ int main(int argc, char **argv) {
 
             // publish set point to perform collision avoidance
             if (ca) {
+                ROS_DEBUG_THROTTLE(2, "Collision avoidance, move to goal (%.2f,%.2f)", local_goal_ca.pose.position.x, local_goal_ca.pose.position.y);
                 publish_goal(local_goal_ca);
             }
 

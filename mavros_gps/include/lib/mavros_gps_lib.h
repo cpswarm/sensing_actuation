@@ -1,12 +1,15 @@
 #ifndef MAVROS_GPS_LIB_H
 #define MAVROS_GPS_LIB_H
 
+#include <math.h>
 #include "GeographicLib/Geoid.hpp"
 #include <ros/ros.h>
 #include <tf2/utils.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <geographic_msgs/GeoPoseStamped.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
 #include "cpswarm_msgs/FixToPose.h"
+#include "cpswarm_msgs/GeoToPose.h"
 #include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/NedToEnu.h"
 #include "cpswarm_msgs/PoseToFix.h"
@@ -44,6 +47,14 @@ public:
      * @return Whether the conversion succeeded.
      */
     bool fix_to_target (mavros_gps::FixToTarget::Request &req, mavros_gps::FixToTarget::Response &res);
+
+    /**
+     * @brief Convert a message from geographic_msgs::GeoPoseStamped to geometry_msgs::PoseStamped.
+     * @param req The global message to convert.
+     * @param res The converted local message.
+     * @return Whether the conversion succeeded.
+     */
+    bool geo_to_pose (cpswarm_msgs::GeoToPose::Request &req, cpswarm_msgs::GeoToPose::Response &res);
 
     /**
      * @brief Get the GPS fix defining the local origin of this CPS.
@@ -134,12 +145,27 @@ private:
     double dist (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const;
 
     /**
+     * @brief Compute the great circle distance between two points.
+     * @param start The starting point GPS coordinates.
+     * @param goal The goal point GPS coordinates.
+     * @return The distance in meters.
+     */
+    double dist (sensor_msgs::NavSatFix start, geographic_msgs::GeoPoseStamped goal) const;
+
+    /**
      * @brief Convert a message from sensor_msgs::NavSatFix to mavros_msgs::GlobalPositionTarget.
      * @param fix The message to convert.
      * @param yaw The bearing of the global position target.
      * @return The converted message.
      */
     mavros_msgs::GlobalPositionTarget fix_to_target (sensor_msgs::NavSatFix fix, double yaw) const;
+
+    /**
+     * @brief Convert a message from geographic_msgs::GeoPoseStamped to sensor_msgs::NavSatFix.
+     * @param geo The message to convert.
+     * @return The converted message.
+     */
+    sensor_msgs::NavSatFix geo_to_fix(geographic_msgs::GeoPoseStamped geo) const;
 
     /**
      * @brief Compute GPS coordinates of a goal point given starting point, distance, and yaw.
@@ -165,6 +191,15 @@ private:
      * @return The converted yaw angle in radian.
      */
     double ned_to_enu(double yaw) const;
+
+    /**
+     * @brief Round a floating point value to a given number of decimals.
+     *
+     * @param number The value to round.
+     * @param precision The number of decimals.
+     * @return double The rounded value.
+     */
+    double round(double number, int precision);
 
     /**
      * @brief Convert a message from mavros_msgs::GlobalPositionTarget to sensor_msgs::NavSatFix.
@@ -206,6 +241,14 @@ private:
     double yaw (mavros_msgs::GlobalPositionTarget start, mavros_msgs::GlobalPositionTarget goal) const;
 
     /**
+     * @brief Compute yaw angle in order to reach the goal.
+     * @param start The starting point GPS coordinates.
+     * @param goal The goal point GPS coordinates.
+     * @return The initial yaw in radian [0,2π].
+     */
+    double yaw (sensor_msgs::NavSatFix start, geographic_msgs::GeoPoseStamped goal) const;
+
+    /**
      * @brief Callback function to retrieve initial position.
      * @param msg Position received from the CPS.
      */
@@ -230,6 +273,11 @@ private:
      * @brief The earth radius in meters.
      */
     const long R = 6378137;
+
+    /**
+     * @brief Number of decimals to create when converting to meters.
+     */
+    int precision;
 
     /**
      * @brief The geoid dataset for conversion between AMSL and WGS-84.

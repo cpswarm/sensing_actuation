@@ -52,6 +52,7 @@
   <depend>roscpp</depend>
   <depend>genmsg</depend>
   <depend>sensor_msgs</depend>
+  <depend>geographic_msgs</depend>
   <depend>mavros_msgs</depend>
   <depend>cpswarm_msgs</depend>
 
