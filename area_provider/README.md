@@ -78,8 +78,8 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
   The map provided by the area provider. It is either copied from the map server or created from the given coordinates.
 
 #### Services
-* `area/closest_bound` ([cpswarm_msgs/ClosestBound](https://cpswarm.github.io/cpswarm_msgs/html/srv/ClosestBound.html))
-  Get the boundary segment of the area polygon closest to a given point. It returns the coordinates of the boundary segment and the perpendicular distance to the given point.
+* `area/closest_bound` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
+  Get the boundary segment of the area polygon closest to a given point or the origin in case the given point is empty. It returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point.
 * `area/get_area` ([cpswarm_msgs/GetPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoints.html))
   Get the bounding area in which the CPS is allowed to move. Returns a vector of points that defines the bounding polygon coordinates.
 * `area/get_center` ([cpswarm_msgs/GetPoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoint.html))
@@ -119,6 +119,10 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 
 ### roi_services
 The basis for the ROI services are maps of the ROIs which are provided through several JSON files in a specified directory. The JSON files must follow the definition of the [qGroundControl plan file format](https://dev.qgroundcontrol.com/master/en/file_formats/plan.html). These files are imported and the corresponding ROIs are labeled by consecutive numbers.
+
+#### Services
+* `rois/get_closest` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
+  Find the ROI that is closest to a given point or the origin in case the given point is empty. It returns the coordinates of the closest boundary segment, the closest point on the segment, and the distance to the given point.
 
 #### Services Called
 * `gps/fix_to_pose` ([cpswarm_msgs/FixToPose](https://cpswarm.github.io/cpswarm_msgs/html/srv/FixToPose.html))
