@@ -50,15 +50,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a330b6c4d93fbea75f60ac975313c983d inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">area</a> ()</td></tr>
 <tr class="memdesc:a330b6c4d93fbea75f60ac975313c983d inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that initializes the private member variables.  <a href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">More...</a><br /></td></tr>
 <tr class="separator:a330b6c4d93fbea75f60ac975313c983d inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a865850bb07513ee5ef3df6e17140c593 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a865850bb07513ee5ef3df6e17140c593">closest_bound</a> (cpswarm_msgs::ClosestBound::Request &amp;req, cpswarm_msgs::ClosestBound::Response &amp;res)</td></tr>
-<tr class="memdesc:a865850bb07513ee5ef3df6e17140c593 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find the closest area bound to a given point.  <a href="classarea.html#a865850bb07513ee5ef3df6e17140c593">More...</a><br /></td></tr>
-<tr class="separator:a865850bb07513ee5ef3df6e17140c593 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0659d2b721466457e34484afab04e47c inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0659d2b721466457e34484afab04e47c">get_area</a> (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</td></tr>
 <tr class="memdesc:a0659d2b721466457e34484afab04e47c inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the area coordinates.  <a href="classarea.html#a0659d2b721466457e34484afab04e47c">More...</a><br /></td></tr>
 <tr class="separator:a0659d2b721466457e34484afab04e47c inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">get_center</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</td></tr>
 <tr class="memdesc:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the center of the area.  <a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">More...</a><br /></td></tr>
 <tr class="separator:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</td></tr>
+<tr class="memdesc:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the distance of a given point to the area boundary (outside or inside the area). Based on <a href="https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon">https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon</a>.  <a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">More...</a><br /></td></tr>
+<tr class="separator:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">get_gridmap</a> ()</td></tr>
 <tr class="memdesc:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a grid map from the given area coordinates.  <a href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">More...</a><br /></td></tr>
 <tr class="separator:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,6 +177,12 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback function to receive map updates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>Pointer to the map message. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00095">95</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
 
@@ -263,7 +269,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Subscriber to receive an existing map. </p>
 
-<p class="definition">Definition at line <a class="el" href="ma_8h_source.html#l00036">36</a> of file <a class="el" href="ma_8h_source.html">ma.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ma_8h_source.html#l00037">37</a> of file <a class="el" href="ma_8h_source.html">ma.h</a>.</p>
 
 </div>
 </div>
@@ -277,7 +283,7 @@ Additional Inherited Members</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Tue Oct 5 2021 10:05:56</small>
+<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
 </div>
 </body>
 </html>

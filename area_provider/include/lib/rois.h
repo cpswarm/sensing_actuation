@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <ros/package.h>
+#include <std_srvs/SetBool.h>
 #include <cpswarm_msgs/PointArrayEvent.h>
 #include "lib/roi.h"
 
@@ -27,13 +28,21 @@ public:
      * @param res For the closest ROI, the coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
      * @return Whether request succeeded.
      */
-    bool get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res);
+    bool get_closest (cpswarm_msgs::GetDist::Request& req, cpswarm_msgs::GetDist::Response& res);
 
     /**
      * @brief Get all ROIs managed by this class.
      * @return Each ROI together with its unique ID.
      */
     map<int,roi> get_rois ();
+
+    /**
+     * @brief Reload ROIs from files.
+     * @param req The trigger to reload. If true, current ROIs are removed before reloading.
+     * @param res
+     * @return Whether request succeeded.
+     */
+    bool reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
 
 private:
     /**

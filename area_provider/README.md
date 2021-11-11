@@ -4,6 +4,7 @@ This package provides services to access the area of the mission and regions of 
 
 ## Dependencies
 This package depends on the following message definitions:
+* [std_srvs](https://wiki.ros.org/std_srvs)
 * [geometry_msgs](https://wiki.ros.org/geometry_msgs)
 * [nav_msgs](https://wiki.ros.org/nav_msgs)
 * [cpswarm_msgs](https://cpswarm.github.io/cpswarm_msgs/html/index-msg.html)
@@ -120,9 +121,15 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 ### roi_services
 The basis for the ROI services are maps of the ROIs which are provided through several JSON files in a specified directory. The JSON files must follow the definition of the [qGroundControl plan file format](https://dev.qgroundcontrol.com/master/en/file_formats/plan.html). These files are imported and the corresponding ROIs are labeled by consecutive numbers.
 
+#### Subscribed Topics
+* `bridge/events/roi` ([cpswarm_msgs/PointArrayEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/PointArrayEvent.html))
+  Receive the coordinates of a ROI and import it.
+
 #### Services
 * `rois/get_closest` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
   Find the ROI that is closest to a given point or the origin in case the given point is empty. It returns the coordinates of the closest boundary segment, the closest point on the segment, and the distance to the given point.
+* `rois/reload` ([std_srvs/SetBool](https://docs.ros.org/en/api/std_srvs/html/srv/SetBool.html))
+  Reload ROIs from files. If set to true, previous ROIs are removed before reloading.
 
 #### Services Called
 * `gps/fix_to_pose` ([cpswarm_msgs/FixToPose](https://cpswarm.github.io/cpswarm_msgs/html/srv/FixToPose.html))

@@ -19,6 +19,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classrois-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -33,9 +34,30 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aa39882fe494b1fb1a160c19a0f159bcc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">get_closest</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</td></tr>
+<tr class="memdesc:aa39882fe494b1fb1a160c19a0f159bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the closest ROI.  <a href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">More...</a><br /></td></tr>
+<tr class="separator:aa39882fe494b1fb1a160c19a0f159bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49e4cd868bddeccc4d7397f7dfff170a"><td class="memItemLeft" align="right" valign="top">map&lt; int, <a class="el" href="classroi.html">roi</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a49e4cd868bddeccc4d7397f7dfff170a">get_rois</a> ()</td></tr>
+<tr class="memdesc:a49e4cd868bddeccc4d7397f7dfff170a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all ROIs managed by this class.  <a href="classrois.html#a49e4cd868bddeccc4d7397f7dfff170a">More...</a><br /></td></tr>
+<tr class="separator:a49e4cd868bddeccc4d7397f7dfff170a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad84dbc0a1e6d774d1b7222ffcc24201d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">reload</a> (std_srvs::SetBool::Request &amp;req, std_srvs::SetBool::Response &amp;res)</td></tr>
+<tr class="memdesc:ad84dbc0a1e6d774d1b7222ffcc24201d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reload ROIs from files.  <a href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">More...</a><br /></td></tr>
+<tr class="separator:ad84dbc0a1e6d774d1b7222ffcc24201d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73eb30742ff10fa11e586b3edfc5553d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a73eb30742ff10fa11e586b3edfc5553d">rois</a> ()</td></tr>
 <tr class="memdesc:a73eb30742ff10fa11e586b3edfc5553d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that initializes the ROIs.  <a href="classrois.html#a73eb30742ff10fa11e586b3edfc5553d">More...</a><br /></td></tr>
 <tr class="separator:a73eb30742ff10fa11e586b3edfc5553d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:aa0b77114a103595adf2a99e23ea27846"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#aa0b77114a103595adf2a99e23ea27846">add_roi</a> (vector&lt; geometry_msgs::Point &gt; coords)</td></tr>
+<tr class="memdesc:aa0b77114a103595adf2a99e23ea27846"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an ROI.  <a href="classrois.html#aa0b77114a103595adf2a99e23ea27846">More...</a><br /></td></tr>
+<tr class="separator:aa0b77114a103595adf2a99e23ea27846"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3662e97501d7aa8af2c6dbe0d174246d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">from_file</a> ()</td></tr>
+<tr class="memdesc:a3662e97501d7aa8af2c6dbe0d174246d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ROI coordinates from files at the folder specified with the <code>roi_dir</code> param.  <a href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">More...</a><br /></td></tr>
+<tr class="separator:a3662e97501d7aa8af2c6dbe0d174246d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2272f63cf000f3916d11a1714f3d435d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">roi_callback</a> (const cpswarm_msgs::PointArrayEvent::ConstPtr &amp;event)</td></tr>
+<tr class="memdesc:a2272f63cf000f3916d11a1714f3d435d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive ROI coordinates from an event message.  <a href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">More...</a><br /></td></tr>
+<tr class="separator:a2272f63cf000f3916d11a1714f3d435d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -45,11 +67,14 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a3a67055051b63cdfab0c613ee34a21ff"><td class="memItemLeft" align="right" valign="top">map&lt; int, <a class="el" href="classroi.html">roi</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a></td></tr>
 <tr class="memdesc:a3a67055051b63cdfab0c613ee34a21ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">All ROIs with IDs.  <a href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">More...</a><br /></td></tr>
 <tr class="separator:a3a67055051b63cdfab0c613ee34a21ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94446e4609b4581a5df85c4740437920"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrois.html#a94446e4609b4581a5df85c4740437920">roi_subscriber</a></td></tr>
+<tr class="memdesc:a94446e4609b4581a5df85c4740437920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber object to receive ROI coordinates from event messages.  <a href="classrois.html#a94446e4609b4581a5df85c4740437920">More...</a><br /></td></tr>
+<tr class="separator:a94446e4609b4581a5df85c4740437920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class that manages several regions of interest (ROIs). </p>
 
-<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00015">15</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00017">17</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a73eb30742ff10fa11e586b3edfc5553d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a73eb30742ff10fa11e586b3edfc5553d">&#9670;&nbsp;</a></span>rois()</h2>
@@ -69,6 +94,210 @@ Private Attributes</h2></td></tr>
 <p>Constructor that initializes the ROIs. </p>
 
 <p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00003">3</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa0b77114a103595adf2a99e23ea27846"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0b77114a103595adf2a99e23ea27846">&#9670;&nbsp;</a></span>add_roi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rois::add_roi </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; geometry_msgs::Point &gt;&#160;</td>
+          <td class="paramname"><em>coords</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add an ROI. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>A vector of the ROI coordinates. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00051">51</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3662e97501d7aa8af2c6dbe0d174246d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3662e97501d7aa8af2c6dbe0d174246d">&#9670;&nbsp;</a></span>from_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rois::from_file </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read ROI coordinates from files at the folder specified with the <code>roi_dir</code> param. </p>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00064">64</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa39882fe494b1fb1a160c19a0f159bcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa39882fe494b1fb1a160c19a0f159bcc">&#9670;&nbsp;</a></span>get_closest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rois::get_closest </td>
+          <td>(</td>
+          <td class="paramtype">cpswarm_msgs::GetDist::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cpswarm_msgs::GetDist::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the closest ROI. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>The coordinates of the point to check. </td></tr>
+    <tr><td class="paramname">res</td><td>For the closest ROI, the coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00014">14</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a49e4cd868bddeccc4d7397f7dfff170a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49e4cd868bddeccc4d7397f7dfff170a">&#9670;&nbsp;</a></span>get_rois()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">map&lt; int, <a class="el" href="classroi.html">roi</a> &gt; rois::get_rois </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get all ROIs managed by this class. </p>
+<dl class="section return"><dt>Returns</dt><dd>Each ROI together with its unique ID. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00032">32</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad84dbc0a1e6d774d1b7222ffcc24201d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad84dbc0a1e6d774d1b7222ffcc24201d">&#9670;&nbsp;</a></span>reload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rois::reload </td>
+          <td>(</td>
+          <td class="paramtype">std_srvs::SetBool::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std_srvs::SetBool::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reload ROIs from files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>The trigger to reload. If true, current ROIs are removed before reloading. </td></tr>
+    <tr><td class="paramname">res</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00037">37</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a2272f63cf000f3916d11a1714f3d435d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2272f63cf000f3916d11a1714f3d435d">&#9670;&nbsp;</a></span>roi_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rois::roi_callback </td>
+          <td>(</td>
+          <td class="paramtype">const cpswarm_msgs::PointArrayEvent::ConstPtr &amp;&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive ROI coordinates from an event message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event</td><td>A pointer to the event holding a vector of coordinates (points). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="rois_8cpp_source.html#l00138">138</a> of file <a class="el" href="rois_8cpp_source.html">rois.cpp</a>.</p>
 
 </div>
 </div>
@@ -95,7 +324,7 @@ Private Attributes</h2></td></tr>
 
 <p>A node handle for the main ROS node. </p>
 
-<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00027">27</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00068">68</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
 
 </div>
 </div>
@@ -121,7 +350,33 @@ Private Attributes</h2></td></tr>
 
 <p>All ROIs with IDs. </p>
 
-<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00032">32</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00078">78</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
+
+</div>
+</div>
+<a id="a94446e4609b4581a5df85c4740437920"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94446e4609b4581a5df85c4740437920">&#9670;&nbsp;</a></span>roi_subscriber</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscriber rois::roi_subscriber</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Subscriber object to receive ROI coordinates from event messages. </p>
+
+<p class="definition">Definition at line <a class="el" href="rois_8h_source.html#l00073">73</a> of file <a class="el" href="rois_8h_source.html">rois.h</a>.</p>
 
 </div>
 </div>
@@ -135,7 +390,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Tue Oct 5 2021 10:05:56</small>
+<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
 </div>
 </body>
 </html>

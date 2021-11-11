@@ -49,15 +49,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a330b6c4d93fbea75f60ac975313c983d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">area</a> ()</td></tr>
 <tr class="memdesc:a330b6c4d93fbea75f60ac975313c983d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that initializes the private member variables.  <a href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">More...</a><br /></td></tr>
 <tr class="separator:a330b6c4d93fbea75f60ac975313c983d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a865850bb07513ee5ef3df6e17140c593"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a865850bb07513ee5ef3df6e17140c593">closest_bound</a> (cpswarm_msgs::ClosestBound::Request &amp;req, cpswarm_msgs::ClosestBound::Response &amp;res)</td></tr>
-<tr class="memdesc:a865850bb07513ee5ef3df6e17140c593"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find the closest area bound to a given point.  <a href="classarea.html#a865850bb07513ee5ef3df6e17140c593">More...</a><br /></td></tr>
-<tr class="separator:a865850bb07513ee5ef3df6e17140c593"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0659d2b721466457e34484afab04e47c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0659d2b721466457e34484afab04e47c">get_area</a> (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</td></tr>
 <tr class="memdesc:a0659d2b721466457e34484afab04e47c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the area coordinates.  <a href="classarea.html#a0659d2b721466457e34484afab04e47c">More...</a><br /></td></tr>
 <tr class="separator:a0659d2b721466457e34484afab04e47c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dd913ac23971e599fc44ec31a7c9d68"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">get_center</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</td></tr>
 <tr class="memdesc:a5dd913ac23971e599fc44ec31a7c9d68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the center of the area.  <a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">More...</a><br /></td></tr>
 <tr class="separator:a5dd913ac23971e599fc44ec31a7c9d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f8f91dc566727a9b2d8eeb835e632e8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</td></tr>
+<tr class="memdesc:a0f8f91dc566727a9b2d8eeb835e632e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the distance of a given point to the area boundary (outside or inside the area). Based on <a href="https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon">https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon</a>.  <a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">More...</a><br /></td></tr>
+<tr class="separator:a0f8f91dc566727a9b2d8eeb835e632e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec33a3e5838ad7d93757660e2fa72115"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">get_gridmap</a> ()</td></tr>
 <tr class="memdesc:aec33a3e5838ad7d93757660e2fa72115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a grid map from the given area coordinates.  <a href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">More...</a><br /></td></tr>
 <tr class="separator:aec33a3e5838ad7d93757660e2fa72115"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,46 +158,6 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a865850bb07513ee5ef3df6e17140c593"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a865850bb07513ee5ef3df6e17140c593">&#9670;&nbsp;</a></span>closest_bound()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool area::closest_bound </td>
-          <td>(</td>
-          <td class="paramtype">cpswarm_msgs::ClosestBound::Request &amp;&#160;</td>
-          <td class="paramname"><em>req</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">cpswarm_msgs::ClosestBound::Response &amp;&#160;</td>
-          <td class="paramname"><em>res</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Find the closest area bound to a given point. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">req</td><td>The point for which to find the closest bound. </td></tr>
-    <tr><td class="paramname">res</td><td>The coordinates of the bound and the perpendicular distance to the given point. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00023">23</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
-
-</div>
-</div>
 <a id="a0659d2b721466457e34484afab04e47c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0659d2b721466457e34484afab04e47c">&#9670;&nbsp;</a></span>get_area()</h2>
 
@@ -234,7 +194,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00064">64</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00023">23</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -274,7 +234,47 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00070">70</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00029">29</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0f8f91dc566727a9b2d8eeb835e632e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f8f91dc566727a9b2d8eeb835e632e8">&#9670;&nbsp;</a></span>get_distance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool area::get_distance </td>
+          <td>(</td>
+          <td class="paramtype">cpswarm_msgs::GetDist::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cpswarm_msgs::GetDist::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the distance of a given point to the area boundary (outside or inside the area). Based on <a href="https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon">https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>The coordinates of the point to check. If it is empty (0,0), the area origin is used. </td></tr>
+    <tr><td class="paramname">res</td><td>The coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00041">41</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -296,7 +296,7 @@ Private Attributes</h2></td></tr>
 <p>Generate a grid map from the given area coordinates. </p>
 <dl class="section return"><dt>Returns</dt><dd>A grid map that represents the area. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00082">82</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00126">126</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -336,7 +336,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00150">150</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00194">194</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -376,7 +376,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00158">158</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00202">202</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +416,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00164">164</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00208">208</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -445,7 +445,7 @@ Private Attributes</h2></td></tr>
 
 <p>Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system. </p>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00229">229</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00273">273</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -500,7 +500,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True, if the point is left of the line, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00280">280</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00324">324</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -555,7 +555,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True, if the point is right of the line, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00288">288</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00332">332</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -595,7 +595,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00202">202</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00246">246</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -624,7 +624,7 @@ Private Attributes</h2></td></tr>
 
 <p>Set the origin of the local coordinate system from the GPS starting position or given parameter. </p>
 
-<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00247">247</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area_8cpp_source.html#l00291">291</a> of file <a class="el" href="area_8cpp_source.html">area.cpp</a>.</p>
 
 </div>
 </div>
@@ -926,7 +926,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Tue Oct 5 2021 10:05:56</small>
+<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
 </div>
 </body>
 </html>

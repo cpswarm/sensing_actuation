@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 
     // advertise services general for all rois
     ServiceServer get_closest_service  = nh.advertiseService("rois/get_closest",  &rois::get_closest, &rois_lib);
+    ServiceServer reload_service  = nh.advertiseService("rois/reload",  &rois::reload, &rois_lib);
 
     // advertise services per roi
     for (auto roi : rois_lib.get_rois()) {

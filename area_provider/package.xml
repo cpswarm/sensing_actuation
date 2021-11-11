@@ -54,6 +54,7 @@
     <depend>nlohmann_json</depend>
     <depend>roscpp</depend>
     <depend>roslib</depend>
+    <depend>std_srvs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>

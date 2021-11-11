@@ -10,6 +10,7 @@ add_compile_options(-std=c++17)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslib
+  std_srvs
   geometry_msgs
   nav_msgs
   cpswarm_msgs

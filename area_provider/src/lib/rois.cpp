@@ -34,6 +34,20 @@ map<int,roi> rois::get_rois ()
     return regions;
 }
 
+bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
+{
+    // reset old rois
+    if (req.data)
+        regions.clear();
+
+    // import rois from files
+    from_file();
+
+    res.success = true;
+
+    return true;
+}
+
 void rois::add_roi (vector<geometry_msgs::Point> coords)
 {
     if (coords.size() > 3) {
