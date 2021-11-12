@@ -5,7 +5,10 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <ros/package.h>
+#include <std_msgs/MultiArrayDimension.h>
+#include <std_msgs/MultiArrayLayout.h>
 #include <std_srvs/SetBool.h>
+#include <cpswarm_msgs/GetMultiPoints.h>
 #include <cpswarm_msgs/PointArrayEvent.h>
 #include "lib/roi.h"
 
@@ -21,6 +24,14 @@ public:
      * @brief Constructor that initializes the ROIs.
      */
     rois ();
+
+    /**
+     * @brief Return all ROIs
+     * @param req Empty request.
+     * @param res The coordinates of the ROI boundaries.
+     * @return Whether the request succeeded.
+     */
+    bool get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res);
 
     /**
      * @brief Return the closest ROI.

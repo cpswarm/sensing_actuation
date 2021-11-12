@@ -11,6 +11,71 @@ rois::rois ()
     from_file();
 }
 
+bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res)
+{
+    // empty request for area service to get coordinates
+    cpswarm_msgs::GetPoints::Request request;
+    cpswarm_msgs::GetPoints::Response response;
+
+    // collection of all roi coordinates
+    vector<vector<geometry_msgs::Point>> coords;
+
+    // maximum number of coordinates of any roi
+    int max_num_coords = 0;
+
+    // iterate all rois
+    for (auto roi : regions) {
+        // call area service to get coordinates
+        roi.second.get_area(request, response);
+
+        // store maximum number of coordinates
+        if (response.points.size() > max_num_coords)
+            max_num_coords = response.points.size();
+
+        // append coordinates
+        coords.push_back(response.points);
+    }
+
+    // pad all rois with empty coordinates at the end
+    geometry_msgs::Point empty;
+    for (vector<vector<geometry_msgs::Point>>::iterator roi = coords.begin() ; roi != coords.end(); ++roi) {
+        for (int i=0; i<max_num_coords-roi->size(); ++i) {
+            roi->push_back(empty);
+        }
+    }
+
+    // flatten roi coordinates
+    vector<geometry_msgs::Point> coords_flat;
+    for (auto roi : coords) {
+        coords_flat.insert(coords_flat.end(), roi.begin(), roi.end());
+    }
+
+    // define multi-array layout
+    vector<std_msgs::MultiArrayDimension> dim;
+
+    std_msgs::MultiArrayDimension dim0;
+    dim0.label = "roi";
+    dim0.size = coords.size();
+    dim0.stride = coords.size() * max_num_coords;
+    dim.push_back(dim0);
+
+    std_msgs::MultiArrayDimension dim1;
+    dim1.label = "coords";
+    dim1.size = max_num_coords;
+    dim1.stride = max_num_coords;
+    dim.push_back(dim1);
+
+    std_msgs::MultiArrayLayout layout;
+    layout.dim = dim;
+    layout.data_offset = 0;
+
+    // create service response
+    res.layout = layout;
+    res.points = coords_flat;
+
+    return true;
+}
+
 bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
 {
     cpswarm_msgs::GetDist::Response closest;

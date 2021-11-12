@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     rois rois_lib;
 
     // advertise services general for all rois
+    ServiceServer get_all  = nh.advertiseService("rois/get_all",  &rois::get_all, &rois_lib);
     ServiceServer get_closest_service  = nh.advertiseService("rois/get_closest",  &rois::get_closest, &rois_lib);
     ServiceServer reload_service  = nh.advertiseService("rois/reload",  &rois::reload, &rois_lib);
 
