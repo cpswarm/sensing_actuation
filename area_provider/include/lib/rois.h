@@ -58,9 +58,10 @@ public:
 private:
     /**
      * @brief Add an ROI.
-     * @param coords A vector of the ROI coordinates.
+     * @param x A vector of the ROI x-coordinates.
+     * @param y A vector of the ROI y-coordinates.
      */
-    void add_roi (vector<geometry_msgs::Point> coords);
+    void add_roi (vector<double> x, vector<double> y);
 
     /**
      * @brief Read ROI coordinates from files at the folder specified with the `roi_dir` param.
@@ -69,7 +70,7 @@ private:
 
     /**
      * @brief Receive ROI coordinates from an event message.
-     * @param event A pointer to the event holding a vector of coordinates (points).
+     * @param event A pointer to the event holding a vector of coordinates.
      */
     void roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event);
 
@@ -84,9 +85,19 @@ private:
     Subscriber roi_subscriber;
 
     /**
+     * @brief Event publisher for ROI coordinates.
+     */
+    Publisher roi_publisher;
+
+    /**
      * @brief All ROIs with IDs.
      */
     map<int,roi> regions;
+
+    /**
+     * @brief Whether to publish any newly imported ROI as event.
+     */
+    bool publish;
 };
 
 #endif // ROIS_H

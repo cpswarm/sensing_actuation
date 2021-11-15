@@ -7,6 +7,11 @@ rois::rois ()
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
 
+    // publish new rois
+    nh.param(this_node::getName() + "/publish", publish, false);
+    if (publish)
+        roi_publisher = nh.advertise<cpswarm_msgs::PointArrayEvent>("rois/roi", queue_size, true); // latched
+
     // import rois from files
     from_file();
 }
@@ -113,16 +118,33 @@ bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response&
     return true;
 }
 
-void rois::add_roi (vector<geometry_msgs::Point> coords)
+void rois::add_roi (vector<double> x, vector<double> y)
 {
-    if (coords.size() > 3) {
-        roi roi(coords);
-        ROS_INFO("Added ROI #%lu: %lu coordinates", regions.size(), coords.size());
-        regions.emplace(regions.size(), roi);
+    // equal number of x and y coordinates required
+    if (x.size() != y.size()) {
+        ROS_ERROR("Cannot add ROI %lu, number of x and y coordinates do not match (%lu != %lu)", regions.size(), x.size(), y.size());
+    }
+
+    // not enough coordinates
+    else if (x.size() < 3) {
+        ROS_ERROR("Cannot add ROI %lu, not enough coordinates: %lu", regions.size(), x.size());
     }
 
     else {
-        ROS_ERROR("Cannot add ROI %lu, not enough coordinates: %lu", regions.size(), coords.size());
+        // add roi
+        roi roi(x, y);
+        ROS_INFO("Added ROI #%lu: %lu coordinates", regions.size(), x.size());
+        regions.emplace(regions.size(), roi);
+
+        // publish roi
+        if (publish) {
+            cpswarm_msgs::PointArrayEvent event;
+            event.header.stamp = Time::now();
+            event.swarmio.name = "roi";
+            event.x = x;
+            event.y = y;
+            roi_publisher.publish(event);
+        }
     }
 }
 
@@ -167,22 +189,20 @@ void rois::from_file ()
 
                 // extract coordinates
                 ROS_DEBUG("Extract ROI coordinates from %s...", roi_file_name.c_str());
-                vector<geometry_msgs::Point> coords;
+                vector<double> x;
+                vector<double> y;
                 for (auto c : roi_json["mission"]["items"]) {
                     if (c["params"].size() < 7) {
                         ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7!", roi_file_name.c_str());
                         break;
                     }
-                    geometry_msgs::Point coord;
-                    coord.x = c["params"][4];
-                    coord.y = c["params"][5];
-                    coord.z = c["params"][6];
-                    coords.push_back(coord);
+                    x.push_back(c["params"][4]);
+                    y.push_back(c["params"][5]);
                 }
 
                 // create roi object
                 ROS_INFO("Add ROI #%lu from file %s", regions.size(), roi_file_name.c_str());
-                add_roi(coords);
+                add_roi(x, y);
             }
 
             catch (json::exception &e) {
@@ -204,5 +224,5 @@ void rois::roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event)
 {
     // create roi object
     ROS_INFO("Received ROI #%lu from swarm member %s", regions.size(), event->swarmio.node.c_str());
-    add_roi(event->points);
+    add_roi(event->x, event->y);
 }

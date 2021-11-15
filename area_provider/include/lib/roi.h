@@ -11,9 +11,10 @@ class roi : public area
 public:
     /**
      * @brief Constructor that initializes ROI coordinates.
-     * @param raw_coords The coordinates of the ROI, can be global (GPS) or local coordinates.
+     * @param x The x-coordinates of the ROI, can be global (GPS) or local coordinates.
+     * @param y The y-coordinates of the ROI, can be global (GPS) or local coordinates.
      */
-    roi (vector<geometry_msgs::Point> raw_coords);
+    roi (vector<double> x, vector<double> y);
 };
 
 #endif // ROI_H
