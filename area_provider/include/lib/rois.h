@@ -64,6 +64,14 @@ private:
     void add_roi (vector<double> x, vector<double> y);
 
     /**
+     * @brief Check whether a given ROI is already known.
+     *
+     * @param roi The ROI to check.
+     * @return True, if the coordinates of the given ROI are identical with an existing ROI. False otherwise.
+     */
+    bool exists (roi roi);
+
+    /**
      * @brief Read ROI coordinates from files at the folder specified with the `roi_dir` param.
      */
     void from_file ();
@@ -93,6 +101,11 @@ private:
      * @brief All ROIs with IDs.
      */
     map<int,roi> regions;
+
+    /**
+     * @brief Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
+     */
+    bool duplicates;
 
     /**
      * @brief Whether to publish any newly imported ROI as event.

@@ -2,9 +2,12 @@
 
 rois::rois ()
 {
-    // get rois from incoming event messages
+    // read parameters
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/duplicates", duplicates, false);
+
+    // get rois from incoming event messages
     roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
 
     // publish new rois
@@ -133,6 +136,13 @@ void rois::add_roi (vector<double> x, vector<double> y)
     else {
         // add roi
         roi roi(x, y);
+
+        // check if roi already exists
+        if (duplicates == false && exists(roi)) {
+            ROS_INFO("Skipped ROI #%lu (%lu coordinates), already existing", regions.size(), x.size());
+            return;
+        }
+
         ROS_INFO("Added ROI #%lu: %lu coordinates", regions.size(), x.size());
         regions.emplace(regions.size(), roi);
 
@@ -146,6 +156,18 @@ void rois::add_roi (vector<double> x, vector<double> y)
             roi_publisher.publish(event);
         }
     }
+}
+
+bool rois::exists (roi roi)
+{
+    // look through all regions
+    for (auto r : regions) {
+        if (r.second == roi)
+            return true;
+    }
+
+    // no matching region found
+    return false;
 }
 
 void rois::from_file ()
@@ -201,7 +223,7 @@ void rois::from_file ()
                 }
 
                 // create roi object
-                ROS_INFO("Add ROI #%lu from file %s", regions.size(), roi_file_name.c_str());
+                ROS_INFO("Add ROI #%lu from file %s...", regions.size(), roi_file_name.c_str());
                 add_roi(x, y);
             }
 

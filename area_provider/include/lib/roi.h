@@ -15,6 +15,13 @@ public:
      * @param y The y-coordinates of the ROI, can be global (GPS) or local coordinates.
      */
     roi (vector<double> x, vector<double> y);
+
+    /**
+     * @brief Compare two ROIs.
+     * @param other The other ROI to compare to this one.
+     * @returns True, if both ROIs have the same coordinates, false otherwise.
+     */
+    bool operator== (const roi other);
 };
 
 #endif // ROI_H
