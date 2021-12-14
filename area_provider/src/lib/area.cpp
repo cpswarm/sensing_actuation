@@ -123,55 +123,32 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     return true;
 }
 
-bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
+bool area::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res)
 {
     if (map_exists == false && create_map == false)
         ROS_WARN("Providing empty map!");
+
+    // get/create original map
     res.map = get_gridmap();
+
+    // rotate map if requested
+    if (req.rotate)
+        res.rotation = rotate(res.map);
+
+    // downsample resolution if requested
+    if (req.resolution > 0 && req.resolution < res.map.info.resolution)
+        downsample(res.map, req.resolution);
+
+    // translate map if requested
+    if (req.translate)
+        res.translation = translate(res.map);
+
     return true;
 }
 
 bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
 {
     res.point = origin;
-    return true;
-}
-
-bool area::get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res)
-{
-    // get coordinates
-    geometry_msgs::Point pl, pb, pr;
-    pl.x = numeric_limits<double>::max();
-    pb.y = numeric_limits<double>::max();
-    pr.x = numeric_limits<double>::min();
-    for (auto p : coords) {
-        // left most point
-        if (p.x < pl.x || (p.x == pl.x && p.y < pl.y))
-            pl = p;
-
-        // bottom most point
-        if (p.y < pb.y)
-            pb = p;
-
-        // right most point
-        if (p.x > pr.x || (p.x == pr.x && p.y < pr.y))
-            pr = p;
-    }
-
-    // no rotation required
-    if ((pl.x == pb.x && pl.y == pb.y) || (pr.x == pb.x && pr.y == pb.y))
-        return false;
-
-    // rotate clockwise
-    if (pr.y < pl.y) {
-        res.value = -atan2(pr.y - pb.y, pr.x - pb.x);
-    }
-
-    // rotate counter clockwise
-    else {
-        res.value = -atan2(pb.y - pl.y, pb.x - pl.x);
-    }
-
     return true;
 }
 
@@ -200,6 +177,77 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
         res.out = false;
 
     return true;
+}
+
+void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
+{
+    // do not increase resolution
+    if (map.info.resolution >= resolution)
+        return;
+
+    // reduction factor
+    int f = int(round(resolution / map.info.resolution));
+
+    ROS_DEBUG("Downsample map by %d...", f);
+
+    // downsample map data
+    vector<signed char> lr;
+    for (int i=0; i+f<=map.info.height; i+=f) {
+        for (int j=0; j+f<=map.info.width; j+=f) {
+            // count frequency of map data values
+            vector<unsigned int> values(256, 0);
+            for (int m=i; m<i+f; ++m) {
+                for (int n=j; n<j+f; ++n) {
+                    values[map.data[m*map.info.width + n]]++;
+                }
+            }
+
+            // choose value with highest frequency
+            unsigned char value = 0;
+            unsigned int freq = 0;
+            for (int k=0; k<values.size(); ++k) {
+                if (values[k] > freq) {
+                    value = k;
+                    freq = values[k];
+                }
+            }
+
+            // push back most seen value
+            lr.push_back(value);
+        }
+    }
+    map.data = lr;
+
+    // update meta data
+    map.info.map_load_time = Time::now();
+    map.info.resolution = resolution;
+    map.info.width = int(floor(double(map.info.width) / double(f)));
+    map.info.height = int(floor(double(map.info.height) / double(f)));
+
+    // remove rows with obstacles only
+    for (int i=0; i<map.info.height; ++i) {
+        // count number of occupied cells in a row
+        int obst = 0;
+        for (int j=0; j<map.info.width; ++j) {
+            if (map.data[i*map.info.width + j] == 100) {
+                ++obst;
+            }
+        }
+
+        // remove row
+        if (obst == map.info.width) {
+            // delete grid cells
+            map.data.erase(map.data.begin() + i*map.info.width, map.data.begin() + (i+1)*map.info.width);
+
+            // update meta data
+            map.info.map_load_time = Time::now();
+            --map.info.height;
+            map.info.origin.position.y += map.info.resolution;
+
+            // stay in current row
+            --i;
+        }
+    }
 }
 
 nav_msgs::OccupancyGrid area::get_gridmap ()
@@ -288,6 +336,115 @@ void area::global_to_local ()
     coords = local;
 }
 
+double area::rotate (nav_msgs::OccupancyGrid& map)
+{
+    // determine angle to rotate by
+    double angle;
+
+    // determine extreme coordinates
+    geometry_msgs::Point pl, pb, pr;
+    pl.x = numeric_limits<double>::max();
+    pb.y = numeric_limits<double>::max();
+    pr.x = numeric_limits<double>::min();
+    for (auto p : coords) {
+        // left most point
+        if (p.x < pl.x || (p.x == pl.x && p.y < pl.y))
+            pl = p;
+
+        // bottom most point
+        if (p.y < pb.y)
+            pb = p;
+
+        // right most point
+        if (p.x > pr.x || (p.x == pr.x && p.y < pr.y))
+            pr = p;
+    }
+
+    // no rotation required
+    if ((pl.x == pb.x && pl.y == pb.y) || (pr.x == pb.x && pr.y == pb.y))
+        return 0;
+
+    // rotate clockwise
+    if (pr.y < pl.y)
+        angle = -atan2(pr.y - pb.y, pr.x - pb.x);
+
+    // rotate counter clockwise
+    else
+        angle = -atan2(pb.y - pl.y, pb.x - pl.x);
+
+    ROS_DEBUG("Rotate map by %.2f...", angle);
+
+    // rotate origin
+    geometry_msgs::Pose origin_new;
+    origin_new.position.x = map.info.origin.position.x*cos(angle) - map.info.origin.position.y*sin(angle);
+    origin_new.position.y = map.info.origin.position.x*sin(angle) + map.info.origin.position.y*cos(angle);
+
+    // create empty rotated map extra large
+    vector<vector<signed char>> rt;
+    for (int i=0; i<2*map.info.height; ++i) {
+        vector<signed char> row(2*map.info.width, 100);
+        rt.push_back(row);
+    }
+
+    // rotate map
+    int i_new, j_new, width_new=0, height_new=0;
+    double x, y, x_new, y_new;
+    for (int i=0; i<map.info.height; ++i) {
+        for (int j=0; j<map.info.width; ++j) {
+            // rotate coordinates
+            x = double(j) * map.info.resolution + map.info.origin.position.x;
+            y = double(i) * map.info.resolution + map.info.origin.position.y;
+            x_new = x*cos(angle) - y*sin(angle);
+            y_new = x*sin(angle) + y*cos(angle);
+            j_new = int(round((x_new - origin_new.position.x) / map.info.resolution));
+            i_new = int(round((y_new - origin_new.position.y) / map.info.resolution));
+
+            // skip negative indexes
+            if (i_new >= rt.size()) {
+                continue;
+            }
+            if (j_new >= rt[i_new].size()) {
+                continue;
+            }
+
+            // assign grid cell value
+            rt[i_new][j_new] = map.data[i*map.info.width + j];
+
+            // measure maximum required size
+            if (rt[i_new][j_new] == 0) {
+                if (i_new > height_new)
+                    height_new = i_new;
+                if (j_new > width_new)
+                    width_new = j_new;
+            }
+        }
+    }
+
+    // truncate rotated map
+    rt.resize(height_new);
+    for (int i=0; i<rt.size(); ++i)
+        rt[i].resize(width_new);
+
+    // collapse map to one dimensional vector
+    vector<signed char> rt_col;
+    for (int i=0; i<rt.size(); ++i) {
+        for (int j=0; j<rt[i].size(); ++j) {
+            rt_col.push_back(rt[i][j]);
+        }
+    }
+
+    // assign map data
+    map.data = rt_col;
+
+    // update meta data
+    map.info.map_load_time = Time::now();
+    map.info.width = width_new;
+    map.info.height= height_new;
+    map.info.origin = origin_new;
+
+    return angle;
+}
+
 void area::set_origin ()
 {
     if (global) {
@@ -319,6 +476,24 @@ void area::set_origin ()
         origin.x = x;
         origin.y = y;
     }
+}
+
+geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
+{
+    // compute required translation
+    geometry_msgs::Vector3 translation;
+    translation.x = round(map.info.origin.position.x) - map.info.origin.position.x;
+    translation.y = round(map.info.origin.position.y) - map.info.origin.position.y;
+    ROS_DEBUG("Translate map by (%.2f,%.2f)...", translation.x, translation.y);
+
+    // translate origin
+    map.info.origin.position.x += translation.x;
+    map.info.origin.position.y += translation.y;
+
+    // update meta data
+    map.info.map_load_time = Time::now();
+
+    return translation;
 }
 
 bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)

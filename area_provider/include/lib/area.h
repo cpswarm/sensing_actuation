@@ -3,8 +3,9 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/GetMap.h>
+#include <cpswarm_msgs/GetMap.h>
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/GetGpsFix.h"
 #include "cpswarm_msgs/GetPoints.h"
@@ -53,11 +54,11 @@ public:
 
     /**
      * @brief Return the map that represents the area.
-     * @param req Empty request.
+     * @param req Empty request. TODO
      * @param res The grid map of the environment.
      * @return Whether the request succeeded.
      */
-    bool get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res);
+    bool get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res);
 
     /**
      * @brief Return the origin of the coordinate system.
@@ -68,14 +69,6 @@ public:
     bool get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
-     * @brief Get the rotation of the area given by coordinates. Assuming a quadrilateral.
-     * @param req Empty request.
-     * @param res The angle that the bottom edge of the area is rotated with respect to the x-axis.
-     * @return Whether the request succeeded.
-     */
-    bool get_rotation (cpswarm_msgs::GetDouble::Request &req, cpswarm_msgs::GetDouble::Response &res);
-
-    /**
      * @brief Determine whether a position is within the area using the winding number algorithm.
      * @param req The position to check.
      * @param res True, if the position is outside of the area, false otherwise.
@@ -84,6 +77,13 @@ public:
     bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
 protected:
+    /**
+     * @brief Decrease the resolution of an occupancy grid map.
+     * @param map A reference to the occupancy grid map to downsample.
+     * @param resolution The desired resolution in meters per cell.
+     */
+    void downsample (nav_msgs::OccupancyGrid& map, double resolution);
+
     /**
      * @brief Generate a grid map from the given area coordinates.
      * @return A grid map that represents the area.
@@ -96,9 +96,23 @@ protected:
     void global_to_local ();
 
     /**
+     * @brief Rotate the area to make the bottom edge horizontal. Assuming a quadrilateral.
+     * @param map A reference to the occupancy grid map to rotate.
+     * @return The angle that the area has been rotated, counter-clockwise, starting from x-axis.
+     */
+    double rotate (nav_msgs::OccupancyGrid& map);
+
+    /**
      * @brief Set the origin of the local coordinate system from the GPS starting position or given parameter.
      */
     void set_origin ();
+
+    /**
+     * @brief Shift a map to be aligned with the grid, i.e., the origin should be an even number.
+     * @param map A reference to the occupancy grid map to shift.
+     * @return A vector that specifies the amount that the map has been shifted in x and y direction.
+     */
+    geometry_msgs::Vector3 translate (nav_msgs::OccupancyGrid& map);
 
     /**
      * @brief A node handle for the main ROS node.
