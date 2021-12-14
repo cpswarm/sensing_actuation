@@ -52,12 +52,6 @@ public:
     bool get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res);
 
     /**
-     * @brief Generate a grid map from the given area coordinates.
-     * @return A grid map that represents the area.
-     */
-    nav_msgs::OccupancyGrid get_gridmap ();
-
-    /**
      * @brief Return the map that represents the area.
      * @param req Empty request.
      * @param res The grid map of the environment.
@@ -90,6 +84,12 @@ public:
     bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
 protected:
+    /**
+     * @brief Generate a grid map from the given area coordinates.
+     * @return A grid map that represents the area.
+     */
+    nav_msgs::OccupancyGrid get_gridmap ();
+
     /**
      * @brief Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.
      */

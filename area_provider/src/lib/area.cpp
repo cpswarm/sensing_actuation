@@ -123,74 +123,6 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     return true;
 }
 
-nav_msgs::OccupancyGrid area::get_gridmap ()
-{
-    // no map existing yet, i.e., no map server
-    if (map_exists == false && create_map == true) {
-        // get coordinates
-        double xmin = numeric_limits<double>::max();
-        double xmax = numeric_limits<double>::min();
-        double ymin = numeric_limits<double>::max();
-        double ymax = numeric_limits<double>::min();
-        for (auto p : coords) {
-            if (p.x < xmin)
-                xmin = p.x;
-            if (p.x > xmax)
-                xmax = p.x;
-            if (p.y < ymin)
-                ymin = p.y;
-            if (p.y > ymax)
-                ymax = p.y;
-        }
-        int x = int(ceil((xmax - xmin) / resolution));
-        int y = int(ceil((ymax - ymin) / resolution));
-
-        // warn about large grids
-        if (x*y > cell_warn)
-            ROS_WARN("Given coordinates seem wrong, grid map extremley large: %d cells!", x*y);
-
-        // generate grid map data
-        cpswarm_msgs::OutOfBounds::Request req;
-        cpswarm_msgs::OutOfBounds::Response res;
-        vector<int8_t> data;
-        for (int i=0; i<y; ++i) { // row major order
-            for (int j=0; j<x; ++j) {
-                // check if cell is within area
-                req.pose.position.x = j * resolution + xmin;
-                req.pose.position.y = i * resolution + ymin;
-                out_of_bounds(req, res);
-
-                // out of bounds
-                if (res.out)
-                    data.push_back(100); // occupied
-
-                // inside area
-                else
-                    data.push_back(0); // free
-            }
-        }
-        map.data = data;
-
-        // set map header
-        map.header.stamp = Time::now();
-        map.header.frame_id = "map";
-
-        // set map meta data
-        map.info.map_load_time == Time::now();
-        map.info.resolution = resolution;
-        map.info.width = x;
-        map.info.height = y;
-
-        // position of cell (0,0)
-        map.info.origin.position.x = xmin;
-        map.info.origin.position.y = ymin;
-
-        map_exists = true;
-    }
-
-    return map;
-}
-
 bool area::get_map (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 {
     if (map_exists == false && create_map == false)
@@ -268,6 +200,74 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
         res.out = false;
 
     return true;
+}
+
+nav_msgs::OccupancyGrid area::get_gridmap ()
+{
+    // no map existing yet, i.e., no map server
+    if (map_exists == false && create_map == true) {
+        // get coordinates
+        double xmin = numeric_limits<double>::max();
+        double xmax = numeric_limits<double>::min();
+        double ymin = numeric_limits<double>::max();
+        double ymax = numeric_limits<double>::min();
+        for (auto p : coords) {
+            if (p.x < xmin)
+                xmin = p.x;
+            if (p.x > xmax)
+                xmax = p.x;
+            if (p.y < ymin)
+                ymin = p.y;
+            if (p.y > ymax)
+                ymax = p.y;
+        }
+        int x = int(ceil((xmax - xmin) / resolution));
+        int y = int(ceil((ymax - ymin) / resolution));
+
+        // warn about large grids
+        if (x*y > cell_warn)
+            ROS_WARN("Given coordinates seem wrong, grid map extremley large: %d cells!", x*y);
+
+        // generate grid map data
+        cpswarm_msgs::OutOfBounds::Request req;
+        cpswarm_msgs::OutOfBounds::Response res;
+        vector<int8_t> data;
+        for (int i=0; i<y; ++i) { // row major order
+            for (int j=0; j<x; ++j) {
+                // check if cell is within area
+                req.pose.position.x = j * resolution + xmin;
+                req.pose.position.y = i * resolution + ymin;
+                out_of_bounds(req, res);
+
+                // out of bounds
+                if (res.out)
+                    data.push_back(100); // occupied
+
+                // inside area
+                else
+                    data.push_back(0); // free
+            }
+        }
+        map.data = data;
+
+        // set map header
+        map.header.stamp = Time::now();
+        map.header.frame_id = "map";
+
+        // set map meta data
+        map.info.map_load_time == Time::now();
+        map.info.resolution = resolution;
+        map.info.width = x;
+        map.info.height = y;
+
+        // position of cell (0,0)
+        map.info.origin.position.x = xmin;
+        map.info.origin.position.y = ymin;
+
+        map_exists = true;
+    }
+
+    return map;
 }
 
 void area::global_to_local ()
