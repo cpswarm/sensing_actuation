@@ -18,6 +18,10 @@ area::area ()
         ROS_DEBUG("Wait for fix_to_pose service...");
         fix_to_pose_client.waitForExistence();
     }
+
+    // map has not yet been modified
+    map_is_rotated = false;
+    map_downsampled_resolution = -1;
 }
 
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
@@ -181,6 +185,10 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
 
 void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
 {
+    // use cached map
+    if (map_downsampled_resolution = resolution)
+        map = map_downsampled;
+
     // do not increase resolution
     if (map.info.resolution >= resolution)
         return;
@@ -248,6 +256,10 @@ void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
             --i;
         }
     }
+
+    // cache downsampled map
+    map_downsampled_resolution = resolution;
+    map_downsampled = map;
 }
 
 nav_msgs::OccupancyGrid area::get_gridmap ()
@@ -338,6 +350,10 @@ void area::global_to_local ()
 
 double area::rotate (nav_msgs::OccupancyGrid& map)
 {
+    // use cached map
+    if (map_is_rotated)
+        map = map_rotated;
+
     // determine angle to rotate by
     double angle;
 
@@ -441,6 +457,10 @@ double area::rotate (nav_msgs::OccupancyGrid& map)
     map.info.width = width_new;
     map.info.height= height_new;
     map.info.origin = origin_new;
+
+    // cache rotated map
+    map_is_rotated = true;
+    map_rotated = map;
 
     return angle;
 }

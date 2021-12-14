@@ -135,9 +135,29 @@ protected:
     bool create_map;
 
     /**
+     * @brief Map has been rotated.
+     */
+    bool map_is_rotated;
+
+    /**
+     * @brief Resolution of the downsampled map.
+     */
+    double map_downsampled_resolution;
+
+    /**
     /**@brief The grid map representing the area.
      */
     nav_msgs::OccupancyGrid map;
+
+    /**
+    /* @brief The grid map representing the rotated area.
+     */
+    nav_msgs::OccupancyGrid map_rotated;
+
+    /**
+    /* @brief The grid map representing the rotated and downsampled area.
+     */
+    nav_msgs::OccupancyGrid map_downsampled;
 
     /**
      * @brief The coordinates of the area.

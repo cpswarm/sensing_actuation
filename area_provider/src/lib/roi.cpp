@@ -28,6 +28,9 @@ roi::roi (vector<double> x, vector<double> y)
         // set origin
         set_origin();
     }
+
+    // gridmap still needs to be created
+    map_exists = false;
 }
 
 bool roi::operator== (const roi other)
