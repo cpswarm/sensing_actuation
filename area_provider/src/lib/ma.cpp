@@ -23,9 +23,6 @@ ma::ma ()
         rate.sleep();
     }
 
-    // mission area coordinates
-    vector<pair<double,double>> raw_coords;
-
     // there is a map, extract it's coordinates
     if (map_exists)
         map_to_coords();
@@ -52,23 +49,24 @@ ma::ma ()
 void ma::map_to_coords ()
 {
     // extract coordinates from map
-    geometry_msgs::Point c;
+    pair<double,double> c;
 
     // bottom left
-    c = map.info.origin.position;
-    coords.push_back(c);
+    c.first = map.info.origin.position.x;
+    c.second = map.info.origin.position.y;
+    coords.insert(c);
 
     // bottom right
-    c.x += map.info.width * map.info.resolution;
-    coords.push_back(c);
+    c.first += map.info.width * map.info.resolution;
+    coords.insert(c);
 
     // top right
-    c.y += map.info.height * map.info.resolution;
-    coords.push_back(c);
+    c.first += map.info.height * map.info.resolution;
+    coords.insert(c);
 
     // top left
-    c.x = map.info.origin.position.x;
-    coords.push_back(c);
+    c.first = map.info.origin.position.x;
+    coords.insert(c);
 }
 
 void ma::read_coords ()
@@ -85,10 +83,10 @@ void ma::read_coords ()
 
     // store area coordinates in right format
     for (int i = 0; i < area_x.size(); ++i) {
-        geometry_msgs::Point c;
-        c.x = area_x[i];
-        c.y = area_y[i];
-        coords.push_back(c);
+        pair<double,double> c;
+        c.first = area_x[i];
+        c.second = area_y[i];
+        coords.insert(c);
     }
 }
 

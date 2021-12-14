@@ -162,7 +162,7 @@ protected:
     /**
      * @brief The coordinates of the area.
      */
-    vector<geometry_msgs::Point> coords;
+    set<pair<double,double>> coords;
 
     /**
      * @brief Whether global (GPS) or local coordinates are used as source.
@@ -177,7 +177,7 @@ private:
      * @param p2 Point to test.
      * @return True, if the point is left of the line, false otherwise.
      */
-    bool is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
+    bool is_left (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2);
 
     /**
      * @brief Test whether a point is right of an infinite line.
@@ -186,7 +186,7 @@ private:
      * @param p2 Point to test.
      * @return True, if the point is right of the line, false otherwise.
      */
-    bool is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);
+    bool is_right (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2);
 
     /**
      * @brief Service client to convert global (GPS) coordinates to the local coordinate system.

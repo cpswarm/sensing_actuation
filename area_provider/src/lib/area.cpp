@@ -26,7 +26,12 @@ area::area ()
 
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
-    res.points = coords;
+    for (auto c : coords) {
+        geometry_msgs::Point p;
+        p.x = c.first;
+        p.y = c.second;
+        res.points.push_back(p);
+    }
     return true;
 }
 
@@ -34,8 +39,8 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 {
     // compute centroid / barycenter
     for (auto c : coords) {
-        res.point.x += c.x;
-        res.point.y += c.y;
+        res.point.x += c.first;
+        res.point.y += c.second;
     }
     res.point.x /= coords.size();
     res.point.y /= coords.size();
@@ -50,26 +55,26 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     geometry_msgs::Point p0;
 
     // use origin
-    if (req.point.x == 0 && req.point.y == 0) {
-        p0.x = origin.x;
-        p0.y = origin.y;
-    }
+    if (req.point.x == 0 && req.point.y == 0)
+        p0 = origin;
 
     // use given point
-    else {
-        p0.x = req.point.x;
-        p0.y = req.point.y;
-    }
+    else
+        p0 = req.point;
 
     // find minimal distance to any area bound
-    for (int i = 0; i < coords.size(); ++i) {
+    set<pair<double,double>>::iterator ne;
+    for (set<pair<double,double>>::iterator it = coords.begin(); it != coords.end(); ++it) {
         // coordinates of two neighboring polygon points
         geometry_msgs::Point p1;
-        p1.x = coords[i].x;
-        p1.y = coords[i].y;
+        p1.x = it->first;
+        p1.y = it->second;
         geometry_msgs::Point p2;
-        p2.x = coords[(i+1)%coords.size()].x;
-        p2.y = coords[(i+1)%coords.size()].y;
+        ne = next(it);
+        if (ne == coords.end())
+            ne = coords.begin();
+        p2.x = ne->first;
+        p2.y = ne->second;
 
         // minimal distance to line connecting the two points
         geometry_msgs::Point p02;
@@ -158,17 +163,28 @@ bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 
 bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
 {
+    // request's position
+    pair<double,double> pos;
+    pos.first = req.pose.position.x;
+    pos.second = req.pose.position.y;
+
     // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
     int wn = 0;
 
     // loop through all edges of the polygon
-    for (int i = 0; i < coords.size(); ++i) {
+    set<pair<double,double>>::iterator ne;
+    for (set<pair<double,double>>::iterator it = coords.begin(); it != coords.end(); ++it) {
+        // next element in set
+        ne = next(it);
+        if (ne == coords.end())
+            ne = coords.begin();
+
         // ray crosses upward edge
-        if (coords[i].y <= req.pose.position.y && coords[(i+1)%coords.size()].y  > req.pose.position.y && is_left(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+        if (it->second <= req.pose.position.y && ne->second  > req.pose.position.y && is_left(*it, *ne, pos))
             ++wn;
 
         // ray crosses downward edge
-        else if (coords[i].y > req.pose.position.y && coords[(i+1)%coords.size()].y  <= req.pose.position.y && is_right(coords[i], coords[(i+1)%coords.size()], req.pose.position))
+        else if (it->second > req.pose.position.y && ne->second  <= req.pose.position.y && is_right(*it, *ne, pos))
             --wn;
     }
 
@@ -272,14 +288,14 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         double ymin = numeric_limits<double>::max();
         double ymax = numeric_limits<double>::min();
         for (auto p : coords) {
-            if (p.x < xmin)
-                xmin = p.x;
-            if (p.x > xmax)
-                xmax = p.x;
-            if (p.y < ymin)
-                ymin = p.y;
-            if (p.y > ymax)
-                ymax = p.y;
+            if (p.first < xmin)
+                xmin = p.first;
+            if (p.first > xmax)
+                xmax = p.first;
+            if (p.second < ymin)
+                ymin = p.second;
+            if (p.second > ymax)
+                ymax = p.second;
         }
         int x = int(ceil((xmax - xmin) / resolution));
         int y = int(ceil((ymax - ymin) / resolution));
@@ -335,12 +351,12 @@ void area::global_to_local ()
     cpswarm_msgs::FixToPose f2p;
 
     // convert given area to local coordinates
-    vector<geometry_msgs::Point> local;
+    set<pair<double,double>> local;
     for (auto c : coords) {
-        f2p.request.fix.longitude = c.x;
-        f2p.request.fix.latitude = c.y;
+        f2p.request.fix.longitude = c.first;
+        f2p.request.fix.latitude = c.second;
         if (fix_to_pose_client.call(f2p)) {
-            local.push_back(f2p.response.pose.pose.position);
+            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y);
         }
         else
             ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
@@ -358,35 +374,35 @@ double area::rotate (nav_msgs::OccupancyGrid& map)
     double angle;
 
     // determine extreme coordinates
-    geometry_msgs::Point pl, pb, pr;
-    pl.x = numeric_limits<double>::max();
-    pb.y = numeric_limits<double>::max();
-    pr.x = numeric_limits<double>::min();
+    pair<double,double> pl, pb, pr;
+    pl.first = numeric_limits<double>::max();
+    pb.second = numeric_limits<double>::max();
+    pr.first = numeric_limits<double>::min();
     for (auto p : coords) {
         // left most point
-        if (p.x < pl.x || (p.x == pl.x && p.y < pl.y))
+        if (p.first < pl.first || (p.first == pl.first && p.second < pl.second))
             pl = p;
 
         // bottom most point
-        if (p.y < pb.y)
+        if (p.second < pb.second)
             pb = p;
 
         // right most point
-        if (p.x > pr.x || (p.x == pr.x && p.y < pr.y))
+        if (p.first > pr.first || (p.first == pr.first && p.second < pr.second))
             pr = p;
     }
 
     // no rotation required
-    if ((pl.x == pb.x && pl.y == pb.y) || (pr.x == pb.x && pr.y == pb.y))
+    if ((pl.first == pb.first && pl.second == pb.second) || (pr.first == pb.first && pr.second == pb.second))
         return 0;
 
     // rotate clockwise
-    if (pr.y < pl.y)
-        angle = -atan2(pr.y - pb.y, pr.x - pb.x);
+    if (pr.second < pl.second)
+        angle = -atan2(pr.second - pb.second, pr.first - pb.first);
 
     // rotate counter clockwise
     else
-        angle = -atan2(pb.y - pl.y, pb.x - pl.x);
+        angle = -atan2(pb.second - pl.second, pb.first - pl.first);
 
     ROS_DEBUG("Rotate map by %.2f...", angle);
 
@@ -516,18 +532,18 @@ geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
     return translation;
 }
 
-bool area::is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
+bool area::is_left (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
 {
     // >0 for p2 left of the line through p0 and p1
     // =0 for p2 on the line
     // <0 for p2 right of the line
-    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) > 0;
+    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) > 0;
 }
 
-bool area::is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)
+bool area::is_right (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
 {
     // >0 for p2 left of the line through p0 and p1
     // =0 for p2 on the line
     // <0 for p2 right of the line
-    return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) < 0;
+    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) < 0;
 }
