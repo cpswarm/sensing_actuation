@@ -42,6 +42,14 @@ public:
     bool get_closest (cpswarm_msgs::GetDist::Request& req, cpswarm_msgs::GetDist::Response& res);
 
     /**
+     * @brief Return the map that correspond to a given ROI.
+     * @param req The coordinates of the ROI together with the desired resolution of the map and whether its bottom edge should be aligned horizontally and the origin should be an integer.
+     * @param res The grid map of the environment together with the angle it has been rotated by and the offset it has been translated by.
+     * @return Whether the request succeeded.
+     */
+    bool get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res);
+
+    /**
      * @brief Get all ROIs managed by this class.
      * @return Each ROI together with its unique ID.
      */

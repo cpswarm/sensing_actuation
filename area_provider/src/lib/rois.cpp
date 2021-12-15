@@ -95,6 +95,19 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
     return true;
 }
 
+bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res)
+{
+    // find roi according to given coordinates
+    for (auto roi : regions) {
+        // forward request
+        if (roi.second.coords == roi.second.vector2set(req.coords)) {
+            roi.second.get_map(req, res);
+            return true;
+        }
+    }
+    return false;
+}
+
 map<int,roi> rois::get_rois ()
 {
     return regions;
