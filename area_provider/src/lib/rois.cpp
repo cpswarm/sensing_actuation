@@ -21,10 +21,6 @@ rois::rois ()
 
 bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res)
 {
-    // empty request for area service to get coordinates
-    cpswarm_msgs::GetPoints::Request request;
-    cpswarm_msgs::GetPoints::Response response;
-
     // collection of all roi coordinates
     vector<vector<geometry_msgs::Point>> coords;
 
@@ -33,22 +29,19 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
 
     // iterate all rois
     for (auto roi : regions) {
-        // call area service to get coordinates
-        roi.second.get_area(request, response);
-
         // store maximum number of coordinates
-        if (response.points.size() > max_num_coords)
-            max_num_coords = response.points.size();
+        if (roi.second.coords.size() > max_num_coords)
+            max_num_coords = roi.second.coords.size();
 
         // append coordinates
-        coords.push_back(response.points);
+        coords.push_back(roi.second.set2vector(roi.second.coords));
     }
 
     // pad all rois with empty coordinates at the end
     geometry_msgs::Point empty;
-    for (vector<vector<geometry_msgs::Point>>::iterator roi = coords.begin() ; roi != coords.end(); ++roi) {
-        for (int i=0; i<max_num_coords-roi->size(); ++i) {
-            roi->push_back(empty);
+    for (auto roi : coords) {
+        for (int i=0; i<max_num_coords-roi.size(); ++i) {
+            roi.push_back(empty);
         }
     }
 

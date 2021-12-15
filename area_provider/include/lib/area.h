@@ -54,8 +54,8 @@ public:
 
     /**
      * @brief Return the map that represents the area.
-     * @param req Empty request. TODO
-     * @param res The grid map of the environment.
+     * @param req The desired resolution of the map and whether its bottom edge should be aligned horizontally and the origin should be an integer.
+     * @param res The grid map of the environment together with the angle it has been rotated by and the offset it has been translated by.
      * @return Whether the request succeeded.
      */
     bool get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res);
@@ -96,6 +96,20 @@ protected:
     void global_to_local ();
 
     /**
+     * @brief Convert a pair of doubles to a geometry_msgs/Point.
+     * @param pair The pair to convert.
+     * @return A geometry_msgs/Point where x is the first element of the pair and y the second.
+     */
+    geometry_msgs::Point pair2point (pair<double,double> pair);
+
+    /**
+     * @brief Convert a geometry_msgs/Point to a pair of doubles.
+     * @param point The point to convert.
+     * @return A pair of doubles where the first element is x of the point and the second element is y.
+     */
+    pair<double,double> point2pair (geometry_msgs::Point point);
+
+    /**
      * @brief Rotate the area to make the bottom edge horizontal. Assuming a quadrilateral.
      * @param map A reference to the occupancy grid map to rotate.
      * @return The angle that the area has been rotated, counter-clockwise, starting from x-axis.
@@ -108,11 +122,25 @@ protected:
     void set_origin ();
 
     /**
+     * @brief Convert a set of double pairs to a vector of geometry_msgs/Point.
+     * @param set The set to convert.
+     * @return The converted vector.
+     */
+    vector<geometry_msgs::Point> set2vector (set<pair<double,double>> set);
+
+    /**
      * @brief Shift a map to be aligned with the grid, i.e., the origin should be an even number.
      * @param map A reference to the occupancy grid map to shift.
      * @return A vector that specifies the amount that the map has been shifted in x and y direction.
      */
     geometry_msgs::Vector3 translate (nav_msgs::OccupancyGrid& map);
+
+    /**
+     * @brief Convert a vector of geometry_msgs/Point to a set of double pairs.
+     * @param vector The vector to convert.
+     * @return The converted set.
+     */
+    set<pair<double,double>> vector2set (vector<geometry_msgs::Point> vector);
 
     /**
      * @brief A node handle for the main ROS node.

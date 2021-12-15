@@ -8,6 +8,11 @@
  */
 class roi : public area
 {
+    /**
+     * @brief Allow the ROI manager to access private members.
+     */
+    friend class rois;
+
 public:
     /**
      * @brief Constructor that initializes ROI coordinates.

@@ -15,10 +15,7 @@ roi::roi (vector<double> x, vector<double> y)
     else {
         // set coordinates
         for (int i=0; i<x.size(); ++i) {
-            pair<double,double> c;
-            c.first = x[i];
-            c.second = y[i];
-            coords.insert(c);
+            coords.emplace(x[i], y[i]);
         }
 
         // convert global coordinates

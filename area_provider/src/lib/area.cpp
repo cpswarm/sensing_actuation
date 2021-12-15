@@ -26,12 +26,7 @@ area::area ()
 
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
-    for (auto c : coords) {
-        geometry_msgs::Point p;
-        p.x = c.first;
-        p.y = c.second;
-        res.points.push_back(p);
-    }
+    res.points = set2vector(coords);
     return true;
 }
 
@@ -65,16 +60,14 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     // find minimal distance to any area bound
     set<pair<double,double>>::iterator ne;
     for (set<pair<double,double>>::iterator it = coords.begin(); it != coords.end(); ++it) {
-        // coordinates of two neighboring polygon points
-        geometry_msgs::Point p1;
-        p1.x = it->first;
-        p1.y = it->second;
-        geometry_msgs::Point p2;
+        // next element
         ne = next(it);
         if (ne == coords.end())
             ne = coords.begin();
-        p2.x = ne->first;
-        p2.y = ne->second;
+
+        // coordinates of two neighboring polygon points
+        geometry_msgs::Point p1 = pair2point(*it);
+        geometry_msgs::Point p2 = pair2point(*ne);
 
         // minimal distance to line connecting the two points
         geometry_msgs::Point p02;
@@ -164,9 +157,7 @@ bool area::get_origin (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res)
 {
     // request's position
-    pair<double,double> pos;
-    pos.first = req.pose.position.x;
-    pos.second = req.pose.position.y;
+    pair<double,double> pos = point2pair(req.pose.position);
 
     // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
     int wn = 0;
@@ -364,6 +355,22 @@ void area::global_to_local ()
     coords = local;
 }
 
+geometry_msgs::Point area::pair2point (pair<double,double> pair)
+{
+    geometry_msgs::Point point;
+    point.x = pair.first;
+    point.y = pair.second;
+    return point;
+}
+
+pair<double,double> area::point2pair (geometry_msgs::Point point)
+{
+    pair<double,double> pair;
+    pair.first = point.x;
+    pair.second = point.y;
+    return pair;
+}
+
 double area::rotate (nav_msgs::OccupancyGrid& map)
 {
     // use cached map
@@ -514,6 +521,15 @@ void area::set_origin ()
     }
 }
 
+vector<geometry_msgs::Point> area::set2vector (set<pair<double,double>> set)
+{
+    vector<geometry_msgs::Point> vector;
+    for (auto pair : set) {
+        vector.push_back(pair2point(pair));
+    }
+    return vector;
+}
+
 geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
 {
     // compute required translation
@@ -530,6 +546,15 @@ geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
     map.info.map_load_time = Time::now();
 
     return translation;
+}
+
+set<pair<double,double>> area::vector2set (vector<geometry_msgs::Point> vector)
+{
+    set<pair<double,double>> set;
+    for (auto point : vector) {
+        set.insert(point2pair(point));
+    }
+    return set;
 }
 
 bool area::is_left (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)

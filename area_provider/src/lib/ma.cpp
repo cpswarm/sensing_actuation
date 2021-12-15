@@ -83,10 +83,7 @@ void ma::read_coords ()
 
     // store area coordinates in right format
     for (int i = 0; i < area_x.size(); ++i) {
-        pair<double,double> c;
-        c.first = area_x[i];
-        c.second = area_y[i];
-        coords.insert(c);
+        coords.emplace(area_x[i], area_y[i]);
     }
 }
 
