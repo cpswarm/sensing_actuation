@@ -221,8 +221,12 @@ void rois::from_file ()
                 vector<double> y;
                 for (auto c : roi_json["mission"]["items"]) {
                     if (c["params"].size() < 7) {
-                        ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7!", roi_file_name.c_str());
+                        ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7 for each mission item!", roi_file_name.c_str());
                         break;
+                    }
+                    if (c["command"] != 16) {
+                        ROS_DEBUG("%s: Skipping item (%f,%f), not a waypoint!", roi_file_name.c_str(), double(c["params"][4]), double(c["params"][5]));
+                        continue;
                     }
                     x.push_back(c["params"][4]);
                     y.push_back(c["params"][5]);
@@ -235,6 +239,10 @@ void rois::from_file ()
 
             catch (json::exception &e) {
                 ROS_DEBUG("Skipping file %s, invalid syntax: %s", roi_file_name.c_str(), e.what());
+            }
+
+            catch (exception &e) {
+                ROS_DEBUG("Skipping file %s: %s", roi_file_name.c_str(), e.what());
             }
         }
     }
