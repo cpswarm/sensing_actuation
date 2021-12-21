@@ -141,7 +141,7 @@ bool area::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
         res.rotation = rotate(res.map);
 
     // downsample resolution if requested
-    if (req.resolution > 0 && req.resolution < res.map.info.resolution)
+    if (req.resolution > 0 && req.resolution > res.map.info.resolution)
         downsample(res.map, req.resolution);
 
     // translate map if requested
@@ -195,13 +195,11 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
 
 void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
 {
-    // use cached map
-    if (map_downsampled_resolution = resolution)
+    // do not increase resolution, use cached map
+    if (resolution <= map_downsampled_resolution) {
         map = map_downsampled;
-
-    // do not increase resolution
-    if (map.info.resolution >= resolution)
         return;
+    }
 
     // reduction factor
     int f = int(round(resolution / map.info.resolution));
