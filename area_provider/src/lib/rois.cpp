@@ -95,6 +95,22 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
     return true;
 }
 
+bool rois::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
+{
+    cpswarm_msgs::GetDist::Response closest;
+    cpswarm_msgs::GetDist::Response response;
+
+    // find roi according to given coordinates
+    for (auto roi : regions) {
+        // forward request
+        if (roi.second.coords == roi.second.vector2set(req.coords)) {
+            roi.second.get_distance(req, res);
+            return true;
+        }
+    }
+    return false;
+}
+
 bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res)
 {
     // find roi according to given coordinates
@@ -106,11 +122,6 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
         }
     }
     return false;
-}
-
-map<int,roi> rois::get_rois ()
-{
-    return regions;
 }
 
 bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
