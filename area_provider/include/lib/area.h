@@ -129,6 +129,11 @@ protected:
     vector<geometry_msgs::Point> set2vector (set<pair<double,double>> set);
 
     /**
+     * @brief Sort the coordinates of the area counter-clockwise about the center by their angle [-π,π].
+     */
+    void sort_coords ();
+
+    /**
      * @brief Shift a map to be aligned with the grid, i.e., the origin should be an even number.
      * @param map A reference to the occupancy grid map to shift.
      * @return A vector that specifies the amount that the map has been shifted in x and y direction.
@@ -175,7 +180,7 @@ protected:
     /**
     /**@brief The grid map representing the area.
      */
-    nav_msgs::OccupancyGrid map;
+    nav_msgs::OccupancyGrid gridmap;
 
     /**
     /* @brief The grid map representing the rotated area.
@@ -191,6 +196,11 @@ protected:
      * @brief The coordinates of the area.
      */
     set<pair<double,double>> coords;
+
+    /**
+     * @brief The coordinates of the area, sorted counter-clockwise about the center, starting from negative x-axis [-π,π]. They are mapped by the respective angle.
+     */
+    map<double, pair<double,double>> coords_sorted;
 
     /**
      * @brief Whether global (GPS) or local coordinates are used as source.

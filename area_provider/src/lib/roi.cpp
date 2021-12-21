@@ -28,6 +28,8 @@ roi::roi (vector<double> x, vector<double> y)
 
     // gridmap still needs to be created
     map_exists = false;
+
+    sort_coords();
 }
 
 bool roi::operator== (const roi other)

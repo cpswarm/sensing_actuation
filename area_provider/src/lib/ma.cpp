@@ -51,21 +51,21 @@ void ma::map_to_coords ()
     // extract coordinates from map
     pair<double,double> c;
 
-    // bottom left
-    c.first = map.info.origin.position.x;
-    c.second = map.info.origin.position.y;
-    coords.insert(c);
-
-    // bottom right
-    c.first += map.info.width * map.info.resolution;
-    coords.insert(c);
-
     // top right
-    c.first += map.info.height * map.info.resolution;
+    c.first += gridmap.info.height * gridmap.info.resolution;
     coords.insert(c);
 
     // top left
-    c.first = map.info.origin.position.x;
+    c.first = gridmap.info.origin.position.x;
+    coords.insert(c);
+
+    // bottom left
+    c.first = gridmap.info.origin.position.x;
+    c.second = gridmap.info.origin.position.y;
+    coords.insert(c);
+
+    // bottom right
+    c.first += gridmap.info.width * gridmap.info.resolution;
     coords.insert(c);
 }
 
@@ -85,12 +85,14 @@ void ma::read_coords ()
     for (int i = 0; i < area_x.size(); ++i) {
         coords.emplace(area_x[i], area_y[i]);
     }
+
+    sort_coords();
 }
 
 void ma::map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
     // store map
-    map = *msg;
+    gridmap = *msg;
     map_exists = true;
 
     // use only initial map

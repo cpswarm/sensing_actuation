@@ -58,16 +58,17 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
         p0 = req.point;
 
     // find minimal distance to any area bound
-    set<pair<double,double>>::iterator ne;
-    for (set<pair<double,double>>::iterator it = coords.begin(); it != coords.end(); ++it) {
+    map<double, pair<double,double>>::iterator ne;
+    for (map<double, pair<double,double>>::iterator it = coords_sorted.begin(); it != coords_sorted.end(); ++it) {
         // next element
         ne = next(it);
-        if (ne == coords.end())
-            ne = coords.begin();
+        if (ne == coords_sorted.end())
+            ne = coords_sorted.begin();
+
 
         // coordinates of two neighboring polygon points
-        geometry_msgs::Point p1 = pair2point(*it);
-        geometry_msgs::Point p2 = pair2point(*ne);
+        geometry_msgs::Point p1 = pair2point(it->second);
+        geometry_msgs::Point p2 = pair2point(ne->second);
 
         // minimal distance to line connecting the two points
         geometry_msgs::Point p02;
@@ -107,6 +108,8 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
 
         // found smaller distance
         if (init || dist < res.distance) {
+            ROS_DEBUG("Found closest point (%.2f,%.2f) on line (%.2f,%.2f)--(%.2f,%.2f) at distance %.2f", closest.x, closest.y, p1.x, p1.y, p2.x, p2.y, dist);
+
             // return closest point
             res.closest_point = closest;
 
@@ -163,19 +166,19 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
     int wn = 0;
 
     // loop through all edges of the polygon
-    set<pair<double,double>>::iterator ne;
-    for (set<pair<double,double>>::iterator it = coords.begin(); it != coords.end(); ++it) {
+    map<double, pair<double,double>>::iterator ne;
+    for (map<double, pair<double,double>>::iterator it = coords_sorted.begin(); it != coords_sorted.end(); ++it) {
         // next element in set
         ne = next(it);
-        if (ne == coords.end())
-            ne = coords.begin();
+        if (ne == coords_sorted.end())
+            ne = coords_sorted.begin();
 
         // ray crosses upward edge
-        if (it->second <= req.pose.position.y && ne->second  > req.pose.position.y && is_left(*it, *ne, pos))
+        if (it->second.second <= req.pose.position.y && ne->second.second  > req.pose.position.y && is_left(it->second, ne->second, pos))
             ++wn;
 
         // ray crosses downward edge
-        else if (it->second > req.pose.position.y && ne->second  <= req.pose.position.y && is_right(*it, *ne, pos))
+        else if (it->second.second > req.pose.position.y && ne->second.second  <= req.pose.position.y && is_right(it->second, ne->second, pos))
             --wn;
     }
 
@@ -315,26 +318,26 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
                     data.push_back(0); // free
             }
         }
-        map.data = data;
+        gridmap.data = data;
 
         // set map header
-        map.header.stamp = Time::now();
-        map.header.frame_id = "map";
+        gridmap.header.stamp = Time::now();
+        gridmap.header.frame_id = "map";
 
         // set map meta data
-        map.info.map_load_time == Time::now();
-        map.info.resolution = resolution;
-        map.info.width = x;
-        map.info.height = y;
+        gridmap.info.map_load_time == Time::now();
+        gridmap.info.resolution = resolution;
+        gridmap.info.width = x;
+        gridmap.info.height = y;
 
         // position of cell (0,0)
-        map.info.origin.position.x = xmin;
-        map.info.origin.position.y = ymin;
+        gridmap.info.origin.position.x = xmin;
+        gridmap.info.origin.position.y = ymin;
 
         map_exists = true;
     }
 
-    return map;
+    return gridmap;
 }
 
 void area::global_to_local ()
@@ -353,6 +356,8 @@ void area::global_to_local ()
             ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
     }
     coords = local;
+
+    sort_coords();
 }
 
 geometry_msgs::Point area::pair2point (pair<double,double> pair)
@@ -528,6 +533,27 @@ vector<geometry_msgs::Point> area::set2vector (set<pair<double,double>> set)
         vector.push_back(pair2point(pair));
     }
     return vector;
+}
+
+void area::sort_coords ()
+{
+    coords_sorted.clear();
+
+    // compute centroid / barycenter
+    pair<double,double> center;
+    for (auto c : coords) {
+        center.first += c.first;
+        center.second += c.second;
+    }
+    center.first /= coords.size();
+    center.second /= coords.size();
+
+    // sort by angle around center
+    double angle;
+    for (auto c : coords) {
+        angle = atan2(c.second-center.second, c.first-center.first);
+        coords_sorted[angle] = c;
+    }
 }
 
 geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
