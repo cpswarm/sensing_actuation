@@ -259,7 +259,7 @@ void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
 
     // update meta data
     map.info.map_load_time = Time::now();
-    map.info.resolution = resolution;
+    map.info.resolution = double(f) * map.info.resolution;
     map.info.width = int(floor(double(map.info.width) / double(f)));
     map.info.height = int(floor(double(map.info.height) / double(f)));
 
