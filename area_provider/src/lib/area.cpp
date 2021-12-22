@@ -42,17 +42,12 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
         if (ne == coords_sorted.end())
             ne = coords_sorted.begin();
 
-
-        // coordinates of two neighboring polygon points
-        geometry_msgs::Point p1 = pair2point(it->second);
-        geometry_msgs::Point p2 = pair2point(ne->second);
-
         // sum up coordinates
-        res.point.x += (p1.x + p2.x) * (p1.x * p2.y - p2.x * p1.y);
-        res.point.y += (p1.y + p2.y) * (p1.x * p2.y - p2.x * p1.y);
+        res.point.x += (it->second.first + ne->second.first) * (it->second.first * ne->second.second - ne->second.first * it->second.second);
+        res.point.y += (it->second.second + ne->second.second) * (it->second.first * ne->second.second - ne->second.first * it->second.second);
 
         // sum up area
-        area += p1.x * p2.y - p2.x * p1.y;
+        area += it->second.first * ne->second.second - ne->second.first * it->second.second;
     }
 
     // normalize area
@@ -164,7 +159,7 @@ bool area::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
         res.rotation = rotate(res.map);
 
     // downsample resolution if requested
-    if (req.resolution > 0 && req.resolution > res.map.info.resolution)
+    if (req.resolution > res.map.info.resolution)
         downsample(res.map, req.resolution);
 
     // translate map if requested
@@ -218,8 +213,12 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
 
 void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
 {
-    // do not increase resolution, use cached map
-    if (resolution <= map_downsampled_resolution) {
+    // do not increase resolution
+    if (resolution < map.info.resolution)
+        return;
+
+    // use cached map
+    if (resolution == map_downsampled_resolution) {
         map = map_downsampled;
         return;
     }
@@ -397,72 +396,70 @@ pair<double,double> area::point2pair (geometry_msgs::Point point)
     return pair;
 }
 
-double area::rotate (nav_msgs::OccupancyGrid& map)
+double area::rotate (nav_msgs::OccupancyGrid& gridmap)
 {
     // use cached map
     if (map_is_rotated)
-        map = map_rotated;
+        gridmap = map_rotated;
 
-    // determine angle to rotate by
-    double angle;
-
-    // determine extreme coordinates
-    pair<double,double> pl, pb, pr;
-    pl.first = numeric_limits<double>::max();
-    pb.second = numeric_limits<double>::max();
-    pr.first = numeric_limits<double>::min();
-    for (auto p : coords) {
-        // left most point
-        if (p.first < pl.first || (p.first == pl.first && p.second < pl.second))
-            pl = p;
-
-        // bottom most point
-        if (p.second < pb.second)
-            pb = p;
-
-        // right most point
-        if (p.first > pr.first || (p.first == pr.first && p.second < pr.second))
-            pr = p;
+    // bottom most point
+    map<double, pair<double,double>>::iterator bot = coords_sorted.begin();
+    for (auto it = coords_sorted.begin(); it != coords_sorted.end(); ++it) {
+        if (it->second.second < bot->second.second)
+            bot = it;
     }
 
-    // no rotation required
-    if ((pl.first == pb.first && pl.second == pb.second) || (pr.first == pb.first && pr.second == pb.second))
-        return 0;
-
-    // rotate clockwise
-    if (pr.second < pl.second)
-        angle = -atan2(pr.second - pb.second, pr.first - pb.first);
-
-    // rotate counter clockwise
+    // previous point
+    map<double, pair<double,double>>::iterator pr;
+    if (bot == coords_sorted.begin())
+        pr = prev(coords_sorted.end());
     else
-        angle = -atan2(pb.second - pl.second, pb.first - pl.first);
+        pr = prev(bot);
+
+    // next point
+    map<double, pair<double,double>>::iterator ne = next(bot);
+    if (ne == coords_sorted.end())
+        ne = coords_sorted.begin();
+
+    // calculate rotation
+    double angle;
+    if (pr->second.second < ne->second.second)
+        angle = -atan2(bot->second.second - pr->second.second, bot->second.first - pr->second.first);
+    else if (pr->second.second > ne->second.second)
+        angle = -atan2(ne->second.second - bot->second.second, ne->second.first - bot->second.first);
+    else {
+        map_is_rotated = true;
+        map_rotated = this->gridmap;
+        gridmap = this->gridmap;
+        return 0;
+    }
 
     ROS_DEBUG("Rotate map by %.2f...", angle);
 
     // rotate origin
     geometry_msgs::Pose origin_new;
-    origin_new.position.x = map.info.origin.position.x*cos(angle) - map.info.origin.position.y*sin(angle);
-    origin_new.position.y = map.info.origin.position.x*sin(angle) + map.info.origin.position.y*cos(angle);
+    origin_new.position.x = gridmap.info.origin.position.x*cos(angle) - gridmap.info.origin.position.y*sin(angle);
+    origin_new.position.y = gridmap.info.origin.position.x*sin(angle) + gridmap.info.origin.position.y*cos(angle);
 
     // create empty rotated map extra large
     vector<vector<signed char>> rt;
-    for (int i=0; i<2*map.info.height; ++i) {
-        vector<signed char> row(2*map.info.width, CELL_OCCUPIED);
+    for (int i=0; i<2*gridmap.info.height; ++i) {
+        vector<signed char> row(2*gridmap.info.width, CELL_OCCUPIED);
         rt.push_back(row);
     }
 
     // rotate map
     int i_new, j_new, width_new=0, height_new=0;
     double x, y, x_new, y_new;
-    for (int i=0; i<map.info.height; ++i) {
-        for (int j=0; j<map.info.width; ++j) {
+    for (int i=0; i<gridmap.info.height; ++i) {
+        for (int j=0; j<gridmap.info.width; ++j) {
             // rotate coordinates
-            x = double(j) * map.info.resolution + map.info.origin.position.x;
-            y = double(i) * map.info.resolution + map.info.origin.position.y;
+            x = double(j) * gridmap.info.resolution + gridmap.info.origin.position.x;
+            y = double(i) * gridmap.info.resolution + gridmap.info.origin.position.y;
             x_new = x*cos(angle) - y*sin(angle);
             y_new = x*sin(angle) + y*cos(angle);
-            j_new = int(round((x_new - origin_new.position.x) / map.info.resolution));
-            i_new = int(round((y_new - origin_new.position.y) / map.info.resolution));
+            j_new = int(round((x_new - origin_new.position.x) / gridmap.info.resolution));
+            i_new = int(round((y_new - origin_new.position.y) / gridmap.info.resolution));
 
             // skip negative indexes
             if (i_new >= rt.size()) {
@@ -473,14 +470,15 @@ double area::rotate (nav_msgs::OccupancyGrid& map)
             }
 
             // assign grid cell value
-            rt[i_new][j_new] = map.data[i*map.info.width + j];
+            rt[i_new][j_new] = gridmap.data[i*gridmap.info.width + j];
 
             // measure maximum required size
-            if (rt[i_new][j_new] == 0) {
-                if (i_new > height_new)
-                    height_new = i_new;
-                if (j_new > width_new)
-                    width_new = j_new;
+            if (rt[i_new][j_new] == CELL_FREE) {
+                ROS_DEBUG("%d,%d --> %d,%d", j, i, j_new, i_new);
+                if (i_new >= height_new)
+                    height_new = i_new + 1;
+                if (j_new >= width_new )
+                    width_new = j_new + 1;
             }
         }
     }
@@ -499,17 +497,17 @@ double area::rotate (nav_msgs::OccupancyGrid& map)
     }
 
     // assign map data
-    map.data = rt_col;
+    gridmap.data = rt_col;
 
     // update meta data
-    map.info.map_load_time = Time::now();
-    map.info.width = width_new;
-    map.info.height= height_new;
-    map.info.origin = origin_new;
+    gridmap.info.map_load_time = Time::now();
+    gridmap.info.width = width_new;
+    gridmap.info.height= height_new;
+    gridmap.info.origin = origin_new;
 
     // cache rotated map
     map_is_rotated = true;
-    map_rotated = map;
+    map_rotated = gridmap;
 
     return angle;
 }
