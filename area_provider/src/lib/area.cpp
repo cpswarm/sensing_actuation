@@ -32,13 +32,36 @@ bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoi
 
 bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res)
 {
-    // compute centroid / barycenter
-    for (auto c : coords) {
-        res.point.x += c.first;
-        res.point.y += c.second;
+    double area = 0;
+
+    // compute centroid
+    map<double, pair<double,double>>::iterator ne;
+    for (map<double, pair<double,double>>::iterator it = coords_sorted.begin(); it != coords_sorted.end(); ++it) {
+        // next element
+        ne = next(it);
+        if (ne == coords_sorted.end())
+            ne = coords_sorted.begin();
+
+
+        // coordinates of two neighboring polygon points
+        geometry_msgs::Point p1 = pair2point(it->second);
+        geometry_msgs::Point p2 = pair2point(ne->second);
+
+        // sum up coordinates
+        res.point.x += (p1.x + p2.x) * (p1.x * p2.y - p2.x * p1.y);
+        res.point.y += (p1.y + p2.y) * (p1.x * p2.y - p2.x * p1.y);
+
+        // sum up area
+        area += p1.x * p2.y - p2.x * p1.y;
     }
-    res.point.x /= coords.size();
-    res.point.y /= coords.size();
+
+    // normalize area
+    area /= 2;
+
+    // normalize coordinates
+    res.point.x /= 6 * area;
+    res.point.y /= 6 * area;
+
     return true;
 }
 

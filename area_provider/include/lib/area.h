@@ -37,9 +37,9 @@ public:
     bool get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res);
 
     /**
-     * @brief Return the center of the area.
+     * @brief Return the centroid of the area (https://en.wikipedia.org/wiki/Centroid#Of_a_polygon).
      * @param req Empty request.
-     * @param res The coordinates of the center of the area.
+     * @param res The coordinates of the centroid of the area.
      * @return Whether request succeeded.
      */
     bool get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
