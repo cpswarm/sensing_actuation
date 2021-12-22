@@ -268,7 +268,7 @@ void area::downsample (nav_msgs::OccupancyGrid& map, double resolution)
         // count number of occupied cells in a row
         int obst = 0;
         for (int j=0; j<map.info.width; ++j) {
-            if (map.data[i*map.info.width + j] == 100) {
+            if (map.data[i*map.info.width + j] == CELL_OCCUPIED) {
                 ++obst;
             }
         }
@@ -332,11 +332,11 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
 
                 // out of bounds
                 if (res.out)
-                    data.push_back(100); // occupied
+                    data.push_back(CELL_OCCUPIED); // occupied
 
                 // inside area
                 else
-                    data.push_back(0); // free
+                    data.push_back(CELL_FREE); // free
             }
         }
         gridmap.data = data;
@@ -447,7 +447,7 @@ double area::rotate (nav_msgs::OccupancyGrid& map)
     // create empty rotated map extra large
     vector<vector<signed char>> rt;
     for (int i=0; i<2*map.info.height; ++i) {
-        vector<signed char> row(2*map.info.width, 100);
+        vector<signed char> row(2*map.info.width, CELL_OCCUPIED);
         rt.push_back(row);
     }
 
