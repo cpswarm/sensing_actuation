@@ -324,9 +324,9 @@ nav_msgs::OccupancyGrid area::get_gridmap ()
         vector<int8_t> data;
         for (int i=0; i<y; ++i) { // row major order
             for (int j=0; j<x; ++j) {
-                // check if cell is within area
-                req.pose.position.x = j * resolution + xmin;
-                req.pose.position.y = i * resolution + ymin;
+                // check if center of cell is within area
+                req.pose.position.x = j * resolution + xmin + resolution / 2.0;
+                req.pose.position.y = i * resolution + ymin + resolution / 2.0;
                 out_of_bounds(req, res);
 
                 // out of bounds
