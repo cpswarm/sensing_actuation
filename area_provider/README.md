@@ -80,7 +80,7 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 
 #### Services
 * `area/closest_bound` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
-  Get the boundary segment of the area polygon closest to a given point or the origin in case the given point is empty. It returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point.
+  Get the boundary segment of the area polygon closest to a given point or the origin in case the given point is empty (0,0). It returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point.
 * `area/get_area` ([cpswarm_msgs/GetPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoints.html))
   Get the bounding area in which the CPS is allowed to move. Returns a vector of points that defines the bounding polygon coordinates.
 * `area/get_center` ([cpswarm_msgs/GetPoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoint.html))
@@ -92,7 +92,7 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 * `area/get_rotation` ([cpswarm_msgs/GetDouble](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDouble.html))
   Get the rotation required to align the lower boundary of the area horizontally assuming a quadrilateral area. Returns the angle that the bottom edge of the area is rotated with respect to the x-axis.
 * `area/out_of_bounds` ([cpswarm_msgs/OutOfBounds](https://cpswarm.github.io/cpswarm_msgs/html/srv/OutOfBounds.html))
-  Determine whether a position is within the area using the winding number algorithm. Returns true, if the position is outside of the area, false otherwise.
+  Determine whether a position is within the area using the winding number algorithm. Returns true, if the position is outside of the area, false otherwise. Points on the boundary are not considered to be out of bounds.
 
 #### Services Called
 * `gps/fix_to_pose` ([cpswarm_msgs/FixToPose](https://cpswarm.github.io/cpswarm_msgs/html/srv/FixToPose.html))
@@ -127,7 +127,7 @@ The basis for the ROI services are maps of the ROIs which are provided through s
 
 #### Services
 * `rois/get_closest` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
-  Find the ROI that is closest to a given point or the origin in case the given point is empty. It returns the coordinates of the closest boundary segment, the closest point on the segment, and the distance to the given point.
+  Find the ROI that is closest to a given point or the origin in case the given point is empty (0,0). It returns the coordinates of the closest boundary segment, the closest point on the segment, and the distance to the given point.
 * `rois/reload` ([std_srvs/SetBool](https://docs.ros.org/en/api/std_srvs/html/srv/SetBool.html))
   Reload ROIs from files. If set to true, previous ROIs are removed before reloading.
 

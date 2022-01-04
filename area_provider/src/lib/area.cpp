@@ -369,8 +369,52 @@ bool area::is_right (pair<double,double> p0, pair<double,double> p1, pair<double
     return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) < 0;
 }
 
+bool area::on_bound (pair<double,double> pos, double angle)
+{
+    double d01x, d01y, d01, d02x, d02y, d02, d12x, d12y, d12;
+
+    // loop through all edges of the polygon
+    map<double, pair<double,double>>::iterator ne;
+    for (map<double, pair<double,double>>::iterator it = coords_sorted[angle].begin(); it != coords_sorted[angle].end(); ++it) {
+        // next element in set
+        ne = next(it);
+        if (ne == coords_sorted[angle].end())
+            ne = coords_sorted[angle].begin();
+
+        // distances between points
+        d01x = ne->second.first - it->second.first;
+        d01y = ne->second.second - it->second.second;
+        d01 = hypot(d01x, d01y);
+        d02x = pos.first - it->second.first;
+        d02y = pos.second - it->second.second;
+        d02 = hypot(d02x, d02y);
+        d12x = pos.first - ne->second.first;
+        d12y = pos.second - ne->second.second;
+        d12 = hypot(d12x, d12y);
+
+        if (pos.first == 6 && pos.second == 3) {
+            ROS_DEBUG("it: %.2f,%.2f", it->second.first, it->second.second);
+            ROS_DEBUG("ne: %.2f,%.2f", ne->second.first, ne->second.second);
+            ROS_DEBUG("pos: %.2f,%.2f", pos.first, pos.second);
+            ROS_DEBUG("%.2f + %.2f - %.2f = %.2f", d02, d12, d01, d02 + d12 - d01);
+        }
+
+        // close enough to boundary
+        if (abs(d02 + d12 - d01) < 0.0001)
+            return true;
+    }
+    ROS_DEBUG("OUT: %.2f,%.2f", pos.first, pos.second);
+
+    // not on boundary
+    return false;
+}
+
 bool area::out_of_bounds (pair<double,double> pos, double angle)
 {
+    // points on boundary are not out of bounds
+    if (on_bound(pos, angle))
+        return false;
+
     // the winding number counter, i.e., how often a ray from the point to the right crosses the boundary
     int wn = 0;
 
@@ -383,11 +427,11 @@ bool area::out_of_bounds (pair<double,double> pos, double angle)
             ne = coords_sorted[angle].begin();
 
         // ray crosses upward edge
-        if (it->second.second <= pos.second && ne->second.second  > pos.second && is_left(it->second, ne->second, pos))
+        if (it->second.second <= pos.second && pos.second < ne->second.second && is_left(it->second, ne->second, pos))
             ++wn;
 
         // ray crosses downward edge
-        else if (it->second.second > pos.second && ne->second.second  <= pos.second && is_right(it->second, ne->second, pos))
+        else if (ne->second.second <= pos.second && pos.second < it->second.second && is_right(it->second, ne->second, pos))
             --wn;
     }
 

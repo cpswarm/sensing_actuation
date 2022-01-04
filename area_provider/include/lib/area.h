@@ -169,10 +169,18 @@ private:
     bool is_right (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2);
 
     /**
+     * @brief Test whether a point is on the area boundary.
+     * @param pos Point to test
+     * @param angle The angle to rotate the area by, radian, counter-clockwise, default 0.
+     * @return True, if the distance from p0 to p2 and from p2 to p1 is almost the same as from p0 to p1, false otherwise.
+     */
+    bool on_bound (pair<double,double> pos, double angle);
+
+    /**
      * @brief Determine whether a position is within the area using the winding number algorithm.
      * @param pos The position to check.
      * @param angle The angle to rotate the area by, radian, counter-clockwise, default 0.
-     * @return True, if the position is outside of the area, false otherwise.
+     * @return True, if the position is outside of the area boundary, false otherwise.
      */
     bool out_of_bounds (pair<double,double> pos, double angle=0);
 
