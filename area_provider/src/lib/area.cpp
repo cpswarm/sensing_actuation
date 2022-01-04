@@ -5,7 +5,6 @@ area::area ()
     // read parameters
     nh.param(this_node::getName() + "/cell_warn", cell_warn, 1000);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
-    nh.param(this_node::getName() + "/create_map", create_map, false);
 
     // check of global (gps) coordinates are used
     string pos_type = "global";
@@ -189,8 +188,8 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
     if (resolution <= 0)
         resolution = this->resolution;
 
-    // no map existing yet, i.e., no map server
-    if (create_map && (gridmaps.count(angle) == 0 || gridmaps[angle].count(resolution) == 0)) {
+    // requested map not existing yet
+    if (gridmaps.count(angle) == 0 || gridmaps[angle].count(resolution) == 0) {
         // get coordinates
         double xmin = numeric_limits<double>::max();
         double xmax = numeric_limits<double>::min();
@@ -274,6 +273,100 @@ void area::global_to_local ()
     coords[0] = local;
 
     sort_coords();
+}
+
+void area::set_origin ()
+{
+    if (global) {
+        cpswarm_msgs::FixToPose f2p;
+
+        // get origin from gps node
+        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
+        ROS_DEBUG("Wait for get_gps_origin service...");
+        get_gps_origin_client.waitForExistence();
+        cpswarm_msgs::GetGpsFix gpso;
+        if (get_gps_origin_client.call(gpso)) {
+            // convert origin to local coordinates
+            f2p.request.fix = gpso.response.fix;
+            if (fix_to_pose_client.call(f2p)) {
+                origin = f2p.response.pose.pose.position;
+            }
+            else
+                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
+        }
+        else
+            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
+    }
+
+    else {
+        // read origin from parameters
+        double x,y;
+        nh.param(this_node::getName() + "/x", x, 0.0);
+        nh.param(this_node::getName() + "/y", y, 0.0);
+        origin.x = x;
+        origin.y = y;
+    }
+}
+
+vector<geometry_msgs::Point> area::set2vector (set<pair<double,double>> set)
+{
+    vector<geometry_msgs::Point> vector;
+    for (auto pair : set) {
+        vector.push_back(pair2point(pair));
+    }
+    return vector;
+}
+
+void area::sort_coords ()
+{
+    coords_sorted.clear();
+
+    // coordinates of different rotations
+    for (auto c : coords) {
+        // rotation of coordinates
+        double rot = c.first;
+
+        // compute centroid / barycenter
+        pair<double,double> center;
+        for (auto cc : c.second) {
+            center.first += cc.first;
+            center.second += cc.second;
+        }
+        center.first /= c.second.size();
+        center.second /= c.second.size();
+
+        // sort by angle around center
+        double angle;
+        for (auto cc : c.second) {
+            angle = atan2(cc.second-center.second, cc.first-center.first);
+            coords_sorted[rot][angle] = cc;
+        }
+    }
+}
+
+set<pair<double,double>> area::vector2set (vector<geometry_msgs::Point> vector)
+{
+    set<pair<double,double>> set;
+    for (auto point : vector) {
+        set.insert(point2pair(point));
+    }
+    return set;
+}
+
+bool area::is_left (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
+{
+    // >0 for p2 left of the line through p0 and p1
+    // =0 for p2 on the line
+    // <0 for p2 right of the line
+    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) > 0;
+}
+
+bool area::is_right (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
+{
+    // >0 for p2 left of the line through p0 and p1
+    // =0 for p2 on the line
+    // <0 for p2 right of the line
+    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) < 0;
 }
 
 bool area::out_of_bounds (pair<double,double> pos, double angle)
@@ -376,75 +469,6 @@ double area::rotate ()
     return rotation;
 }
 
-void area::set_origin ()
-{
-    if (global) {
-        cpswarm_msgs::FixToPose f2p;
-
-        // get origin from gps node
-        ServiceClient get_gps_origin_client = nh.serviceClient<cpswarm_msgs::GetGpsFix>("gps/get_gps_origin");
-        ROS_DEBUG("Wait for get_gps_origin service...");
-        get_gps_origin_client.waitForExistence();
-        cpswarm_msgs::GetGpsFix gpso;
-        if (get_gps_origin_client.call(gpso)) {
-            // convert origin to local coordinates
-            f2p.request.fix = gpso.response.fix;
-            if (fix_to_pose_client.call(f2p)) {
-                origin = f2p.response.pose.pose.position;
-            }
-            else
-                ROS_FATAL("AREA_PROV - Failed to convert origin to local coordinates");
-        }
-        else
-            ROS_FATAL("AREA_PROV - Failed get GPS coordinates of origin");
-    }
-
-    else {
-        // read origin from parameters
-        double x,y;
-        nh.param(this_node::getName() + "/x", x, 0.0);
-        nh.param(this_node::getName() + "/y", y, 0.0);
-        origin.x = x;
-        origin.y = y;
-    }
-}
-
-vector<geometry_msgs::Point> area::set2vector (set<pair<double,double>> set)
-{
-    vector<geometry_msgs::Point> vector;
-    for (auto pair : set) {
-        vector.push_back(pair2point(pair));
-    }
-    return vector;
-}
-
-void area::sort_coords ()
-{
-    coords_sorted.clear();
-
-    // coordinates of different rotations
-    for (auto c : coords) {
-        // rotation of coordinates
-        double rot = c.first;
-
-        // compute centroid / barycenter
-        pair<double,double> center;
-        for (auto cc : c.second) {
-            center.first += cc.first;
-            center.second += cc.second;
-        }
-        center.first /= c.second.size();
-        center.second /= c.second.size();
-
-        // sort by angle around center
-        double angle;
-        for (auto cc : c.second) {
-            angle = atan2(cc.second-center.second, cc.first-center.first);
-            coords_sorted[rot][angle] = cc;
-        }
-    }
-}
-
 geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
 {
     // compute required translation
@@ -461,29 +485,4 @@ geometry_msgs::Vector3 area::translate (nav_msgs::OccupancyGrid& map)
     map.info.map_load_time = Time::now();
 
     return translation;
-}
-
-set<pair<double,double>> area::vector2set (vector<geometry_msgs::Point> vector)
-{
-    set<pair<double,double>> set;
-    for (auto point : vector) {
-        set.insert(point2pair(point));
-    }
-    return set;
-}
-
-bool area::is_left (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
-{
-    // >0 for p2 left of the line through p0 and p1
-    // =0 for p2 on the line
-    // <0 for p2 right of the line
-    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) > 0;
-}
-
-bool area::is_right (pair<double,double> p0, pair<double,double> p1, pair<double,double> p2)
-{
-    // >0 for p2 left of the line through p0 and p1
-    // =0 for p2 on the line
-    // <0 for p2 right of the line
-    return ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) < 0;
 }

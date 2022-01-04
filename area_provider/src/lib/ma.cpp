@@ -5,6 +5,7 @@ ma::ma ()
     // init map publisher
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/publish_map", publish_map, false);
     map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area/map", queue_size, true);
 
     // subscribe to map
@@ -39,7 +40,7 @@ ma::ma ()
     }
 
     // publish grid map
-    if (gridmaps.count(0) > 0 || create_map)
+    if (publish_map)
         map_publisher.publish(get_gridmap());
     else
         ROS_INFO("Not publishing map");
