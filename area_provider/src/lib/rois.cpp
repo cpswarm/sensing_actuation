@@ -30,11 +30,11 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
     // iterate all rois
     for (auto roi : regions) {
         // store maximum number of coordinates
-        if (roi.second.coords.size() > max_num_coords)
-            max_num_coords = roi.second.coords.size();
+        if (roi.second.coords[0].size() > max_num_coords)
+            max_num_coords = roi.second.coords[0].size();
 
         // append coordinates
-        coords.push_back(roi.second.set2vector(roi.second.coords));
+        coords.push_back(roi.second.set2vector(roi.second.coords[0]));
     }
 
     // pad all rois with empty coordinates at the end
@@ -103,7 +103,7 @@ bool rois::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     // find roi according to given coordinates
     for (auto roi : regions) {
         // forward request
-        if (roi.second.coords == roi.second.vector2set(req.coords)) {
+        if (roi.second.coords[0] == roi.second.vector2set(req.coords)) {
             roi.second.get_distance(req, res);
             return true;
         }
@@ -116,7 +116,7 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
     // find roi according to given coordinates
     for (auto roi : regions) {
         // forward request
-        if (roi.second.coords == roi.second.vector2set(req.coords)) {
+        if (roi.second.coords[0] == roi.second.vector2set(req.coords)) {
             roi.second.get_map(req, res);
             return true;
         }

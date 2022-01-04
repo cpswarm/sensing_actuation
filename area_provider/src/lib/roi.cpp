@@ -15,7 +15,7 @@ roi::roi (vector<double> x, vector<double> y)
     else {
         // set coordinates
         for (int i=0; i<x.size(); ++i) {
-            coords.emplace(x[i], y[i]);
+            coords[0].emplace(x[i], y[i]);
         }
 
         // convert global coordinates
@@ -26,13 +26,10 @@ roi::roi (vector<double> x, vector<double> y)
         set_origin();
     }
 
-    // gridmap still needs to be created
-    map_exists = false;
-
     sort_coords();
 }
 
 bool roi::operator== (const roi other)
 {
-    return coords == other.coords;
+    return coords[0] == other.coords.at(0);
 }
