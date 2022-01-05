@@ -39,8 +39,8 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
 
     // pad all rois with empty coordinates at the end
     geometry_msgs::Point empty;
-    for (auto roi : coords) {
-        for (int i=0; i<max_num_coords-roi.size(); ++i) {
+    for (auto& roi : coords) {
+        for (int i=roi.size(); i<max_num_coords; ++i) {
             roi.push_back(empty);
         }
     }
