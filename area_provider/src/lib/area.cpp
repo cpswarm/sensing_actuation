@@ -200,7 +200,7 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
 
     // requested map not existing yet
     if (gridmaps.count(angle) == 0 || gridmaps[angle].count(resolution) == 0) {
-        // get coordinates
+        // get extreme coordinates
         double xmin = numeric_limits<double>::max();
         double xmax = numeric_limits<double>::min();
         double ymin = numeric_limits<double>::max();
@@ -215,8 +215,18 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
             if (p.second > ymax)
                 ymax = p.second;
         }
+
+        // calculate dimensions
         int x = int(ceil((xmax - xmin) / resolution));
         int y = int(ceil((ymax - ymin) / resolution));
+
+        // fix minimal resolution
+        if (xmax - xmin < resolution || ymax - ymin < resolution ) {
+            resolution = min(xmax - xmin, ymax - ymin);
+            x = int(ceil((xmax - xmin) / resolution));
+            y = int(ceil((ymax - ymin) / resolution));
+            ROS_WARN("Changing resolution to minimal possible %.2f, grid size %dx%d!", resolution, x, y);
+        }
 
         // warn about large grids
         if (x*y > cell_warn)
