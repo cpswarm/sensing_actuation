@@ -53,7 +53,7 @@ public:
     bool get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPoint::Response &res);
 
     /**
-     * @brief Return the distance of a given point to the area boundary (outside or inside the area). Based on https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon.
+     * @brief Return the distance of a given point to the area boundary (outside or inside the area). Based on https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon and https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment.
      * @param req The coordinates of the point to check. If it is empty (0,0), the area origin is used.
      * @param res The coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
      * @return Whether request succeeded.

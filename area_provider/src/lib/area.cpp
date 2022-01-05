@@ -73,6 +73,8 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     else
         p0 = req.point;
 
+    ROS_DEBUG("Calculate distance for point (%.2f,%.2f)", p0.x, p0.y);
+
     // find minimal distance to any area bound
     map<double, pair<double,double>>::iterator ne;
     for (map<double, pair<double,double>>::iterator it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it) {
@@ -86,7 +88,7 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
         geometry_msgs::Point p1 = pair2point(it->second);
         geometry_msgs::Point p2 = pair2point(ne->second);
 
-        // minimal distance to line connecting the two points
+        // difference between all three points
         geometry_msgs::Point p02;
         p02.x = p2.x - p0.x;
         p02.y = p2.y - p0.y;
@@ -96,13 +98,15 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
         geometry_msgs::Point p10;
         p10.x = p0.x - p1.x;
         p10.y = p0.y - p1.y;
-        double dot = p12.x * p10.x + p12.y * p10.y;
-        double dis = hypot(p12.x, p12.y);
-        double r = dot / dis / dis;
 
+        // calculate where on the line p12 the closest point lies
+        double dot = p12.x * p10.x + p12.y * p10.y;
+        double dis = p12.x * p12.x + p12.y * p12.y;
+        double r = dot / dis;
+
+        // distance and closest point
         double dist;
         geometry_msgs::Point closest;
-
         // p1 is closest point
         if (r < 0) {
             closest = p1;
@@ -115,11 +119,9 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
         }
         // closest point is between p1 and p2
         else {
-            dist = sqrt((p10.x*p10.x + p10.y*p10.y) - pow(r * hypot(p12.x, p12.y), 2));
-            double d1c = sqrt((p10.x*p10.x + p10.y*p10.y) - dist*dist); // distance from p1 to closest point
-            double d12 = hypot(p12.x, p12.y);
-            closest.x = p1.x + p12.x / d12 * d1c;
-            closest.y = p1.y + p12.y / d12 * d1c;
+            closest.x = p1.x + r * p12.x;
+            closest.y = p1.y + r * p12.y;
+            dist = sqrt((p10.x * p10.x + p10.y * p10.y) - dis * r * r);
         }
 
         // found smaller distance
