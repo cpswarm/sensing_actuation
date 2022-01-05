@@ -392,18 +392,10 @@ bool area::on_bound (pair<double,double> pos, double angle)
         d12y = pos.second - ne->second.second;
         d12 = hypot(d12x, d12y);
 
-        if (pos.first == 6 && pos.second == 3) {
-            ROS_DEBUG("it: %.2f,%.2f", it->second.first, it->second.second);
-            ROS_DEBUG("ne: %.2f,%.2f", ne->second.first, ne->second.second);
-            ROS_DEBUG("pos: %.2f,%.2f", pos.first, pos.second);
-            ROS_DEBUG("%.2f + %.2f - %.2f = %.2f", d02, d12, d01, d02 + d12 - d01);
-        }
-
         // close enough to boundary
         if (abs(d02 + d12 - d01) < 0.0001)
             return true;
     }
-    ROS_DEBUG("OUT: %.2f,%.2f", pos.first, pos.second);
 
     // not on boundary
     return false;
