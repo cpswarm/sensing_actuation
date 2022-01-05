@@ -111,6 +111,13 @@ bool rois::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
             return true;
         }
     }
+
+    // create string for warning
+    stringstream coords_ss;
+    for (auto p : req.coords)
+        coords_ss << "(" << p.x << "," << p.y << ") ";
+    ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
+
     return false;
 }
 
@@ -124,6 +131,13 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
             return true;
         }
     }
+
+    // create string for warning
+    stringstream coords_ss;
+    for (auto p : req.coords)
+        coords_ss << "(" << p.x << "," << p.y << ") ";
+    ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
+
     return false;
 }
 
