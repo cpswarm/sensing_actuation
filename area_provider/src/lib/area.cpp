@@ -173,6 +173,14 @@ bool area::out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs:
     return true;
 }
 
+string area::to_string ()
+{
+    stringstream ss;
+    for (auto c : coords_sorted[0])
+        ss << "(" << c.second.first << "," << c.second.second << ") ";
+    return ss.str();
+}
+
 nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
 {
     // empty grid map

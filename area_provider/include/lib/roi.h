@@ -27,6 +27,14 @@ public:
      * @returns True, if both ROIs have the same coordinates, false otherwise.
      */
     bool operator== (const roi other);
+
+    /**
+     * @brief Compare two ROIs.
+     * @param other The other ROI to compare to this one.
+     * @return True, if this ROIs coordinates are less than the other ROI coordinates, false otherwise.
+     */
+    bool operator< (const roi other) const;
+
 };
 
 #endif // ROI_H

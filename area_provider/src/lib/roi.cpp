@@ -33,3 +33,8 @@ bool roi::operator== (const roi other)
 {
     return coords[0] == other.coords.at(0);
 }
+
+bool roi::operator< (const roi other) const
+{
+    return coords.at(0) < other.coords.at(0);
+}

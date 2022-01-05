@@ -84,6 +84,12 @@ public:
      */
     bool out_of_bounds (cpswarm_msgs::OutOfBounds::Request &req, cpswarm_msgs::OutOfBounds::Response &res);
 
+    /**
+     * @brief Return a string that uniquely represents the area.
+     * @return A concatenation of the area's coordinates.
+     */
+    string to_string ();
+
 protected:
     /**
      * @brief Generate a grid map from the given area coordinates.

@@ -110,7 +110,7 @@ private:
     /**
      * @brief All ROIs with IDs.
      */
-    map<int,roi> regions;
+    set<roi> regions;
 
     /**
      * @brief Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
