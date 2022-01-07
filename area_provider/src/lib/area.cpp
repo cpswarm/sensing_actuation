@@ -496,7 +496,7 @@ double area::rotate ()
         ne = coords_sorted[0].begin();
 
     // calculate rotation
-    if (pr->second.second < ne->second.second)
+    if (pr->second.second < ne->second.second || pr->second.second == ne->second.second && pr->second.second != bot->second.second) // prefer counter-clockwise rotation in case of tie
         rotation = -atan2(bot->second.second - pr->second.second, bot->second.first - pr->second.first);
     else if (pr->second.second > ne->second.second)
         rotation = -atan2(ne->second.second - bot->second.second, ne->second.first - bot->second.first);
@@ -507,12 +507,16 @@ double area::rotate ()
 
     // rotate coordinates
     pair<double,double> rot;
-    if (coords.count(rotation) == 0)
+    if (coords.count(rotation) == 0) {
+        stringstream css;
         for (auto c : coords[0]) {
             rot.first = c.first * cos(rotation) - c.second * sin(rotation);
             rot.second = c.first * sin(rotation) + c.second * cos(rotation);
             coords[rotation].insert(rot);
+            css << "(" << rot.first << "," << rot.second << ") ";
         }
+        ROS_DEBUG("Rotated coordinates: %s", css.str().c_str());
+    }
 
     // rotate sorted coordinates
     if (coords_sorted.count(rotation) == 0)
