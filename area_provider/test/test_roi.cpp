@@ -66,57 +66,76 @@ TEST (NodeTestRoi, testGetAll)
     // test response
     ASSERT_TRUE(client.call(msg));
     ASSERT_EQ(msg.response.layout.dim.size(), 2);
-    EXPECT_EQ(msg.response.layout.dim[0].size, 3);
-    EXPECT_EQ(msg.response.layout.dim[0].stride, 15);
+    EXPECT_EQ(msg.response.layout.dim[0].size, 4);
+    EXPECT_EQ(msg.response.layout.dim[0].stride, 20);
     EXPECT_EQ(msg.response.layout.dim[1].size, 5);
     EXPECT_EQ(msg.response.layout.dim[1].stride, 5);
     EXPECT_EQ(msg.response.layout.data_offset, 0);
-    ASSERT_EQ(msg.response.points.size(), 15);
-    EXPECT_FLOAT_EQ(msg.response.points[0].x, -3);
-    EXPECT_FLOAT_EQ(msg.response.points[0].y, 4);
+    ASSERT_EQ(msg.response.points.size(), 20);
+
+    EXPECT_FLOAT_EQ(msg.response.points[0].x, -7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[0].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[0].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[1].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[1].y, 2);
+    EXPECT_FLOAT_EQ(msg.response.points[1].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[1].y, 10);
     EXPECT_FLOAT_EQ(msg.response.points[1].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[2].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[2].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[2].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[2].y, 24.1421356237309);
     EXPECT_FLOAT_EQ(msg.response.points[2].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[3].x, -1);
-    EXPECT_FLOAT_EQ(msg.response.points[3].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[3].x, 7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[3].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[3].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[4].y, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[4].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[5].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[5].y, -3);
+
+    EXPECT_FLOAT_EQ(msg.response.points[5].x, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[5].y, 4);
     EXPECT_FLOAT_EQ(msg.response.points[5].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[6].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[6].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[6].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[6].y, 2);
     EXPECT_FLOAT_EQ(msg.response.points[6].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[7].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[7].y, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[7].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[7].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[7].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[8].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[8].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].x, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[8].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[9].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[9].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[9].y, 3);
     EXPECT_FLOAT_EQ(msg.response.points[9].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[10].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[10].y, -1);
+
+    EXPECT_FLOAT_EQ(msg.response.points[10].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[10].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[10].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[11].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[11].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[11].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[12].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[12].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[12].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[12].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[12].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[13].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[13].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[13].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[13].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[13].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].x, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[15].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[15].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[15].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[16].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[16].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[16].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[17].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[17].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[17].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[18].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[18].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[18].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].z, 0);
 }
 
 /**
@@ -219,14 +238,14 @@ TEST (NodeTestRoi, testGetClosest)
     msg.request.point.x = -99;
     msg.request.point.y = 4;
     ASSERT_TRUE(client.call(msg));
-    EXPECT_EQ(msg.response.closest_point.x, -3);
-    EXPECT_EQ(msg.response.closest_point.y, 4);
+    EXPECT_EQ(msg.response.closest_point.x, -7.07106781186548);
+    EXPECT_EQ(msg.response.closest_point.y, 17.0710678118655);
     ASSERT_EQ(msg.response.closest_line.size(), 2);
-    EXPECT_EQ(msg.response.closest_line[0].x, -2);
-    EXPECT_EQ(msg.response.closest_line[0].y, 5);
-    EXPECT_EQ(msg.response.closest_line[1].x, -3);
-    EXPECT_EQ(msg.response.closest_line[1].y, 4);
-    EXPECT_FLOAT_EQ(msg.response.distance, 96);
+    EXPECT_EQ(msg.response.closest_line[0].x, 0);
+    EXPECT_EQ(msg.response.closest_line[0].y, 24.1421356237309);
+    EXPECT_EQ(msg.response.closest_line[1].x, -7.07106781186548);
+    EXPECT_EQ(msg.response.closest_line[1].y, 17.0710678118655);
+    EXPECT_FLOAT_EQ(msg.response.distance, 92.8535480581815);
 
     // test points at equal distance between rois
     msg.request.point.x = 3;
@@ -620,6 +639,67 @@ TEST (NodeTestRoi, testGetMap)
     EXPECT_FLOAT_EQ(msg.response.translation.x, round(-2.0*cos(rot)-2*sin(rot)) - (-2.0*cos(rot)-2*sin(rot)));
     EXPECT_FLOAT_EQ(msg.response.translation.y, round(-2*sin(rot)+2*cos(rot)) - (-2*sin(rot)+2*cos(rot)));
     EXPECT_FLOAT_EQ(msg.response.translation.z, 0);
+
+    // select roi 4
+    msg.request.coords.clear();
+    coord.x = 0;
+    coord.y = 10;
+    msg.request.coords.push_back(coord);
+    coord.x = 0;
+    coord.y = 24.1421356237309;
+    msg.request.coords.push_back(coord);
+    coord.x = -7.07106781186548;
+    coord.y = 17.0710678118655;
+    msg.request.coords.push_back(coord);
+    coord.x = 7.07106781186548;
+    coord.y = 17.0710678118655;
+    msg.request.coords.push_back(coord);
+
+    // test original (only meta data)
+    msg.request.rotate = false;
+    msg.request.translate = false;
+    msg.request.resolution = 1;
+    ASSERT_TRUE(client.call(msg));
+    EXPECT_FLOAT_EQ(msg.response.map.info.resolution, 1);
+    EXPECT_EQ(msg.response.map.info.width, 15);
+    EXPECT_EQ(msg.response.map.info.height, 15);
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.x, -7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.y, 10);
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.z, 0);
+    ASSERT_EQ(msg.response.map.data.size(), 225);
+    EXPECT_FLOAT_EQ(msg.response.rotation, 0);
+    EXPECT_FLOAT_EQ(msg.response.translation.x, 0);
+    EXPECT_FLOAT_EQ(msg.response.translation.y, 0);
+    EXPECT_FLOAT_EQ(msg.response.translation.z, 0);
+
+    // test rotated and translated
+    rot = M_PI / 4.0;
+    msg.request.rotate = true;
+    msg.request.translate = true;
+    msg.request.resolution = 1;
+    ASSERT_TRUE(client.call(msg));
+    EXPECT_FLOAT_EQ(msg.response.map.info.resolution, 1);
+    EXPECT_EQ(msg.response.map.info.width, 11);
+    EXPECT_EQ(msg.response.map.info.height, 11);
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.x, round(-7.07106781186548*cos(rot)-17.0710678118655*sin(rot)));
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.y, round(-7.07106781186548*sin(rot)+17.0710678118655*cos(rot)));
+    EXPECT_FLOAT_EQ(msg.response.map.info.origin.position.z, 0);
+    ASSERT_EQ(msg.response.map.data.size(), 121);
+    for (int i=0; i<10; ++i) {
+        for (int j=0; j<10; ++j) {
+            EXPECT_EQ(msg.response.map.data[i*11 + j], 0);
+        }
+    }
+    for (int i=0; i<11; ++i) {
+        EXPECT_EQ(msg.response.map.data[i*11 + 10], 100);
+    }
+    for (int j=0; j<11; ++j) {
+        EXPECT_EQ(msg.response.map.data[10*11 + j], 100);
+    }
+    EXPECT_FLOAT_EQ(msg.response.rotation, rot);
+    EXPECT_FLOAT_EQ(msg.response.translation.x, round(-7.07106781186548*cos(rot)-10*sin(rot)) - (-7.07106781186548*cos(rot)-10*sin(rot)));
+    EXPECT_FLOAT_EQ(msg.response.translation.y, round(-7.07106781186548*sin(rot)+10*cos(rot)) - (-7.07106781186548*sin(rot)+10*cos(rot)));
+    EXPECT_FLOAT_EQ(msg.response.translation.z, 0);
 }
 
 /**
@@ -644,57 +724,76 @@ TEST (NodeTestRoi, testReload)
     cpswarm_msgs::GetMultiPoints msg;
     ASSERT_TRUE(client.call(msg));
     ASSERT_EQ(msg.response.layout.dim.size(), 2);
-    EXPECT_EQ(msg.response.layout.dim[0].size, 3);
-    EXPECT_EQ(msg.response.layout.dim[0].stride, 15);
+    EXPECT_EQ(msg.response.layout.dim[0].size, 4);
+    EXPECT_EQ(msg.response.layout.dim[0].stride, 20);
     EXPECT_EQ(msg.response.layout.dim[1].size, 5);
     EXPECT_EQ(msg.response.layout.dim[1].stride, 5);
     EXPECT_EQ(msg.response.layout.data_offset, 0);
-    ASSERT_EQ(msg.response.points.size(), 15);
-    EXPECT_FLOAT_EQ(msg.response.points[0].x, -3);
-    EXPECT_FLOAT_EQ(msg.response.points[0].y, 4);
+    ASSERT_EQ(msg.response.points.size(), 20);
+
+    EXPECT_FLOAT_EQ(msg.response.points[0].x, -7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[0].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[0].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[1].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[1].y, 2);
+    EXPECT_FLOAT_EQ(msg.response.points[1].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[1].y, 10);
     EXPECT_FLOAT_EQ(msg.response.points[1].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[2].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[2].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[2].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[2].y, 24.1421356237309);
     EXPECT_FLOAT_EQ(msg.response.points[2].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[3].x, -1);
-    EXPECT_FLOAT_EQ(msg.response.points[3].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[3].x, 7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[3].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[3].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[4].y, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[4].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[5].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[5].y, -3);
+
+    EXPECT_FLOAT_EQ(msg.response.points[5].x, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[5].y, 4);
     EXPECT_FLOAT_EQ(msg.response.points[5].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[6].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[6].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[6].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[6].y, 2);
     EXPECT_FLOAT_EQ(msg.response.points[6].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[7].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[7].y, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[7].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[7].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[7].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[8].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[8].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].x, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[8].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[9].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[9].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[9].y, 3);
     EXPECT_FLOAT_EQ(msg.response.points[9].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[10].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[10].y, -1);
+
+    EXPECT_FLOAT_EQ(msg.response.points[10].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[10].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[10].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[11].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[11].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[11].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[12].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[12].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[12].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[12].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[12].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[13].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[13].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[13].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[13].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[13].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].x, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[15].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[15].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[15].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[16].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[16].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[16].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[17].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[17].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[17].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[18].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[18].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[18].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].z, 0);
 
     // reload with clearing
     reload_msg.request.data = true;
@@ -704,57 +803,76 @@ TEST (NodeTestRoi, testReload)
     // retrieve rois
     ASSERT_TRUE(client.call(msg));
     ASSERT_EQ(msg.response.layout.dim.size(), 2);
-    EXPECT_EQ(msg.response.layout.dim[0].size, 3);
-    EXPECT_EQ(msg.response.layout.dim[0].stride, 15);
+    EXPECT_EQ(msg.response.layout.dim[0].size, 4);
+    EXPECT_EQ(msg.response.layout.dim[0].stride, 20);
     EXPECT_EQ(msg.response.layout.dim[1].size, 5);
     EXPECT_EQ(msg.response.layout.dim[1].stride, 5);
     EXPECT_EQ(msg.response.layout.data_offset, 0);
-    ASSERT_EQ(msg.response.points.size(), 15);
-    EXPECT_FLOAT_EQ(msg.response.points[0].x, -3);
-    EXPECT_FLOAT_EQ(msg.response.points[0].y, 4);
+    ASSERT_EQ(msg.response.points.size(), 20);
+
+    EXPECT_FLOAT_EQ(msg.response.points[0].x, -7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[0].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[0].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[1].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[1].y, 2);
+    EXPECT_FLOAT_EQ(msg.response.points[1].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[1].y, 10);
     EXPECT_FLOAT_EQ(msg.response.points[1].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[2].x, -2);
-    EXPECT_FLOAT_EQ(msg.response.points[2].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[2].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[2].y, 24.1421356237309);
     EXPECT_FLOAT_EQ(msg.response.points[2].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[3].x, -1);
-    EXPECT_FLOAT_EQ(msg.response.points[3].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[3].x, 7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[3].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.points[3].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[4].y, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[4].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[4].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[5].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[5].y, -3);
+
+    EXPECT_FLOAT_EQ(msg.response.points[5].x, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[5].y, 4);
     EXPECT_FLOAT_EQ(msg.response.points[5].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[6].x, 1);
-    EXPECT_FLOAT_EQ(msg.response.points[6].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[6].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[6].y, 2);
     EXPECT_FLOAT_EQ(msg.response.points[6].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[7].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[7].y, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[7].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[7].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[7].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[8].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[8].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].x, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].y, 5);
     EXPECT_FLOAT_EQ(msg.response.points[8].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[9].x, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[9].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[9].y, 3);
     EXPECT_FLOAT_EQ(msg.response.points[9].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[10].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[10].y, -1);
+
+    EXPECT_FLOAT_EQ(msg.response.points[10].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[10].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[10].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[11].x, 3);
-    EXPECT_FLOAT_EQ(msg.response.points[11].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[11].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[12].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[12].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[12].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[12].y, -3);
     EXPECT_FLOAT_EQ(msg.response.points[12].z, 0);
-    EXPECT_FLOAT_EQ(msg.response.points[13].x, 5);
-    EXPECT_FLOAT_EQ(msg.response.points[13].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[13].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[13].y, -1);
     EXPECT_FLOAT_EQ(msg.response.points[13].z, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].x, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[14].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[15].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[15].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[15].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[16].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[16].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[16].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[17].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[17].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[17].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[18].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[18].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[18].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].z, 0);
 }
 
 /**
