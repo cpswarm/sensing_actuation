@@ -202,9 +202,9 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
     if (gridmaps.count(angle) == 0 || gridmaps[angle].count(resolution) == 0) {
         // get extreme coordinates
         double xmin = numeric_limits<double>::max();
-        double xmax = numeric_limits<double>::min();
+        double xmax = numeric_limits<double>::lowest();
         double ymin = numeric_limits<double>::max();
-        double ymax = numeric_limits<double>::min();
+        double ymax = numeric_limits<double>::lowest();
         for (auto p : coords[angle]) {
             if (p.first < xmin)
                 xmin = p.first;
