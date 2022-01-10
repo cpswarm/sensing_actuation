@@ -54,26 +54,23 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0659d2b721466457e34484afab04e47c inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the area coordinates.  <a href="classarea.html#a0659d2b721466457e34484afab04e47c">More...</a><br /></td></tr>
 <tr class="separator:a0659d2b721466457e34484afab04e47c inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">get_center</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</td></tr>
-<tr class="memdesc:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the center of the area.  <a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">More...</a><br /></td></tr>
+<tr class="memdesc:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the centroid of the area (<a href="https://en.wikipedia.org/wiki/Centroid#Of_a_polygon">https://en.wikipedia.org/wiki/Centroid#Of_a_polygon</a>).  <a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">More...</a><br /></td></tr>
 <tr class="separator:a5dd913ac23971e599fc44ec31a7c9d68 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</td></tr>
-<tr class="memdesc:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the distance of a given point to the area boundary (outside or inside the area). Based on <a href="https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon">https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon</a>.  <a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">More...</a><br /></td></tr>
+<tr class="memdesc:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the distance of a given point to the area boundary (outside or inside the area). Based on <a href="https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon">https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon</a> and <a href="https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment">https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</a>.  <a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">More...</a><br /></td></tr>
 <tr class="separator:a0f8f91dc566727a9b2d8eeb835e632e8 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">get_gridmap</a> ()</td></tr>
-<tr class="memdesc:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a grid map from the given area coordinates.  <a href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">More...</a><br /></td></tr>
-<tr class="separator:aec33a3e5838ad7d93757660e2fa72115 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac00e659b1c1851e119fe6870eff8a0e4 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ac00e659b1c1851e119fe6870eff8a0e4">get_map</a> (nav_msgs::GetMap::Request &amp;req, nav_msgs::GetMap::Response &amp;res)</td></tr>
-<tr class="memdesc:ac00e659b1c1851e119fe6870eff8a0e4 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the map that represents the area.  <a href="classarea.html#ac00e659b1c1851e119fe6870eff8a0e4">More...</a><br /></td></tr>
-<tr class="separator:ac00e659b1c1851e119fe6870eff8a0e4 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfe3cde0d5c80a5a1660fc8dfb5f859c inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">get_map</a> (cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</td></tr>
+<tr class="memdesc:acfe3cde0d5c80a5a1660fc8dfb5f859c inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the map that represents the area.  <a href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">More...</a><br /></td></tr>
+<tr class="separator:acfe3cde0d5c80a5a1660fc8dfb5f859c inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa717c832cbeb66e12e7a8fcef30f0939 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">get_origin</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</td></tr>
 <tr class="memdesc:aa717c832cbeb66e12e7a8fcef30f0939 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the origin of the coordinate system.  <a href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">More...</a><br /></td></tr>
 <tr class="separator:aa717c832cbeb66e12e7a8fcef30f0939 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1433f67bc4e2800f5e6bf5d97821b99f inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a1433f67bc4e2800f5e6bf5d97821b99f">get_rotation</a> (cpswarm_msgs::GetDouble::Request &amp;req, cpswarm_msgs::GetDouble::Response &amp;res)</td></tr>
-<tr class="memdesc:a1433f67bc4e2800f5e6bf5d97821b99f inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rotation of the area given by coordinates. Assuming a quadrilateral.  <a href="classarea.html#a1433f67bc4e2800f5e6bf5d97821b99f">More...</a><br /></td></tr>
-<tr class="separator:a1433f67bc4e2800f5e6bf5d97821b99f inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86d143859a1eca41342fedc9b9c8600b inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">out_of_bounds</a> (cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res)</td></tr>
-<tr class="memdesc:a86d143859a1eca41342fedc9b9c8600b inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a position is within the area using the winding number algorithm.  <a href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">More...</a><br /></td></tr>
+<tr class="memdesc:a86d143859a1eca41342fedc9b9c8600b inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a position is within the area.  <a href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">More...</a><br /></td></tr>
 <tr class="separator:a86d143859a1eca41342fedc9b9c8600b inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6680911799897d1b8ca1b3d38525101 inherit pub_methods_classarea"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">to_string</a> ()</td></tr>
+<tr class="memdesc:ad6680911799897d1b8ca1b3d38525101 inherit pub_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a string that uniquely represents the area.  <a href="classarea.html#ad6680911799897d1b8ca1b3d38525101">More...</a><br /></td></tr>
+<tr class="separator:ad6680911799897d1b8ca1b3d38525101 inherit pub_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -89,41 +86,53 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a3a7cf29a809f0a61c0c682d40544eeb2"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classma.html#a3a7cf29a809f0a61c0c682d40544eeb2">map_publisher</a></td></tr>
+<tr class="memdesc:a3a7cf29a809f0a61c0c682d40544eeb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to publish grid map.  <a href="classma.html#a3a7cf29a809f0a61c0c682d40544eeb2">More...</a><br /></td></tr>
+<tr class="separator:a3a7cf29a809f0a61c0c682d40544eeb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee77bb9c34cc71537e0565d5f881c99e"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">map_subscriber</a></td></tr>
 <tr class="memdesc:aee77bb9c34cc71537e0565d5f881c99e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to receive an existing map.  <a href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">More...</a><br /></td></tr>
 <tr class="separator:aee77bb9c34cc71537e0565d5f881c99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78d617070544063c56457b92e21336b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classma.html#a78d617070544063c56457b92e21336b9">publish_map</a></td></tr>
+<tr class="memdesc:a78d617070544063c56457b92e21336b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a grid map will be published.  <a href="classma.html#a78d617070544063c56457b92e21336b9">More...</a><br /></td></tr>
+<tr class="separator:a78d617070544063c56457b92e21336b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classarea"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classarea')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classarea.html">area</a></td></tr>
+<tr class="memitem:a62b41663e94e6ff2c3d83778cb6b04c9 inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">get_gridmap</a> (bool rotated=false, double <a class="el" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>=0)</td></tr>
+<tr class="memdesc:a62b41663e94e6ff2c3d83778cb6b04c9 inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a grid map from the given area coordinates.  <a href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">More...</a><br /></td></tr>
+<tr class="separator:a62b41663e94e6ff2c3d83778cb6b04c9 inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2ad101e400c7e44534cd5960a56cb81 inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">global_to_local</a> ()</td></tr>
 <tr class="memdesc:af2ad101e400c7e44534cd5960a56cb81 inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.  <a href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">More...</a><br /></td></tr>
 <tr class="separator:af2ad101e400c7e44534cd5960a56cb81 inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0df347e3c69fec830b637de43bb9f2a5 inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">vector&lt; geometry_msgs::Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">set2vector</a> (set&lt; pair&lt; double, double &gt;&gt; set)</td></tr>
+<tr class="memdesc:a0df347e3c69fec830b637de43bb9f2a5 inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a set of double pairs to a vector of geometry_msgs/Point.  <a href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">More...</a><br /></td></tr>
+<tr class="separator:a0df347e3c69fec830b637de43bb9f2a5 inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d12a8eeed699c1d037e17ba76854f3c inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">set_origin</a> ()</td></tr>
 <tr class="memdesc:a3d12a8eeed699c1d037e17ba76854f3c inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the origin of the local coordinate system from the GPS starting position or given parameter.  <a href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">More...</a><br /></td></tr>
 <tr class="separator:a3d12a8eeed699c1d037e17ba76854f3c inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e8293857d5b3cf324d7676893bcafbc inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">sort_coords</a> ()</td></tr>
+<tr class="memdesc:a1e8293857d5b3cf324d7676893bcafbc inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort the coordinates of the area counter-clockwise about the center by their angle [-π,π].  <a href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">More...</a><br /></td></tr>
+<tr class="separator:a1e8293857d5b3cf324d7676893bcafbc inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a643cf2e7d1285ff9f1f206b78d592bf4 inherit pro_methods_classarea"><td class="memItemLeft" align="right" valign="top">set&lt; pair&lt; double, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">vector2set</a> (vector&lt; geometry_msgs::Point &gt; vector)</td></tr>
+<tr class="memdesc:a643cf2e7d1285ff9f1f206b78d592bf4 inherit pro_methods_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a vector of geometry_msgs/Point to a set of double pairs.  <a href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">More...</a><br /></td></tr>
+<tr class="separator:a643cf2e7d1285ff9f1f206b78d592bf4 inherit pro_methods_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classarea"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classarea')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classarea.html">area</a></td></tr>
-<tr class="memitem:ab3cdba909e86500000638439b39c100c inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">vector&lt; geometry_msgs::Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a></td></tr>
-<tr class="memdesc:ab3cdba909e86500000638439b39c100c inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coordinates of the area.  <a href="classarea.html#ab3cdba909e86500000638439b39c100c">More...</a><br /></td></tr>
-<tr class="separator:ab3cdba909e86500000638439b39c100c inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f3fe025c1982b608584b7e8267069e9 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a></td></tr>
-<tr class="memdesc:a9f3fe025c1982b608584b7e8267069e9 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a grid map will be generated by this node.  <a href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">More...</a><br /></td></tr>
-<tr class="separator:a9f3fe025c1982b608584b7e8267069e9 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8158ad7955107d6b43c44485a27b872 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">map&lt; double, set&lt; pair&lt; double, double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a></td></tr>
+<tr class="memdesc:aa8158ad7955107d6b43c44485a27b872 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coordinates of the area at different rotations.  <a href="classarea.html#aa8158ad7955107d6b43c44485a27b872">More...</a><br /></td></tr>
+<tr class="separator:aa8158ad7955107d6b43c44485a27b872 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0eb55bca59864691f23b179e319884ec inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a></td></tr>
 <tr class="memdesc:a0eb55bca59864691f23b179e319884ec inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether global (GPS) or local coordinates are used as source.  <a href="classarea.html#a0eb55bca59864691f23b179e319884ec">More...</a><br /></td></tr>
 <tr class="separator:a0eb55bca59864691f23b179e319884ec inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac03a56986a5d909d5f942adea1b17fd6 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a></td></tr>
-<tr class="memdesc:ac03a56986a5d909d5f942adea1b17fd6 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grid map representing the area.  <a href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">More...</a><br /></td></tr>
-<tr class="separator:ac03a56986a5d909d5f942adea1b17fd6 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6aad6bf8486ec00983122a3716fe46c inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a></td></tr>
-<tr class="memdesc:ae6aad6bf8486ec00983122a3716fe46c inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map has been created.  <a href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">More...</a><br /></td></tr>
-<tr class="separator:ae6aad6bf8486ec00983122a3716fe46c inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3c41269d438d199a56900714f75da17 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#ae3c41269d438d199a56900714f75da17">map_publisher</a></td></tr>
-<tr class="memdesc:ae3c41269d438d199a56900714f75da17 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to publish grid map.  <a href="classarea.html#ae3c41269d438d199a56900714f75da17">More...</a><br /></td></tr>
-<tr class="separator:ae3c41269d438d199a56900714f75da17 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b19ef007ee7041ea2f28ed26937f3b6 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">map&lt; double, map&lt; double, nav_msgs::OccupancyGrid &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a></td></tr>
+<tr class="memdesc:a7b19ef007ee7041ea2f28ed26937f3b6 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grid map representing the area at different rotations and resolutions.  <a href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">More...</a><br /></td></tr>
+<tr class="separator:a7b19ef007ee7041ea2f28ed26937f3b6 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a474af94f136070aae06e096a7521c367 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">NodeHandle&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a></td></tr>
 <tr class="memdesc:a474af94f136070aae06e096a7521c367 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">A node handle for the main ROS node.  <a href="classarea.html#a474af94f136070aae06e096a7521c367">More...</a><br /></td></tr>
 <tr class="separator:a474af94f136070aae06e096a7521c367 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc804cb034d0eaa28f5fbba56f538e54 inherit pro_attribs_classarea"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a></td></tr>
+<tr class="memdesc:acc804cb034d0eaa28f5fbba56f538e54 inherit pro_attribs_classarea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolution of the grid map representing the area in meter / cell.  <a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">More...</a><br /></td></tr>
+<tr class="separator:acc804cb034d0eaa28f5fbba56f538e54 inherit pro_attribs_classarea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class that holds the mission area, i.e., the area in which CPSs are allowed to move. </p>
@@ -184,7 +193,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00095">95</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00092">92</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
 
 </div>
 </div>
@@ -213,7 +222,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Extract coordinates from existing map. </p>
 
-<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00052">52</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00049">49</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
 
 </div>
 </div>
@@ -242,11 +251,37 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Read mission area coordinates from ROS parameters. If global (GPS) coordinates are given they are converted to a local coordinate system. </p>
 
-<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00074">74</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ma_8cpp_source.html#l00072">72</a> of file <a class="el" href="ma_8cpp_source.html">ma.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3a7cf29a809f0a61c0c682d40544eeb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a7cf29a809f0a61c0c682d40544eeb2">&#9670;&nbsp;</a></span>map_publisher</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Publisher ma::map_publisher</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Publisher to publish grid map. </p>
+
+<p class="definition">Definition at line <a class="el" href="ma_8h_source.html#l00042">42</a> of file <a class="el" href="ma_8h_source.html">ma.h</a>.</p>
+
+</div>
+</div>
 <a id="aee77bb9c34cc71537e0565d5f881c99e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee77bb9c34cc71537e0565d5f881c99e">&#9670;&nbsp;</a></span>map_subscriber</h2>
 
@@ -273,6 +308,32 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a78d617070544063c56457b92e21336b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78d617070544063c56457b92e21336b9">&#9670;&nbsp;</a></span>publish_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ma::publish_map</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a grid map will be published. </p>
+
+<p class="definition">Definition at line <a class="el" href="ma_8h_source.html#l00047">47</a> of file <a class="el" href="ma_8h_source.html">ma.h</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="ma_8h_source.html">ma.h</a></li>
 <li><a class="el" href="ma_8cpp_source.html">ma.cpp</a></li>
@@ -283,7 +344,7 @@ Additional Inherited Members</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

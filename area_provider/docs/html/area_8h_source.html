@@ -30,93 +30,117 @@ $(function() {
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;ros/ros.h&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;geometry_msgs/Point.h&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;nav_msgs/OccupancyGrid.h&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;nav_msgs/GetMap.h&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/FixToPose.h&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetGpsFix.h&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetPoints.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetPoint.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetDouble.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/OutOfBounds.h&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetDist.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">using namespace </span>ros;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classarea.html">   22</a></span>&#160;<span class="keyword">class </span><a class="code" href="classarea.html">area</a></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="classarea.html">area</a> ();</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">bool</span> get_area (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">bool</span> get_center (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">bool</span> get_distance (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    nav_msgs::OccupancyGrid get_gridmap ();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">bool</span> get_map (nav_msgs::GetMap::Request &amp;req, nav_msgs::GetMap::Response &amp;res);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> get_origin (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">bool</span> get_rotation (cpswarm_msgs::GetDouble::Request &amp;req, cpswarm_msgs::GetDouble::Response &amp;res);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">bool</span> out_of_bounds (cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> global_to_local ();</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">void</span> set_origin ();</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="classarea.html#a474af94f136070aae06e096a7521c367">  106</a></span>&#160;    NodeHandle <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classarea.html#ae3c41269d438d199a56900714f75da17">  111</a></span>&#160;    Publisher <a class="code" href="classarea.html#ae3c41269d438d199a56900714f75da17">map_publisher</a>;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">  116</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a>;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">  121</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a>;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">  126</a></span>&#160;    nav_msgs::OccupancyGrid <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="classarea.html#ab3cdba909e86500000638439b39c100c">  131</a></span>&#160;    vector&lt;geometry_msgs::Point&gt; <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="classarea.html#a0eb55bca59864691f23b179e319884ec">  136</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">bool</span> is_left (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;geometry_msgs/Vector3.h&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;nav_msgs/OccupancyGrid.h&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;cpswarm_msgs/GetMap.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/FixToPose.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetGpsFix.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetPoints.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetPoint.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetDouble.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/OutOfBounds.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;cpswarm_msgs/GetDist.h&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">using namespace </span>ros;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454d">   23</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940">   24</a></span>&#160;    <a class="code" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940">CELL_FREE</a> = 0,      <span class="comment">// cell value for free cells</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428">   25</a></span>&#160;    <a class="code" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428">CELL_OCCUPIED</a> = 100 <span class="comment">// cell value for occupied cells</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;} <a class="code" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454d">cell_value_t</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classarea.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="classarea.html">area</a></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="classarea.html">area</a> ();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">bool</span> get_area (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">bool</span> get_center (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> get_distance (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">bool</span> get_map (cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">bool</span> get_origin (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">bool</span> out_of_bounds (cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">string</span> to_string ();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    nav_msgs::OccupancyGrid get_gridmap (<span class="keywordtype">bool</span> rotated=<span class="keyword">false</span>, <span class="keywordtype">double</span> resolution=0);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">void</span> global_to_local ();</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">void</span> set_origin ();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    vector&lt;geometry_msgs::Point&gt; set2vector (set&lt;pair&lt;double,double&gt;&gt; set);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> sort_coords ();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    set&lt;pair&lt;double,double&gt;&gt; vector2set (vector&lt;geometry_msgs::Point&gt; vector);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="classarea.html#a474af94f136070aae06e096a7521c367">  134</a></span>&#160;    NodeHandle <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">  141</a></span>&#160;    map&lt;double,map&lt;double,nav_msgs::OccupancyGrid&gt;&gt; <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">  146</a></span>&#160;    map&lt;double,set&lt;pair&lt;double,double&gt;&gt;&gt; <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>;</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">bool</span> is_right (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="classarea.html#a689affa99750a54788bfa576f44cf76b">  160</a></span>&#160;    ServiceClient <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">  165</a></span>&#160;    geometry_msgs::Point <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno"><a class="line" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">  170</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">cell_warn</a>;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno"><a class="line" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">  175</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;};</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="preprocessor">#endif // AREA_H</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="classarea.html#a0eb55bca59864691f23b179e319884ec">  151</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno"><a class="line" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">  156</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">bool</span> is_left (pair&lt;double,double&gt; p0, pair&lt;double,double&gt; p1, pair&lt;double,double&gt; p2);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">bool</span> is_right (pair&lt;double,double&gt; p0, pair&lt;double,double&gt; p1, pair&lt;double,double&gt; p2);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">bool</span> on_bound (pair&lt;double,double&gt; pos, <span class="keywordtype">double</span> angle);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordtype">bool</span> out_of_bounds (pair&lt;double,double&gt; pos, <span class="keywordtype">double</span> angle=0);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    geometry_msgs::Point pair2point (pair&lt;double,double&gt; pair);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    pair&lt;double,double&gt; point2pair (geometry_msgs::Point point);</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keywordtype">double</span> rotate ();</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    geometry_msgs::Vector3 translate (nav_msgs::OccupancyGrid&amp; map);</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="classarea.html#a689affa99750a54788bfa576f44cf76b">  223</a></span>&#160;    ServiceClient <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">  228</a></span>&#160;    geometry_msgs::Point <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno"><a class="line" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">  235</a></span>&#160;    map&lt;double,map&lt;double, pair&lt;double,double&gt;&gt;&gt; <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno"><a class="line" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">  240</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">cell_warn</a>;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">  245</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;};</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#endif // AREA_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassarea_html_ab3cdba909e86500000638439b39c100c"><div class="ttname"><a href="classarea.html#ab3cdba909e86500000638439b39c100c">area::coords</a></div><div class="ttdeci">vector&lt; geometry_msgs::Point &gt; coords</div><div class="ttdoc">The coordinates of the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00131">area.h:131</a></div></div>
-<div class="ttc" id="aclassarea_html"><div class="ttname"><a href="classarea.html">area</a></div><div class="ttdoc">A class that holds the an area and offers related services.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00022">area.h:22</a></div></div>
-<div class="ttc" id="aclassarea_html_ae6aad6bf8486ec00983122a3716fe46c"><div class="ttname"><a href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">area::map_exists</a></div><div class="ttdeci">bool map_exists</div><div class="ttdoc">Map has been created.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00116">area.h:116</a></div></div>
-<div class="ttc" id="aclassarea_html_ae3c41269d438d199a56900714f75da17"><div class="ttname"><a href="classarea.html#ae3c41269d438d199a56900714f75da17">area::map_publisher</a></div><div class="ttdeci">Publisher map_publisher</div><div class="ttdoc">Publisher to publish grid map.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00111">area.h:111</a></div></div>
-<div class="ttc" id="aclassarea_html_aeceda763636ebea2056ee7c8bec823e5"><div class="ttname"><a href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">area::origin</a></div><div class="ttdeci">geometry_msgs::Point origin</div><div class="ttdoc">The origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00165">area.h:165</a></div></div>
-<div class="ttc" id="aclassarea_html_a689affa99750a54788bfa576f44cf76b"><div class="ttname"><a href="classarea.html#a689affa99750a54788bfa576f44cf76b">area::fix_to_pose_client</a></div><div class="ttdeci">ServiceClient fix_to_pose_client</div><div class="ttdoc">Service client to convert global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00160">area.h:160</a></div></div>
-<div class="ttc" id="aclassarea_html_a9f3fe025c1982b608584b7e8267069e9"><div class="ttname"><a href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">area::create_map</a></div><div class="ttdeci">bool create_map</div><div class="ttdoc">Whether a grid map will be generated by this node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00121">area.h:121</a></div></div>
-<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00136">area.h:136</a></div></div>
-<div class="ttc" id="aclassarea_html_ac03a56986a5d909d5f942adea1b17fd6"><div class="ttname"><a href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">area::map</a></div><div class="ttdeci">nav_msgs::OccupancyGrid map</div><div class="ttdoc">The grid map representing the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00126">area.h:126</a></div></div>
-<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00106">area.h:106</a></div></div>
-<div class="ttc" id="aclassarea_html_ad63f786362205207cb478cf5688ac7d4"><div class="ttname"><a href="classarea.html#ad63f786362205207cb478cf5688ac7d4">area::cell_warn</a></div><div class="ttdeci">int cell_warn</div><div class="ttdoc">Number of grid cells in the map above which a performance warning is issued.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00170">area.h:170</a></div></div>
-<div class="ttc" id="aclassarea_html_acc804cb034d0eaa28f5fbba56f538e54"><div class="ttname"><a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">area::resolution</a></div><div class="ttdeci">double resolution</div><div class="ttdoc">Resolution of the grid map representing the area in meter / cell.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00175">area.h:175</a></div></div>
+<div class="ttc" id="aclassarea_html_aee0e0cdcaa918c41945407d82fe845a1"><div class="ttname"><a href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">area::coords_sorted</a></div><div class="ttdeci">map&lt; double, map&lt; double, pair&lt; double, double &gt; &gt; &gt; coords_sorted</div><div class="ttdoc">The coordinates of the area at different rotations, sorted counter-clockwise about the center,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00235">area.h:235</a></div></div>
+<div class="ttc" id="aclassarea_html"><div class="ttname"><a href="classarea.html">area</a></div><div class="ttdoc">A class that holds the an area and offers related services.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00031">area.h:31</a></div></div>
+<div class="ttc" id="aclassarea_html_afe291ca83ddc448185e99dc79eb0a223"><div class="ttname"><a href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">area::rotation</a></div><div class="ttdeci">double rotation</div><div class="ttdoc">The angle that the map has to rotated by to make the bottom edge horizontal, radian,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00245">area.h:245</a></div></div>
+<div class="ttc" id="aclassarea_html_aa8158ad7955107d6b43c44485a27b872"><div class="ttname"><a href="classarea.html#aa8158ad7955107d6b43c44485a27b872">area::coords</a></div><div class="ttdeci">map&lt; double, set&lt; pair&lt; double, double &gt; &gt; &gt; coords</div><div class="ttdoc">The coordinates of the area at different rotations.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00146">area.h:146</a></div></div>
+<div class="ttc" id="aclassarea_html_aeceda763636ebea2056ee7c8bec823e5"><div class="ttname"><a href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">area::origin</a></div><div class="ttdeci">geometry_msgs::Point origin</div><div class="ttdoc">The origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00228">area.h:228</a></div></div>
+<div class="ttc" id="aclassarea_html_a689affa99750a54788bfa576f44cf76b"><div class="ttname"><a href="classarea.html#a689affa99750a54788bfa576f44cf76b">area::fix_to_pose_client</a></div><div class="ttdeci">ServiceClient fix_to_pose_client</div><div class="ttdoc">Service client to convert global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00223">area.h:223</a></div></div>
+<div class="ttc" id="aclassarea_html_a7b19ef007ee7041ea2f28ed26937f3b6"><div class="ttname"><a href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">area::gridmaps</a></div><div class="ttdeci">map&lt; double, map&lt; double, nav_msgs::OccupancyGrid &gt; &gt; gridmaps</div><div class="ttdoc">The grid map representing the area at different rotations and resolutions.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00141">area.h:141</a></div></div>
+<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00151">area.h:151</a></div></div>
+<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00134">area.h:134</a></div></div>
+<div class="ttc" id="aclassarea_html_ad63f786362205207cb478cf5688ac7d4"><div class="ttname"><a href="classarea.html#ad63f786362205207cb478cf5688ac7d4">area::cell_warn</a></div><div class="ttdeci">int cell_warn</div><div class="ttdoc">Number of grid cells in the map above which a performance warning is issued.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00240">area.h:240</a></div></div>
+<div class="ttc" id="aclassarea_html_acc804cb034d0eaa28f5fbba56f538e54"><div class="ttname"><a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">area::resolution</a></div><div class="ttdeci">double resolution</div><div class="ttdoc">Resolution of the grid map representing the area in meter / cell.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00156">area.h:156</a></div></div>
+<div class="ttc" id="aarea_8h_html_a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940"><div class="ttname"><a href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940">CELL_FREE</a></div><div class="ttdeci">@ CELL_FREE</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00024">area.h:24</a></div></div>
+<div class="ttc" id="aarea_8h_html_a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428"><div class="ttname"><a href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428">CELL_OCCUPIED</a></div><div class="ttdeci">@ CELL_OCCUPIED</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00025">area.h:25</a></div></div>
+<div class="ttc" id="aarea_8h_html_a323757124e1fcbd2ee710e9eb8d4454d"><div class="ttname"><a href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454d">cell_value_t</a></div><div class="ttdeci">cell_value_t</div><div class="ttdoc">An enumeration for grid cell values.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00023">area.h:23</a></div></div>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

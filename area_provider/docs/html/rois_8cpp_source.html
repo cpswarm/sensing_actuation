@@ -29,166 +29,326 @@ $(function() {
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno"><a class="line" href="classrois.html#a73eb30742ff10fa11e586b3edfc5553d">    3</a></span>&#160;<a class="code" href="classrois.html#a73eb30742ff10fa11e586b3edfc5553d">rois::rois</a> ()</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;{</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">// get rois from incoming event messages</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">// read parameters</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keywordtype">int</span> queue_size;</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/queue_size&quot;</span>, queue_size, 1);</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="classrois.html#a94446e4609b4581a5df85c4740437920">roi_subscriber</a> = <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.subscribe(<span class="stringliteral">&quot;bridge/events/roi&quot;</span>, queue_size, &amp;<a class="code" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a>, <span class="keyword">this</span>);</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/duplicates&quot;</span>, <a class="code" href="classrois.html#aac45b23ccec86b78ae98666ba8bec3c5">duplicates</a>, <span class="keyword">false</span>);</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// import rois from files</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">from_file</a>();</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;}</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">   14</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">rois::get_closest</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;{</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    cpswarm_msgs::GetDist::Response closest;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    cpswarm_msgs::GetDist::Response response;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>) {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classroi.html">roi</a>.second.<a class="code" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a>(req, response))</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            <span class="keywordflow">if</span> (closest.closest_line.size() &lt;= 0 || response.distance &lt; closest.distance)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                closest = response;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            ROS_ERROR(<span class="stringliteral">&quot;Failed to retrieve distance for ROI %d!&quot;</span>, <a class="code" href="classroi.html">roi</a>.first);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    }</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// get rois from incoming event messages</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="classrois.html#a94446e4609b4581a5df85c4740437920">roi_subscriber</a> = <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.subscribe(<span class="stringliteral">&quot;bridge/events/roi&quot;</span>, queue_size, &amp;<a class="code" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a>, <span class="keyword">this</span>);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">// publish new rois</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/publish&quot;</span>, <a class="code" href="classrois.html#a051e5b24fbeeef20511439f208705bfe">publish</a>, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classrois.html#a051e5b24fbeeef20511439f208705bfe">publish</a>)</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="classrois.html#aa30ac3d81ac12e296cb437e2d1b7aaf2">roi_publisher</a> = <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.advertise&lt;cpswarm_msgs::PointArrayEvent&gt;(<span class="stringliteral">&quot;rois/roi&quot;</span>, queue_size, <span class="keyword">true</span>); <span class="comment">// latched</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="comment">// import rois from files</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">from_file</a>();</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classrois.html#a6946931f6d8e7586297222c786b3a991">   22</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#a6946931f6d8e7586297222c786b3a991">rois::get_all</a> (cpswarm_msgs::GetMultiPoints::Request &amp;req, cpswarm_msgs::GetMultiPoints::Response &amp;res)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">// collection of all roi coordinates</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    vector&lt;vector&lt;geometry_msgs::Point&gt;&gt; coords;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    res = closest;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classrois.html#a49e4cd868bddeccc4d7397f7dfff170a">   32</a></span>&#160;map&lt;int,roi&gt; <a class="code" href="classrois.html#a49e4cd868bddeccc4d7397f7dfff170a">rois::get_rois</a> ()</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">   37</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">rois::reload</a> (std_srvs::SetBool::Request&amp; req, std_srvs::SetBool::Response&amp; res)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// reset old rois</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (req.data)</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.clear();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="comment">// import rois from files</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">from_file</a>();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    res.success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="comment">// maximum number of coordinates of any roi</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">int</span> max_num_coords = 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">// iterate all rois</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>) {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// store maximum number of coordinates</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].size() &gt; max_num_coords)</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            max_num_coords = <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].size();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="comment">// append coordinates</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        coords.push_back(<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">set2vector</a>(<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0]));</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="comment">// pad all rois with empty coordinates at the end</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    geometry_msgs::Point empty;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; <a class="code" href="classroi.html">roi</a> : coords) {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i=<a class="code" href="classroi.html">roi</a>.size(); i&lt;max_num_coords; ++i) {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <a class="code" href="classroi.html">roi</a>.push_back(empty);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classrois.html#aa0b77114a103595adf2a99e23ea27846">   51</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#aa0b77114a103595adf2a99e23ea27846">rois::add_roi</a> (vector&lt;geometry_msgs::Point&gt; coords)</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">if</span> (coords.size() &gt; 3) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="classroi.html">roi</a> <a class="code" href="classroi.html">roi</a>(coords);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;Added ROI #%lu: %lu coordinates&quot;</span>, <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size(), coords.size());</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.emplace(<a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size(), <a class="code" href="classroi.html">roi</a>);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        ROS_ERROR(<span class="stringliteral">&quot;Cannot add ROI %lu, not enough coordinates: %lu&quot;</span>, <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size(), coords.size());</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">   64</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">rois::from_file</a> ()</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;{</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// directory with roi coodinate files</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">string</span> roi_dir_str = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/roi_dir&quot;</span>, roi_dir_str, roi_dir_str);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="comment">// no roi files</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">if</span> (roi_dir_str.empty()) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;No directory for ROI files given!&quot;</span>);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// iterate all files in given directory</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">// path relative to this ros package</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        filesystem::path package_dir = package::getPath(<span class="stringliteral">&quot;area_provider&quot;</span>);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        filesystem::path roi_dir = roi_dir_str;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        filesystem::path roi_dir_abs = package_dir / roi_dir;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">// iterate all files</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">auto</span> <span class="keyword">const</span>&amp; roi_file : filesystem::directory_iterator{roi_dir_abs}) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            <span class="keywordtype">string</span> roi_file_name = roi_file.path().filename().string();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="comment">// convert file contents to json object</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                ifstream roi_stream(roi_file.path().string());</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <a class="code" href="rois_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> roi_json;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                roi_stream &gt;&gt; roi_json;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                <span class="comment">// invalid plan file</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keywordflow">if</span> (roi_json.contains(<span class="stringliteral">&quot;fileType&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;fileType&quot;</span>] != <span class="stringliteral">&quot;Plan&quot;</span>) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                    ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: not a qGroundControl plan file!&quot;</span>, roi_file_name.c_str());</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                }</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <span class="keywordflow">if</span> (roi_json.contains(<span class="stringliteral">&quot;mission&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;mission&quot;</span>].contains(<span class="stringliteral">&quot;items&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;mission&quot;</span>][<span class="stringliteral">&quot;items&quot;</span>].size() &lt; 3) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                    ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: no mission specified!&quot;</span>, roi_file_name.c_str());</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                <span class="comment">// extract coordinates</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                ROS_DEBUG(<span class="stringliteral">&quot;Extract ROI coordinates from %s...&quot;</span>, roi_file_name.c_str());</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                vector&lt;geometry_msgs::Point&gt; coords;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : roi_json[<span class="stringliteral">&quot;mission&quot;</span>][<span class="stringliteral">&quot;items&quot;</span>]) {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                    <span class="keywordflow">if</span> (c[<span class="stringliteral">&quot;params&quot;</span>].size() &lt; 7) {</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                        ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: number of params must be 7!&quot;</span>, roi_file_name.c_str());</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                    }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                    geometry_msgs::Point coord;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                    coord.x = c[<span class="stringliteral">&quot;params&quot;</span>][4];</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                    coord.y = c[<span class="stringliteral">&quot;params&quot;</span>][5];</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                    coord.z = c[<span class="stringliteral">&quot;params&quot;</span>][6];</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    coords.push_back(coord);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                <span class="comment">// create roi object</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                ROS_INFO(<span class="stringliteral">&quot;Add ROI #%lu from file %s&quot;</span>, <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size(), roi_file_name.c_str());</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                <a class="code" href="classrois.html#aa0b77114a103595adf2a99e23ea27846">add_roi</a>(coords);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            }</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            <span class="keywordflow">catch</span> (json::exception &amp;e) {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                ROS_DEBUG(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: %s&quot;</span>, roi_file_name.c_str(), e.what());</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        }</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">catch</span> (filesystem::filesystem_error &amp;e) {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        ROS_ERROR(<span class="stringliteral">&quot;Cannot read ROI files from %s: %s&quot;</span>, roi_dir_str.c_str(), e.what());</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size() &lt; 1) {</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;No ROIs specified in %s!&quot;</span>, roi_dir_str.c_str());</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    }</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">  138</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a> (<span class="keyword">const</span> cpswarm_msgs::PointArrayEvent::ConstPtr&amp; event)</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;{</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="comment">// create roi object</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    ROS_INFO(<span class="stringliteral">&quot;Received ROI #%lu from swarm member %s&quot;</span>, <a class="code" href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">regions</a>.size(), event-&gt;swarmio.node.c_str());</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <a class="code" href="classrois.html#aa0b77114a103595adf2a99e23ea27846">add_roi</a>(event-&gt;points);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// flatten roi coordinates</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    vector&lt;geometry_msgs::Point&gt; coords_flat;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : coords) {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        coords_flat.insert(coords_flat.end(), <a class="code" href="classroi.html">roi</a>.begin(), <a class="code" href="classroi.html">roi</a>.end());</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// define multi-array layout</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    vector&lt;std_msgs::MultiArrayDimension&gt; dim;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std_msgs::MultiArrayDimension dim0;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    dim0.label = <span class="stringliteral">&quot;roi&quot;</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    dim0.size = coords.size();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    dim0.stride = coords.size() * max_num_coords;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    dim.push_back(dim0);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    std_msgs::MultiArrayDimension dim1;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    dim1.label = <span class="stringliteral">&quot;coords&quot;</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    dim1.size = max_num_coords;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    dim1.stride = max_num_coords;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    dim.push_back(dim1);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std_msgs::MultiArrayLayout layout;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    layout.dim = dim;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    layout.data_offset = 0;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// create service response</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    res.layout = layout;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    res.points = coords_flat;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">   80</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">rois::get_closest</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    cpswarm_msgs::GetDist::Response closest;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    cpswarm_msgs::GetDist::Response response;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Calculate distance to ROI %s&quot;</span>, <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">to_string</a>().c_str());</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a>(req, response)) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="keywordflow">if</span> (closest.closest_line.size() &lt;= 0 || response.distance &lt; closest.distance)</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                closest = response;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            ROS_ERROR(<span class="stringliteral">&quot;Failed to retrieve distance for ROI %s!&quot;</span>, <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">to_string</a>().c_str());</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    res = closest;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classrois.html#acc25fe958ead2f9314a0f12935950d42">  101</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#acc25fe958ead2f9314a0f12935950d42">rois::get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;{</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    cpswarm_msgs::GetDist::Response closest;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    cpswarm_msgs::GetDist::Response response;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="comment">// find roi according to given coordinates</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="comment">// forward request</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0] == <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">vector2set</a>(req.coords)) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">get_distance</a>(req, res);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="comment">// create string for warning</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    stringstream coords_ss;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> p : req.coords)</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        coords_ss &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; p.x &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; p.y &lt;&lt; <span class="stringliteral">&quot;) &quot;</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    ROS_WARN(<span class="stringliteral">&quot;Could not find ROI %s&quot;</span>, coords_ss.str().c_str());</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classrois.html#a83fcce3ec987c560d1655c7c21bd368e">  124</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#a83fcce3ec987c560d1655c7c21bd368e">rois::get_map</a> (cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;{</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="comment">// find roi according to given coordinates</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <a class="code" href="classroi.html">roi</a> : <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>) {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="comment">// forward request</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0] == <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">vector2set</a>(req.coords)) {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">get_map</a>(req, res);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="comment">// create string for warning</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    stringstream coords_ss;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> p : req.coords)</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        coords_ss &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; p.x &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; p.y &lt;&lt; <span class="stringliteral">&quot;) &quot;</span>;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    ROS_WARN(<span class="stringliteral">&quot;Could not find ROI %s&quot;</span>, coords_ss.str().c_str());</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;}</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">  144</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">rois::reload</a> (std_srvs::SetBool::Request&amp; req, std_srvs::SetBool::Response&amp; res)</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;{</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="comment">// reset old rois</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordflow">if</span> (req.data)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>.clear();</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="comment">// import rois from files</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">from_file</a>();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    res.success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;}</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="classrois.html#a9ce154b9e4478c059165f50edaaea36b">  158</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#a9ce154b9e4478c059165f50edaaea36b">rois::add_roi</a> (vector&lt;double&gt; x, vector&lt;double&gt; y)</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;{</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="comment">// equal number of x and y coordinates required</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordflow">if</span> (x.size() != y.size()) {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        ROS_ERROR(<span class="stringliteral">&quot;Cannot add ROI, number of x and y coordinates do not match (%lu != %lu)&quot;</span>, x.size(), y.size());</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="comment">// not enough coordinates</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (x.size() &lt; 3) {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        ROS_ERROR(<span class="stringliteral">&quot;Cannot add ROI, not enough coordinates: %lu&quot;</span>, x.size());</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="comment">// add roi</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <a class="code" href="classroi.html">roi</a> <a class="code" href="classroi.html">roi</a>(x, y);</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="comment">// check if roi already exists</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classrois.html#aac45b23ccec86b78ae98666ba8bec3c5">duplicates</a> == <span class="keyword">false</span> &amp;&amp; <a class="code" href="classrois.html#aea128dd731c6305595dc005dbef5beab">exists</a>(<a class="code" href="classroi.html">roi</a>)) {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            ROS_INFO(<span class="stringliteral">&quot;Skipped ROI %s, already existing&quot;</span>, <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">to_string</a>().c_str());</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        }</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;Added ROI %s&quot;</span>, <a class="code" href="classroi.html">roi</a>.<a class="code" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">to_string</a>().c_str());</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>.insert(<a class="code" href="classroi.html">roi</a>);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="comment">// publish roi</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classrois.html#a051e5b24fbeeef20511439f208705bfe">publish</a>) {</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            cpswarm_msgs::PointArrayEvent event;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            <span class="keyword">event</span>.header.stamp = Time::now();</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            <span class="keyword">event</span>.swarmio.name = <span class="stringliteral">&quot;roi&quot;</span>;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            <span class="keyword">event</span>.x = x;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="keyword">event</span>.y = y;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            <a class="code" href="classrois.html#aa30ac3d81ac12e296cb437e2d1b7aaf2">roi_publisher</a>.publish(event);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        }</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;}</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="classrois.html#aea128dd731c6305595dc005dbef5beab">  195</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classrois.html#aea128dd731c6305595dc005dbef5beab">rois::exists</a> (<a class="code" href="classroi.html">roi</a> <a class="code" href="classroi.html">roi</a>)</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;{</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">// look through all regions</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> r : <a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>) {</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <span class="keywordflow">if</span> (r == <a class="code" href="classroi.html">roi</a>)</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="comment">// no matching region found</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;}</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">  207</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">rois::from_file</a> ()</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;{</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="comment">// directory with roi coodinate files</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordtype">string</span> roi_dir_str = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <a class="code" href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/roi_dir&quot;</span>, roi_dir_str, roi_dir_str);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="comment">// no roi files</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keywordflow">if</span> (roi_dir_str.empty()) {</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;No directory for ROI files given!&quot;</span>);</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    }</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="comment">// iterate all files in given directory</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="comment">// path relative to this ros package</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        filesystem::path package_dir = package::getPath(<span class="stringliteral">&quot;area_provider&quot;</span>);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        filesystem::path roi_dir = roi_dir_str;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        filesystem::path roi_dir_abs = package_dir / roi_dir;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="comment">// iterate all files</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">auto</span> <span class="keyword">const</span>&amp; roi_file : filesystem::directory_iterator{roi_dir_abs}) {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            <span class="keywordtype">string</span> roi_file_name = roi_file.path().filename().string();</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                <span class="comment">// convert file contents to json object</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                ifstream roi_stream(roi_file.path().string());</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                <a class="code" href="rois_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> roi_json;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                roi_stream &gt;&gt; roi_json;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                <span class="comment">// invalid plan file</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                <span class="keywordflow">if</span> (roi_json.contains(<span class="stringliteral">&quot;fileType&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;fileType&quot;</span>] != <span class="stringliteral">&quot;Plan&quot;</span>) {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                    ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: not a qGroundControl plan file!&quot;</span>, roi_file_name.c_str());</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                <span class="keywordflow">if</span> (roi_json.contains(<span class="stringliteral">&quot;mission&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;mission&quot;</span>].contains(<span class="stringliteral">&quot;items&quot;</span>) == <span class="keyword">false</span> or roi_json[<span class="stringliteral">&quot;mission&quot;</span>][<span class="stringliteral">&quot;items&quot;</span>].size() &lt; 3) {</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                    ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: no mission specified!&quot;</span>, roi_file_name.c_str());</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                }</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                <span class="comment">// extract coordinates</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                ROS_DEBUG(<span class="stringliteral">&quot;Extract ROI coordinates from %s...&quot;</span>, roi_file_name.c_str());</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                vector&lt;double&gt; x;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                vector&lt;double&gt; y;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : roi_json[<span class="stringliteral">&quot;mission&quot;</span>][<span class="stringliteral">&quot;items&quot;</span>]) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                    <span class="keywordflow">if</span> (c[<span class="stringliteral">&quot;params&quot;</span>].size() &lt; 7) {</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                        ROS_ERROR(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: number of params must be 7 for each mission item!&quot;</span>, roi_file_name.c_str());</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                    }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                    <span class="keywordflow">if</span> (c[<span class="stringliteral">&quot;command&quot;</span>] != 16) {</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                        ROS_DEBUG(<span class="stringliteral">&quot;%s: Skipping item (%f,%f), not a waypoint!&quot;</span>, roi_file_name.c_str(), <span class="keywordtype">double</span>(c[<span class="stringliteral">&quot;params&quot;</span>][4]), <span class="keywordtype">double</span>(c[<span class="stringliteral">&quot;params&quot;</span>][5]));</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                    }</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                    x.push_back(c[<span class="stringliteral">&quot;params&quot;</span>][4]);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                    y.push_back(c[<span class="stringliteral">&quot;params&quot;</span>][5]);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                <span class="comment">// create roi object</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                ROS_INFO(<span class="stringliteral">&quot;Add ROI from file %s...&quot;</span>, roi_file_name.c_str());</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                <a class="code" href="classrois.html#a9ce154b9e4478c059165f50edaaea36b">add_roi</a>(x, y);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            <span class="keywordflow">catch</span> (json::exception &amp;e) {</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                ROS_DEBUG(<span class="stringliteral">&quot;Skipping file %s, invalid syntax: %s&quot;</span>, roi_file_name.c_str(), e.what());</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            <span class="keywordflow">catch</span> (exception &amp;e) {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                ROS_DEBUG(<span class="stringliteral">&quot;Skipping file %s: %s&quot;</span>, roi_file_name.c_str(), e.what());</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            }</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        }</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    }</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keywordflow">catch</span> (filesystem::filesystem_error &amp;e) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        ROS_ERROR(<span class="stringliteral">&quot;Cannot read ROI files from %s: %s&quot;</span>, roi_dir_str.c_str(), e.what());</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">regions</a>.size() &lt; 1) {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;No ROIs specified in %s!&quot;</span>, roi_dir_str.c_str());</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;}</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">  287</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a> (<span class="keyword">const</span> cpswarm_msgs::PointArrayEvent::ConstPtr&amp; event)</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;{</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="comment">// create roi object</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    ROS_INFO(<span class="stringliteral">&quot;Received ROI from swarm member %s&quot;</span>, event-&gt;swarmio.node.c_str());</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <a class="code" href="classrois.html#a9ce154b9e4478c059165f50edaaea36b">add_roi</a>(event-&gt;x, event-&gt;y);</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassrois_html_a3a67055051b63cdfab0c613ee34a21ff"><div class="ttname"><a href="classrois.html#a3a67055051b63cdfab0c613ee34a21ff">rois::regions</a></div><div class="ttdeci">map&lt; int, roi &gt; regions</div><div class="ttdoc">All ROIs with IDs.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00078">rois.h:78</a></div></div>
 <div class="ttc" id="arois_8h_html"><div class="ttname"><a href="rois_8h.html">rois.h</a></div></div>
-<div class="ttc" id="aclassarea_html_a0f8f91dc566727a9b2d8eeb835e632e8"><div class="ttname"><a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a></div><div class="ttdeci">bool get_distance(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the distance of a given point to the area boundary (outside or inside the area)....</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00041">area.cpp:41</a></div></div>
-<div class="ttc" id="aclassrois_html_a94446e4609b4581a5df85c4740437920"><div class="ttname"><a href="classrois.html#a94446e4609b4581a5df85c4740437920">rois::roi_subscriber</a></div><div class="ttdeci">Subscriber roi_subscriber</div><div class="ttdoc">Subscriber object to receive ROI coordinates from event messages.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00073">rois.h:73</a></div></div>
-<div class="ttc" id="aclassrois_html_ad84dbc0a1e6d774d1b7222ffcc24201d"><div class="ttname"><a href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">rois::reload</a></div><div class="ttdeci">bool reload(std_srvs::SetBool::Request &amp;req, std_srvs::SetBool::Response &amp;res)</div><div class="ttdoc">Reload ROIs from files.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00037">rois.cpp:37</a></div></div>
-<div class="ttc" id="aclassrois_html_a3662e97501d7aa8af2c6dbe0d174246d"><div class="ttname"><a href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">rois::from_file</a></div><div class="ttdeci">void from_file()</div><div class="ttdoc">Read ROI coordinates from files at the folder specified with the roi_dir param.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00064">rois.cpp:64</a></div></div>
-<div class="ttc" id="arois_8h_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="rois_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00012">rois.h:12</a></div></div>
-<div class="ttc" id="aclassrois_html_aa0b77114a103595adf2a99e23ea27846"><div class="ttname"><a href="classrois.html#aa0b77114a103595adf2a99e23ea27846">rois::add_roi</a></div><div class="ttdeci">void add_roi(vector&lt; geometry_msgs::Point &gt; coords)</div><div class="ttdoc">Add an ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00051">rois.cpp:51</a></div></div>
-<div class="ttc" id="aclassrois_html_a2272f63cf000f3916d11a1714f3d435d"><div class="ttname"><a href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a></div><div class="ttdeci">void roi_callback(const cpswarm_msgs::PointArrayEvent::ConstPtr &amp;event)</div><div class="ttdoc">Receive ROI coordinates from an event message.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00138">rois.cpp:138</a></div></div>
+<div class="ttc" id="aclassarea_html_a0f8f91dc566727a9b2d8eeb835e632e8"><div class="ttname"><a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a></div><div class="ttdeci">bool get_distance(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the distance of a given point to the area boundary (outside or inside the area)....</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00061">area.cpp:61</a></div></div>
+<div class="ttc" id="aclassrois_html_ae9ff6ab824d2d3cd149682343a4005e4"><div class="ttname"><a href="classrois.html#ae9ff6ab824d2d3cd149682343a4005e4">rois::regions</a></div><div class="ttdeci">set&lt; roi &gt; regions</div><div class="ttdoc">All ROIs with IDs.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00113">rois.h:113</a></div></div>
+<div class="ttc" id="aclassarea_html_aa8158ad7955107d6b43c44485a27b872"><div class="ttname"><a href="classarea.html#aa8158ad7955107d6b43c44485a27b872">area::coords</a></div><div class="ttdeci">map&lt; double, set&lt; pair&lt; double, double &gt; &gt; &gt; coords</div><div class="ttdoc">The coordinates of the area at different rotations.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00146">area.h:146</a></div></div>
+<div class="ttc" id="aclassarea_html_a643cf2e7d1285ff9f1f206b78d592bf4"><div class="ttname"><a href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">area::vector2set</a></div><div class="ttdeci">set&lt; pair&lt; double, double &gt; &gt; vector2set(vector&lt; geometry_msgs::Point &gt; vector)</div><div class="ttdoc">Convert a vector of geometry_msgs/Point to a set of double pairs.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00367">area.cpp:367</a></div></div>
+<div class="ttc" id="aclassrois_html_aea128dd731c6305595dc005dbef5beab"><div class="ttname"><a href="classrois.html#aea128dd731c6305595dc005dbef5beab">rois::exists</a></div><div class="ttdeci">bool exists(roi roi)</div><div class="ttdoc">Check whether a given ROI is already known.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00195">rois.cpp:195</a></div></div>
+<div class="ttc" id="aclassrois_html_a94446e4609b4581a5df85c4740437920"><div class="ttname"><a href="classrois.html#a94446e4609b4581a5df85c4740437920">rois::roi_subscriber</a></div><div class="ttdeci">Subscriber roi_subscriber</div><div class="ttdoc">Subscriber object to receive ROI coordinates from event messages.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00103">rois.h:103</a></div></div>
+<div class="ttc" id="aclassrois_html_aac45b23ccec86b78ae98666ba8bec3c5"><div class="ttname"><a href="classrois.html#aac45b23ccec86b78ae98666ba8bec3c5">rois::duplicates</a></div><div class="ttdeci">bool duplicates</div><div class="ttdoc">Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00118">rois.h:118</a></div></div>
+<div class="ttc" id="aclassrois_html_ad84dbc0a1e6d774d1b7222ffcc24201d"><div class="ttname"><a href="classrois.html#ad84dbc0a1e6d774d1b7222ffcc24201d">rois::reload</a></div><div class="ttdeci">bool reload(std_srvs::SetBool::Request &amp;req, std_srvs::SetBool::Response &amp;res)</div><div class="ttdoc">Reload ROIs from files.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00144">rois.cpp:144</a></div></div>
+<div class="ttc" id="aclassarea_html_ad6680911799897d1b8ca1b3d38525101"><div class="ttname"><a href="classarea.html#ad6680911799897d1b8ca1b3d38525101">area::to_string</a></div><div class="ttdeci">string to_string()</div><div class="ttdoc">Return a string that uniquely represents the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00178">area.cpp:178</a></div></div>
+<div class="ttc" id="aclassrois_html_a3662e97501d7aa8af2c6dbe0d174246d"><div class="ttname"><a href="classrois.html#a3662e97501d7aa8af2c6dbe0d174246d">rois::from_file</a></div><div class="ttdeci">void from_file()</div><div class="ttdoc">Read ROI coordinates from files at the folder specified with the roi_dir param.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00207">rois.cpp:207</a></div></div>
+<div class="ttc" id="aclassrois_html_a6946931f6d8e7586297222c786b3a991"><div class="ttname"><a href="classrois.html#a6946931f6d8e7586297222c786b3a991">rois::get_all</a></div><div class="ttdeci">bool get_all(cpswarm_msgs::GetMultiPoints::Request &amp;req, cpswarm_msgs::GetMultiPoints::Response &amp;res)</div><div class="ttdoc">Return all ROIs.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00022">rois.cpp:22</a></div></div>
+<div class="ttc" id="arois_8h_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="rois_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00015">rois.h:15</a></div></div>
+<div class="ttc" id="aclassarea_html_acfe3cde0d5c80a5a1660fc8dfb5f859c"><div class="ttname"><a href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">area::get_map</a></div><div class="ttdeci">bool get_map(cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</div><div class="ttdoc">Return the map that represents the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00149">area.cpp:149</a></div></div>
+<div class="ttc" id="aclassrois_html_acc25fe958ead2f9314a0f12935950d42"><div class="ttname"><a href="classrois.html#acc25fe958ead2f9314a0f12935950d42">rois::get_distance</a></div><div class="ttdeci">bool get_distance(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the distance to a given ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00101">rois.cpp:101</a></div></div>
+<div class="ttc" id="aclassrois_html_a83fcce3ec987c560d1655c7c21bd368e"><div class="ttname"><a href="classrois.html#a83fcce3ec987c560d1655c7c21bd368e">rois::get_map</a></div><div class="ttdeci">bool get_map(cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</div><div class="ttdoc">Return the map that correspond to a given ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00124">rois.cpp:124</a></div></div>
+<div class="ttc" id="aclassrois_html_aa30ac3d81ac12e296cb437e2d1b7aaf2"><div class="ttname"><a href="classrois.html#aa30ac3d81ac12e296cb437e2d1b7aaf2">rois::roi_publisher</a></div><div class="ttdeci">Publisher roi_publisher</div><div class="ttdoc">Event publisher for ROI coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00108">rois.h:108</a></div></div>
+<div class="ttc" id="aclassrois_html_a2272f63cf000f3916d11a1714f3d435d"><div class="ttname"><a href="classrois.html#a2272f63cf000f3916d11a1714f3d435d">rois::roi_callback</a></div><div class="ttdeci">void roi_callback(const cpswarm_msgs::PointArrayEvent::ConstPtr &amp;event)</div><div class="ttdoc">Receive ROI coordinates from an event message.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00287">rois.cpp:287</a></div></div>
 <div class="ttc" id="aclassrois_html_a73eb30742ff10fa11e586b3edfc5553d"><div class="ttname"><a href="classrois.html#a73eb30742ff10fa11e586b3edfc5553d">rois::rois</a></div><div class="ttdeci">rois()</div><div class="ttdoc">Constructor that initializes the ROIs.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00003">rois.cpp:3</a></div></div>
+<div class="ttc" id="aclassrois_html_a9ce154b9e4478c059165f50edaaea36b"><div class="ttname"><a href="classrois.html#a9ce154b9e4478c059165f50edaaea36b">rois::add_roi</a></div><div class="ttdeci">void add_roi(vector&lt; double &gt; x, vector&lt; double &gt; y)</div><div class="ttdoc">Add an ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00158">rois.cpp:158</a></div></div>
 <div class="ttc" id="aclassroi_html"><div class="ttname"><a href="classroi.html">roi</a></div><div class="ttdoc">A class that holds a region of interest (ROI).</div><div class="ttdef"><b>Definition:</b> <a href="roi_8h_source.html#l00009">roi.h:9</a></div></div>
-<div class="ttc" id="aclassrois_html_a49e4cd868bddeccc4d7397f7dfff170a"><div class="ttname"><a href="classrois.html#a49e4cd868bddeccc4d7397f7dfff170a">rois::get_rois</a></div><div class="ttdeci">map&lt; int, roi &gt; get_rois()</div><div class="ttdoc">Get all ROIs managed by this class.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00032">rois.cpp:32</a></div></div>
-<div class="ttc" id="aclassrois_html_a33a4af83392e7307f08d8c78cb683d68"><div class="ttname"><a href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">rois::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00068">rois.h:68</a></div></div>
-<div class="ttc" id="aclassrois_html_aa39882fe494b1fb1a160c19a0f159bcc"><div class="ttname"><a href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">rois::get_closest</a></div><div class="ttdeci">bool get_closest(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the closest ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00014">rois.cpp:14</a></div></div>
+<div class="ttc" id="aclassrois_html_a051e5b24fbeeef20511439f208705bfe"><div class="ttname"><a href="classrois.html#a051e5b24fbeeef20511439f208705bfe">rois::publish</a></div><div class="ttdeci">bool publish</div><div class="ttdoc">Whether to publish any newly imported ROI as event.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00123">rois.h:123</a></div></div>
+<div class="ttc" id="aclassarea_html_a0df347e3c69fec830b637de43bb9f2a5"><div class="ttname"><a href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">area::set2vector</a></div><div class="ttdeci">vector&lt; geometry_msgs::Point &gt; set2vector(set&lt; pair&lt; double, double &gt;&gt; set)</div><div class="ttdoc">Convert a set of double pairs to a vector of geometry_msgs/Point.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00331">area.cpp:331</a></div></div>
+<div class="ttc" id="aclassrois_html_a33a4af83392e7307f08d8c78cb683d68"><div class="ttname"><a href="classrois.html#a33a4af83392e7307f08d8c78cb683d68">rois::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00098">rois.h:98</a></div></div>
+<div class="ttc" id="aclassrois_html_aa39882fe494b1fb1a160c19a0f159bcc"><div class="ttname"><a href="classrois.html#aa39882fe494b1fb1a160c19a0f159bcc">rois::get_closest</a></div><div class="ttdeci">bool get_closest(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the closest ROI.</div><div class="ttdef"><b>Definition:</b> <a href="rois_8cpp_source.html#l00080">rois.cpp:80</a></div></div>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

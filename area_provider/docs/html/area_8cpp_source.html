@@ -32,368 +32,589 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">// read parameters</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/cell_warn&quot;</span>, <a class="code" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">cell_warn</a>, 1000);</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/resolution&quot;</span>, <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>, 1.0);</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/create_map&quot;</span>, <a class="code" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a>, <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// check of global (gps) coordinates are used</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keywordtype">string</span> pos_type = <span class="stringliteral">&quot;global&quot;</span>;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/pos_type&quot;</span>, pos_type, pos_type);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a> = pos_type == <span class="stringliteral">&quot;local&quot;</span> ? false : <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">// service client for converting gps to local coordinates</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a> = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.serviceClient&lt;cpswarm_msgs::FixToPose&gt;(<span class="stringliteral">&quot;gps/fix_to_pose&quot;</span>);</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Wait for fix_to_pose service...&quot;</span>);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.waitForExistence();</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    }</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classarea.html#a0659d2b721466457e34484afab04e47c">   23</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0659d2b721466457e34484afab04e47c">area::get_area</a> (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    res.points = <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">   29</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">area::get_center</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="comment">// compute centroid / barycenter</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>) {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        res.point.x += c.x;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        res.point.y += c.y;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    res.point.x /= <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    res.point.y /= <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size();</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">   41</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">bool</span> init = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// point to check</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    geometry_msgs::Point p0;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// use origin</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordflow">if</span> (req.point.x == 0 &amp;&amp; req.point.y == 0) {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        p0.x = <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.x;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        p0.y = <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.y;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">// check of global (gps) coordinates are used</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">string</span> pos_type = <span class="stringliteral">&quot;global&quot;</span>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/pos_type&quot;</span>, pos_type, pos_type);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a> = pos_type == <span class="stringliteral">&quot;local&quot;</span> ? false : <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">// service client for converting gps to local coordinates</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a> = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.serviceClient&lt;cpswarm_msgs::FixToPose&gt;(<span class="stringliteral">&quot;gps/fix_to_pose&quot;</span>);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Wait for fix_to_pose service...&quot;</span>);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.waitForExistence();</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    }</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">// map not yet rotated</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a> = 0;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;}</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classarea.html#a0659d2b721466457e34484afab04e47c">   25</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0659d2b721466457e34484afab04e47c">area::get_area</a> (cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    res.points = <a class="code" href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">set2vector</a>(<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0]);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">   31</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">area::get_center</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classarea.html">area</a> = 0;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// compute centroid</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator ne;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">for</span> (map&lt;<span class="keywordtype">double</span>, pair&lt;double,double&gt;&gt;::iterator it = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin(); it != <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end(); ++it) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">// next element</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        ne = next(it);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">if</span> (ne == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end())</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            ne = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">// sum up coordinates</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        res.point.x += (it-&gt;second.first + ne-&gt;second.first) * (it-&gt;second.first * ne-&gt;second.second - ne-&gt;second.first * it-&gt;second.second);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        res.point.y += (it-&gt;second.second + ne-&gt;second.second) * (it-&gt;second.first * ne-&gt;second.second - ne-&gt;second.first * it-&gt;second.second);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// sum up area</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="classarea.html">area</a> += it-&gt;second.first * ne-&gt;second.second - ne-&gt;second.first * it-&gt;second.second;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// normalize area</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="classarea.html">area</a> /= 2;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// use given point</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        p0.x = req.point.x;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        p0.y = req.point.y;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// find minimal distance to any area bound</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size(); ++i) {</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="comment">// coordinates of two neighboring polygon points</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        geometry_msgs::Point p1;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        p1.x = <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i].x;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        p1.y = <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i].y;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        geometry_msgs::Point p2;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        p2.x = <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()].x;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        p2.y = <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()].y;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="comment">// minimal distance to line connecting the two points</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        geometry_msgs::Point p02;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        p02.x = p2.x - p0.x;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        p02.y = p2.y - p0.y;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        geometry_msgs::Point p12;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        p12.x = p2.x - p1.x;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        p12.y = p2.y - p1.y;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        geometry_msgs::Point p10;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        p10.x = p0.x - p1.x;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        p10.y = p0.y - p1.y;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordtype">double</span> dot = p12.x * p10.x + p12.y * p10.y;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">double</span> dis = hypot(p12.x, p12.y);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordtype">double</span> r = dot / dis / dis;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">double</span> dist;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        geometry_msgs::Point closest;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// normalize coordinates</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    res.point.x /= 6 * <a class="code" href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">area</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    res.point.y /= 6 * <a class="code" href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">area</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">   61</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a> (cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> init = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// point to check</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    geometry_msgs::Point p0;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">// use origin</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">if</span> (req.point.x == 0 &amp;&amp; req.point.y == 0)</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        p0 = <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="comment">// use given point</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        p0 = req.point;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    ROS_DEBUG(<span class="stringliteral">&quot;Calculate distance for point (%.2f,%.2f)&quot;</span>, p0.x, p0.y);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="comment">// find minimal distance to any area bound</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator ne;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">for</span> (map&lt;<span class="keywordtype">double</span>, pair&lt;double,double&gt;&gt;::iterator it = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin(); it != <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end(); ++it) {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">// next element</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        ne = next(it);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">if</span> (ne == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end())</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            ne = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">// p1 is closest point</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">if</span> (r &lt; 0) {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            closest = p1;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            dist = hypot(p10.x, p10.y);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">// p2 is closest point</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (r &gt; 1) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            closest = p2;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            dist = hypot(p02.x, p02.y);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="comment">// closest point is between p1 and p2</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            dist = sqrt((p10.x*p10.x + p10.y*p10.y) - pow(r * hypot(p12.x, p12.y), 2));</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordtype">double</span> d1c = sqrt((p10.x*p10.x + p10.y*p10.y) - dist*dist); <span class="comment">// distance from p1 to closest point</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordtype">double</span> d12 = hypot(p12.x, p12.y);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            closest.x = p1.x + p12.x / d12 * d1c;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            closest.y = p1.y + p12.y / d12 * d1c;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="comment">// found smaller distance</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">if</span> (init || dist &lt; res.distance) {</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="comment">// return closest point</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            res.closest_point = closest;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="comment">// return line segment</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            res.closest_line.clear();</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            res.closest_line.push_back(p1);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            res.closest_line.push_back(p2);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            <span class="comment">// return distance</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            res.distance = dist;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            init = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        }</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">  126</a></span>&#160;nav_msgs::OccupancyGrid <a class="code" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">area::get_gridmap</a> ()</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;{</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">// no map existing yet, i.e., no map server</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> == <span class="keyword">false</span> &amp;&amp; <a class="code" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a> == <span class="keyword">true</span>) {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="comment">// get coordinates</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordtype">double</span> xmin = numeric_limits&lt;double&gt;::max();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keywordtype">double</span> xmax = numeric_limits&lt;double&gt;::min();</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keywordtype">double</span> ymin = numeric_limits&lt;double&gt;::max();</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordtype">double</span> ymax = numeric_limits&lt;double&gt;::min();</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> p : <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>) {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keywordflow">if</span> (p.x &lt; xmin)</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                xmin = p.x;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <span class="keywordflow">if</span> (p.x &gt; xmax)</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                xmax = p.x;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <span class="keywordflow">if</span> (p.y &lt; ymin)</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                ymin = p.y;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <span class="keywordflow">if</span> (p.y &gt; ymax)</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                ymax = p.y;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        }</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordtype">int</span> x = int(ceil((xmax - xmin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordtype">int</span> y = int(ceil((ymax - ymin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="comment">// warn about large grids</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">if</span> (x*y &gt; <a class="code" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">cell_warn</a>)</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            ROS_WARN(<span class="stringliteral">&quot;Given coordinates seem wrong, grid map extremley large: %d cells!&quot;</span>, x*y);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="comment">// generate grid map data</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        cpswarm_msgs::OutOfBounds::Request req;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        cpswarm_msgs::OutOfBounds::Response res;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        vector&lt;int8_t&gt; data;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i=0; i&lt;y; ++i) { <span class="comment">// row major order</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j=0; j&lt;x; ++j) {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                <span class="comment">// check if cell is within area</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                req.pose.position.x = j * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> + xmin;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                req.pose.position.y = i * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> + ymin;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                <a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">out_of_bounds</a>(req, res);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                <span class="comment">// out of bounds</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                <span class="keywordflow">if</span> (res.out)</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    data.push_back(100); <span class="comment">// occupied</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                <span class="comment">// inside area</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                    data.push_back(0); <span class="comment">// free</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            }</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        }</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.data = data;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="comment">// set map header</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.header.stamp = Time::now();</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.header.frame_id = <span class="stringliteral">&quot;map&quot;</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">// coordinates of two neighboring polygon points</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        geometry_msgs::Point p1 = <a class="code" href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">pair2point</a>(it-&gt;second);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        geometry_msgs::Point p2 = <a class="code" href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">pair2point</a>(ne-&gt;second);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="comment">// difference between all three points</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        geometry_msgs::Point p02;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        p02.x = p2.x - p0.x;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        p02.y = p2.y - p0.y;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        geometry_msgs::Point p12;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        p12.x = p2.x - p1.x;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        p12.y = p2.y - p1.y;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        geometry_msgs::Point p10;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        p10.x = p0.x - p1.x;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        p10.y = p0.y - p1.y;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">// calculate where on the line p12 the closest point lies</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keywordtype">double</span> dot = p12.x * p10.x + p12.y * p10.y;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordtype">double</span> dis = p12.x * p12.x + p12.y * p12.y;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordtype">double</span> r = dot / dis;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// distance and closest point</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordtype">double</span> dist;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        geometry_msgs::Point closest;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="comment">// p1 is closest point</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">if</span> (r &lt; 0) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            closest = p1;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            dist = hypot(p10.x, p10.y);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="comment">// p2 is closest point</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (r &gt; 1) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            closest = p2;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            dist = hypot(p02.x, p02.y);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="comment">// closest point is between p1 and p2</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            closest.x = p1.x + r * p12.x;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            closest.y = p1.y + r * p12.y;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            dist = sqrt((p10.x * p10.x + p10.y * p10.y) - dis * r * r);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="comment">// found smaller distance</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keywordflow">if</span> (init || dist &lt; res.distance) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            ROS_DEBUG(<span class="stringliteral">&quot;Found closest point (%.2f,%.2f) on line (%.2f,%.2f)--(%.2f,%.2f) at distance %.2f&quot;</span>, closest.x, closest.y, p1.x, p1.y, p2.x, p2.y, dist);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <span class="comment">// return closest point</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            res.closest_point = closest;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="comment">// return line segment</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            res.closest_line.clear();</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            res.closest_line.push_back(p1);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            res.closest_line.push_back(p2);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            <span class="comment">// return distance</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            res.distance = dist;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            init = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        }</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;}</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">  149</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">area::get_map</a> (cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;{</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="comment">// get/create map</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    res.map = <a class="code" href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">get_gridmap</a>(req.rotate, req.resolution);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="comment">// angle of rotation</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">if</span> (req.rotate)</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        res.rotation = <a class="code" href="classarea.html#aa09514d15176ebd516b10dbd4efb958d">rotate</a>();</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="comment">// translate map if requested</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">if</span> (req.translate)</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        res.translation = <a class="code" href="classarea.html#aaa40eb9bd032d8c486796cc7aa642dbe">translate</a>(res.map);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;}</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">  165</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">area::get_origin</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;{</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    res.point = <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
+<div class="line"><a name="l00171"></a><span class="lineno"><a class="line" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">  171</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">area::out_of_bounds</a> (cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res)</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;{</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    res.out = <a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">out_of_bounds</a>(<a class="code" href="classarea.html#a1ca66a9810e71c5bfdc20c7fedffd772">point2pair</a>(req.pose.position));</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;}</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="comment">// set map meta data</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.map_load_time == Time::now();</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.resolution = <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.width = x;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.height = y;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="comment">// position of cell (0,0)</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.origin.position.x = xmin;</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.origin.position.y = ymin;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    }</div>
+<div class="line"><a name="l00178"></a><span class="lineno"><a class="line" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">  178</a></span>&#160;<span class="keywordtype">string</span> <a class="code" href="classarea.html#ad6680911799897d1b8ca1b3d38525101">area::to_string</a> ()</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;{</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    stringstream ss;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0])</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        ss &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; c.second.first &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; c.second.second &lt;&lt; <span class="stringliteral">&quot;) &quot;</span>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;}</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno"><a class="line" href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">  186</a></span>&#160;nav_msgs::OccupancyGrid <a class="code" href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">area::get_gridmap</a> (<span class="keywordtype">bool</span> rotated, <span class="keywordtype">double</span> resolution)</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;{</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="comment">// empty grid map</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    nav_msgs::OccupancyGrid gridmap;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;}</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno"><a class="line" href="classarea.html#ac00e659b1c1851e119fe6870eff8a0e4">  194</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#ac00e659b1c1851e119fe6870eff8a0e4">area::get_map</a> (nav_msgs::GetMap::Request &amp;req, nav_msgs::GetMap::Response &amp;res)</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;{</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> == <span class="keyword">false</span> &amp;&amp; <a class="code" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a> == <span class="keyword">false</span>)</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        ROS_WARN(<span class="stringliteral">&quot;Providing empty map!&quot;</span>);</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    res.map = <a class="code" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">get_gridmap</a>();</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;}</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">  202</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">area::get_origin</a> (cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;{</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    res.point = <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;}</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
-<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="classarea.html#a1433f67bc4e2800f5e6bf5d97821b99f">  208</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a1433f67bc4e2800f5e6bf5d97821b99f">area::get_rotation</a> (cpswarm_msgs::GetDouble::Request &amp;req, cpswarm_msgs::GetDouble::Response &amp;res)</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;{</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="comment">// get coordinates</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    geometry_msgs::Point pl, pb, pr;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    pl.x = numeric_limits&lt;double&gt;::max();</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    pb.y = numeric_limits&lt;double&gt;::max();</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    pr.x = numeric_limits&lt;double&gt;::min();</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> p : <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>) {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="comment">// left most point</span></div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">if</span> (p.x &lt; pl.x || (p.x == pl.x &amp;&amp; p.y &lt; pl.y))</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            pl = p;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="comment">// bottom most point</span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="keywordflow">if</span> (p.y &lt; pb.y)</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            pb = p;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="comment">// right most point</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordflow">if</span> (p.x &gt; pr.x || (p.x == pr.x &amp;&amp; p.y &lt; pr.y))</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            pr = p;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    }</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="comment">// no rotation required</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordflow">if</span> ((pl.x == pb.x &amp;&amp; pl.y == pb.y) || (pr.x == pb.x &amp;&amp; pr.y == pb.y))</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="comment">// rotate clockwise</span></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordflow">if</span> (pr.y &lt; pl.y) {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        res.value = -atan2(pr.y - pb.y, pr.x - pb.x);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    }</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="comment">// rotate counter clockwise</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        res.value = -atan2(pb.y - pl.y, pb.x - pl.x);</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;}</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno"><a class="line" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">  246</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">area::out_of_bounds</a> (cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res)</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;{</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="comment">// the winding number counter, i.e., how often a ray from the point to the right crosses the boundary</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">int</span> wn = 0;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="comment">// loop through all edges of the polygon</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size(); ++i) {</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        <span class="comment">// ray crosses upward edge</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i].y &lt;= req.pose.position.y &amp;&amp; <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()].y  &gt; req.pose.position.y &amp;&amp; <a class="code" href="classarea.html#a976da88b2c0a3012d27db3bcb93dfc0e">is_left</a>(<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i], <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()], req.pose.position))</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            ++wn;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="comment">// ray crosses downward edge</span></div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i].y &gt; req.pose.position.y &amp;&amp; <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()].y  &lt;= req.pose.position.y &amp;&amp; <a class="code" href="classarea.html#a7947c99fb363e7e9cefe80ac52587eda">is_right</a>(<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[i], <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>[(i+1)%<a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.size()], req.pose.position))</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            --wn;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="comment">// rotation of map</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordtype">double</span> angle = 0;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordflow">if</span> (rotated) {</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        angle = <a class="code" href="classarea.html#aa09514d15176ebd516b10dbd4efb958d">rotate</a>();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">// use default resolution if not specified</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> &lt;= 0)</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> = this-&gt;<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="comment">// requested map not existing yet</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>.count(angle) == 0 || <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[angle].count(<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>) == 0) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="comment">// get extreme coordinates</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keywordtype">double</span> xmin = numeric_limits&lt;double&gt;::max();</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordtype">double</span> xmax = numeric_limits&lt;double&gt;::lowest();</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordtype">double</span> ymin = numeric_limits&lt;double&gt;::max();</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordtype">double</span> ymax = numeric_limits&lt;double&gt;::lowest();</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> p : <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[angle]) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            <span class="keywordflow">if</span> (p.first &lt; xmin)</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                xmin = p.first;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;            <span class="keywordflow">if</span> (p.first &gt; xmax)</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                xmax = p.first;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            <span class="keywordflow">if</span> (p.second &lt; ymin)</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                ymin = p.second;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            <span class="keywordflow">if</span> (p.second &gt; ymax)</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                ymax = p.second;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        }</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        <span class="comment">// calculate dimensions</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="keywordtype">int</span> x = int(ceil((xmax - xmin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="keywordtype">int</span> y = int(ceil((ymax - ymin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        <span class="comment">// fix minimal resolution</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="keywordflow">if</span> (xmax - xmin &lt; <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> || ymax - ymin &lt; <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> ) {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> = min(xmax - xmin, ymax - ymin);</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            x = int(ceil((xmax - xmin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            y = int(ceil((ymax - ymin) / <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>));</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            ROS_WARN(<span class="stringliteral">&quot;Changing resolution to minimal possible %.2f, grid size %dx%d!&quot;</span>, <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>, x, y);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="comment">// warn about large grids</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <span class="keywordflow">if</span> (x*y &gt; <a class="code" href="classarea.html#ad63f786362205207cb478cf5688ac7d4">cell_warn</a>)</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            ROS_WARN(<span class="stringliteral">&quot;Given coordinates seem wrong, grid map extremley large: %d cells!&quot;</span>, x*y);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="comment">// generate grid map data</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        cpswarm_msgs::OutOfBounds::Request req;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        cpswarm_msgs::OutOfBounds::Response res;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        vector&lt;int8_t&gt; data;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i=0; i&lt;y; ++i) { <span class="comment">// row major order</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j=0; j&lt;x; ++j) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                <span class="comment">// check if center of cell is outside of area</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">out_of_bounds</a>(make_pair(j * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> + xmin + <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> / 2.0, i * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> + ymin + <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> / 2.0), angle))</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                    data.push_back(<a class="code" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428">CELL_OCCUPIED</a>); <span class="comment">// occupied</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                <span class="comment">// inside area</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                    data.push_back(<a class="code" href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940">CELL_FREE</a>); <span class="comment">// free</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            }</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        }</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        gridmap.data = data;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="comment">// set map header</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        gridmap.header.stamp = Time::now();</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        gridmap.header.frame_id = <span class="stringliteral">&quot;map&quot;</span>;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="comment">// set map meta data</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        gridmap.info.map_load_time == Time::now();</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        gridmap.info.resolution = <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        gridmap.info.width = x;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        gridmap.info.height = y;</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="comment">// pose is outside</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">if</span> (wn == 0)</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        res.out = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="comment">// position of cell (0,0)</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        gridmap.info.origin.position.x = xmin;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        gridmap.info.origin.position.y = ymin;</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="comment">// pose is inside</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        res.out = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[angle][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>] = gridmap;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="comment">// return existing or newly generated grid map</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>.count(angle) &gt; 0 &amp;&amp; <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[angle].count(<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>) &gt; 0)</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[angle][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>];</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">  273</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a> ()</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;{</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    cpswarm_msgs::FixToPose f2p;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="comment">// convert given area to local coordinates</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    vector&lt;geometry_msgs::Point&gt; local;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>) {</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        f2p.request.fix.longitude = c.x;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        f2p.request.fix.latitude = c.y;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.call(f2p)) {</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            local.push_back(f2p.response.pose.pose.position);</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed to convert area bounds to local coordinates&quot;</span>);</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a> = local;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;}</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
-<div class="line"><a name="l00291"></a><span class="lineno"><a class="line" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">  291</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a> ()</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;{</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        cpswarm_msgs::FixToPose f2p;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        <span class="comment">// get origin from gps node</span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        ServiceClient get_gps_origin_client = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.serviceClient&lt;cpswarm_msgs::GetGpsFix&gt;(<span class="stringliteral">&quot;gps/get_gps_origin&quot;</span>);</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Wait for get_gps_origin service...&quot;</span>);</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        get_gps_origin_client.waitForExistence();</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        cpswarm_msgs::GetGpsFix gpso;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        <span class="keywordflow">if</span> (get_gps_origin_client.call(gpso)) {</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            <span class="comment">// convert origin to local coordinates</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            f2p.request.fix = gpso.response.fix;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.call(f2p)) {</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a> = f2p.response.pose.pose.position;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;            }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed to convert origin to local coordinates&quot;</span>);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        }</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed get GPS coordinates of origin&quot;</span>);</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        <span class="comment">// read origin from parameters</span></div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="keywordtype">double</span> x,y;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/x&quot;</span>, x, 0.0);</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/y&quot;</span>, y, 0.0);</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.x = x;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.y = y;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;}</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno"><a class="line" href="classarea.html#a976da88b2c0a3012d27db3bcb93dfc0e">  324</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a976da88b2c0a3012d27db3bcb93dfc0e">area::is_left</a> (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;{</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="comment">// &gt;0 for p2 left of the line through p0 and p1</span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="comment">// =0 for p2 on the line</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// &lt;0 for p2 right of the line</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">return</span> ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) &gt; 0;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;}</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160; </div>
-<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="classarea.html#a7947c99fb363e7e9cefe80ac52587eda">  332</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a7947c99fb363e7e9cefe80ac52587eda">area::is_right</a> (geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;{</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="comment">// &gt;0 for p2 left of the line through p0 and p1</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">// =0 for p2 on the line</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="comment">// &lt;0 for p2 right of the line</span></div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">return</span> ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x -  p0.x) * (p1.y - p0.y)) &lt; 0;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="comment">// return empty grid map</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    ROS_WARN(<span class="stringliteral">&quot;Providing empty map!&quot;</span>);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordflow">return</span> gridmap;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;}</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno"><a class="line" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">  278</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a> ()</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;{</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    cpswarm_msgs::FixToPose f2p;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="comment">// convert given area to local coordinates</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    set&lt;pair&lt;double,double&gt;&gt; local;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0]) {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        f2p.request.fix.longitude = c.first;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        f2p.request.fix.latitude = c.second;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.call(f2p)) {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed to convert area bounds to local coordinates&quot;</span>);</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    }</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0] = local;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <a class="code" href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">sort_coords</a>();</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;}</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno"><a class="line" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">  298</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a> ()</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;{</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        cpswarm_msgs::FixToPose f2p;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="comment">// get origin from gps node</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        ServiceClient get_gps_origin_client = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.serviceClient&lt;cpswarm_msgs::GetGpsFix&gt;(<span class="stringliteral">&quot;gps/get_gps_origin&quot;</span>);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Wait for get_gps_origin service...&quot;</span>);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        get_gps_origin_client.waitForExistence();</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        cpswarm_msgs::GetGpsFix gpso;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keywordflow">if</span> (get_gps_origin_client.call(gpso)) {</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            <span class="comment">// convert origin to local coordinates</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            f2p.request.fix = gpso.response.fix;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a689affa99750a54788bfa576f44cf76b">fix_to_pose_client</a>.call(f2p)) {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a> = f2p.response.pose.pose.position;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            }</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed to convert origin to local coordinates&quot;</span>);</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        }</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Failed get GPS coordinates of origin&quot;</span>);</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="comment">// read origin from parameters</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="keywordtype">double</span> x,y;</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/x&quot;</span>, x, 0.0);</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/y&quot;</span>, y, 0.0);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.x = x;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <a class="code" href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">origin</a>.y = y;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    }</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;}</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">  331</a></span>&#160;vector&lt;geometry_msgs::Point&gt; <a class="code" href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">area::set2vector</a> (set&lt;pair&lt;double,double&gt;&gt; set)</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;{</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    vector&lt;geometry_msgs::Point&gt; vector;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> pair : set) {</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        vector.push_back(<a class="code" href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">pair2point</a>(pair));</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    }</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">return</span> vector;</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;}</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
+<div class="line"><a name="l00340"></a><span class="lineno"><a class="line" href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">  340</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">area::sort_coords</a> ()</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;{</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>.clear();</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="comment">// coordinates of different rotations</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>) {</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        <span class="comment">// rotation of coordinates</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="keywordtype">double</span> rot = c.first;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <span class="comment">// compute centroid / barycenter</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        pair&lt;double,double&gt; center;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> cc : c.second) {</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            center.first += cc.first;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;            center.second += cc.second;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        }</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        center.first /= c.second.size();</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        center.second /= c.second.size();</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        <span class="comment">// sort by angle around center</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        <span class="keywordtype">double</span> angle;</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> cc : c.second) {</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            angle = atan2(cc.second-center.second, cc.first-center.first);</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[rot][angle] = cc;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        }</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    }</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;}</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
+<div class="line"><a name="l00367"></a><span class="lineno"><a class="line" href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">  367</a></span>&#160;set&lt;pair&lt;double,double&gt;&gt; <a class="code" href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">area::vector2set</a> (vector&lt;geometry_msgs::Point&gt; vector)</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;{</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    set&lt;pair&lt;double,double&gt;&gt; set;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> point : vector) {</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        set.insert(<a class="code" href="classarea.html#a1ca66a9810e71c5bfdc20c7fedffd772">point2pair</a>(point));</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordflow">return</span> set;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;}</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160; </div>
+<div class="line"><a name="l00376"></a><span class="lineno"><a class="line" href="classarea.html#a40c139884bccf899c3ad70dca8a8eb07">  376</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a40c139884bccf899c3ad70dca8a8eb07">area::is_left</a> (pair&lt;double,double&gt; p0, pair&lt;double,double&gt; p1, pair&lt;double,double&gt; p2)</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;{</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="comment">// &gt;0 for p2 left of the line through p0 and p1</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="comment">// =0 for p2 on the line</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="comment">// &lt;0 for p2 right of the line</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="keywordflow">return</span> ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) &gt; 0;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;}</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
+<div class="line"><a name="l00384"></a><span class="lineno"><a class="line" href="classarea.html#a3607d1bd4622cb8a3d21506831ff6c67">  384</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a3607d1bd4622cb8a3d21506831ff6c67">area::is_right</a> (pair&lt;double,double&gt; p0, pair&lt;double,double&gt; p1, pair&lt;double,double&gt; p2)</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;{</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="comment">// &gt;0 for p2 left of the line through p0 and p1</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="comment">// =0 for p2 on the line</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="comment">// &lt;0 for p2 right of the line</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keywordflow">return</span> ((p1.first - p0.first) * (p2.second - p0.second) - (p2.first -  p0.first) * (p1.second - p0.second)) &lt; 0;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;}</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno"><a class="line" href="classarea.html#a3829f1889df61a5b17b1bdda731e5272">  392</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a3829f1889df61a5b17b1bdda731e5272">area::on_bound</a> (pair&lt;double,double&gt; pos, <span class="keywordtype">double</span> angle)</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;{</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keywordtype">double</span> d01x, d01y, d01, d02x, d02y, d02, d12x, d12y, d12;</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="comment">// loop through all edges of the polygon</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator ne;</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keywordflow">for</span> (map&lt;<span class="keywordtype">double</span>, pair&lt;double,double&gt;&gt;::iterator it = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].begin(); it != <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].end(); ++it) {</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;        <span class="comment">// next element in set</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        ne = next(it);</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        <span class="keywordflow">if</span> (ne == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].end())</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;            ne = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].begin();</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        <span class="comment">// distances between points</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;        d01x = ne-&gt;second.first - it-&gt;second.first;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;        d01y = ne-&gt;second.second - it-&gt;second.second;</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        d01 = hypot(d01x, d01y);</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        d02x = pos.first - it-&gt;second.first;</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        d02y = pos.second - it-&gt;second.second;</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;        d02 = hypot(d02x, d02y);</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;        d12x = pos.first - ne-&gt;second.first;</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        d12y = pos.second - ne-&gt;second.second;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        d12 = hypot(d12x, d12y);</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        <span class="comment">// close enough to boundary</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        <span class="keywordflow">if</span> (abs(d02 + d12 - d01) &lt; 0.0001)</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    }</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="comment">// not on boundary</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;}</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
+<div class="line"><a name="l00424"></a><span class="lineno"><a class="line" href="classarea.html#a8aa07df118a28fe44a2e99c84c46a814">  424</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">area::out_of_bounds</a> (pair&lt;double,double&gt; pos, <span class="keywordtype">double</span> angle)</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;{</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    <span class="comment">// points on boundary are not out of bounds</span></div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a3829f1889df61a5b17b1bdda731e5272">on_bound</a>(pos, angle))</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160; </div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    <span class="comment">// the winding number counter, i.e., how often a ray from the point to the right crosses the boundary</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    <span class="keywordtype">int</span> wn = 0;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160; </div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    <span class="comment">// loop through all edges of the polygon</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator ne;</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    <span class="keywordflow">for</span> (map&lt;<span class="keywordtype">double</span>, pair&lt;double,double&gt;&gt;::iterator it = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].begin(); it != <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].end(); ++it) {</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        <span class="comment">// next element in set</span></div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        ne = next(it);</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        <span class="keywordflow">if</span> (ne == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].end())</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;            ne = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[angle].begin();</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        <span class="comment">// ray crosses upward edge</span></div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <span class="keywordflow">if</span> (it-&gt;second.second &lt;= pos.second &amp;&amp; pos.second &lt; ne-&gt;second.second &amp;&amp; <a class="code" href="classarea.html#a40c139884bccf899c3ad70dca8a8eb07">is_left</a>(it-&gt;second, ne-&gt;second, pos))</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;            ++wn;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        <span class="comment">// ray crosses downward edge</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (ne-&gt;second.second &lt;= pos.second &amp;&amp; pos.second &lt; it-&gt;second.second &amp;&amp; <a class="code" href="classarea.html#a3607d1bd4622cb8a3d21506831ff6c67">is_right</a>(it-&gt;second, ne-&gt;second, pos))</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;            --wn;</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    }</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    <span class="comment">// pose is outside</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    <span class="keywordflow">if</span> (wn == 0)</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160; </div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <span class="comment">// pose is inside</span></div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;}</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160; </div>
+<div class="line"><a name="l00458"></a><span class="lineno"><a class="line" href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">  458</a></span>&#160;geometry_msgs::Point <a class="code" href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">area::pair2point</a> (pair&lt;double,double&gt; pair)</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;{</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    geometry_msgs::Point point;</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    point.x = pair.first;</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    point.y = pair.second;</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="keywordflow">return</span> point;</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;}</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160; </div>
+<div class="line"><a name="l00466"></a><span class="lineno"><a class="line" href="classarea.html#a1ca66a9810e71c5bfdc20c7fedffd772">  466</a></span>&#160;pair&lt;double,double&gt; <a class="code" href="classarea.html#a1ca66a9810e71c5bfdc20c7fedffd772">area::point2pair</a> (geometry_msgs::Point point)</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;{</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    pair&lt;double,double&gt; pair;</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    pair.first = point.x;</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    pair.second = point.y;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    <span class="keywordflow">return</span> pair;</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;}</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
+<div class="line"><a name="l00474"></a><span class="lineno"><a class="line" href="classarea.html#aa09514d15176ebd516b10dbd4efb958d">  474</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="classarea.html#aa09514d15176ebd516b10dbd4efb958d">area::rotate</a> ()</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;{</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    <span class="comment">// map has already been rotated</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a> != 0)</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>;</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160; </div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    <span class="comment">// bottom most point</span></div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator bot = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin();</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin(); it != <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end(); ++it)</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;        <span class="keywordflow">if</span> (it-&gt;second.second &lt; bot-&gt;second.second)</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;            bot = it;</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160; </div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    <span class="comment">// previous point</span></div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator pr;</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    <span class="keywordflow">if</span> (bot == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin())</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;        pr = prev(<a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end());</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;        pr = prev(bot);</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160; </div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    <span class="comment">// next point</span></div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    map&lt;double, pair&lt;double,double&gt;&gt;::iterator ne = next(bot);</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    <span class="keywordflow">if</span> (ne == <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].end())</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;        ne = <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0].begin();</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160; </div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    <span class="comment">// calculate rotation</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;    <span class="keywordflow">if</span> (pr-&gt;second.second &lt; ne-&gt;second.second || pr-&gt;second.second == ne-&gt;second.second &amp;&amp; pr-&gt;second.second != bot-&gt;second.second) <span class="comment">// prefer counter-clockwise rotation in case of tie</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a> = -atan2(bot-&gt;second.second - pr-&gt;second.second, bot-&gt;second.first - pr-&gt;second.first);</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pr-&gt;second.second &gt; ne-&gt;second.second)</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;        <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a> = -atan2(ne-&gt;second.second - bot-&gt;second.second, ne-&gt;second.first - bot-&gt;second.first);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160; </div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    ROS_DEBUG(<span class="stringliteral">&quot;Rotate map by %.2f...&quot;</span>, <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>);</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160; </div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    <span class="comment">// rotate coordinates</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    pair&lt;double,double&gt; rot;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>.count(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) == 0) {</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;        stringstream css;</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0]) {</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;            rot.first = c.first * cos(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) - c.second * sin(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>);</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;            rot.second = c.first * sin(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) + c.second * cos(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>);</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;            <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>].insert(rot);</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;            css &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; rot.first &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; rot.second &lt;&lt; <span class="stringliteral">&quot;) &quot;</span>;</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;        }</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;        ROS_DEBUG(<span class="stringliteral">&quot;Rotated coordinates: %s&quot;</span>, css.str().c_str());</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;    }</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    <span class="comment">// rotate sorted coordinates</span></div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>.count(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) == 0)</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[0]) {</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;            rot.first = c.second.first * cos(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) - c.second.second * sin(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>);</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;            rot.second = c.second.first * sin(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>) + c.second.second * cos(<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>);</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;            <a class="code" href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">coords_sorted</a>[<a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>][c.first] = rot;</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        }</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160; </div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">rotation</a>;</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;}</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160; </div>
+<div class="line"><a name="l00532"></a><span class="lineno"><a class="line" href="classarea.html#aaa40eb9bd032d8c486796cc7aa642dbe">  532</a></span>&#160;geometry_msgs::Vector3 <a class="code" href="classarea.html#aaa40eb9bd032d8c486796cc7aa642dbe">area::translate</a> (nav_msgs::OccupancyGrid&amp; map)</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;{</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    <span class="comment">// compute required translation</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    geometry_msgs::Vector3 translation;</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    translation.x = round(map.info.origin.position.x) - map.info.origin.position.x;</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    translation.y = round(map.info.origin.position.y) - map.info.origin.position.y;</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    ROS_DEBUG(<span class="stringliteral">&quot;Translate map by (%.2f,%.2f)...&quot;</span>, translation.x, translation.y);</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="comment">// translate origin</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    map.info.origin.position.x += translation.x;</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    map.info.origin.position.y += translation.y;</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160; </div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="comment">// update meta data</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    map.info.map_load_time = Time::now();</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160; </div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    <span class="keywordflow">return</span> translation;</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassarea_html_ac00e659b1c1851e119fe6870eff8a0e4"><div class="ttname"><a href="classarea.html#ac00e659b1c1851e119fe6870eff8a0e4">area::get_map</a></div><div class="ttdeci">bool get_map(nav_msgs::GetMap::Request &amp;req, nav_msgs::GetMap::Response &amp;res)</div><div class="ttdoc">Return the map that represents the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00194">area.cpp:194</a></div></div>
-<div class="ttc" id="aclassarea_html_ab3cdba909e86500000638439b39c100c"><div class="ttname"><a href="classarea.html#ab3cdba909e86500000638439b39c100c">area::coords</a></div><div class="ttdeci">vector&lt; geometry_msgs::Point &gt; coords</div><div class="ttdoc">The coordinates of the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00131">area.h:131</a></div></div>
-<div class="ttc" id="aclassarea_html_ae6aad6bf8486ec00983122a3716fe46c"><div class="ttname"><a href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">area::map_exists</a></div><div class="ttdeci">bool map_exists</div><div class="ttdoc">Map has been created.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00116">area.h:116</a></div></div>
-<div class="ttc" id="aclassarea_html_a0f8f91dc566727a9b2d8eeb835e632e8"><div class="ttname"><a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a></div><div class="ttdeci">bool get_distance(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the distance of a given point to the area boundary (outside or inside the area)....</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00041">area.cpp:41</a></div></div>
-<div class="ttc" id="aclassarea_html_a976da88b2c0a3012d27db3bcb93dfc0e"><div class="ttname"><a href="classarea.html#a976da88b2c0a3012d27db3bcb93dfc0e">area::is_left</a></div><div class="ttdeci">bool is_left(geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)</div><div class="ttdoc">Test whether a point is left of an infinite line.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00324">area.cpp:324</a></div></div>
-<div class="ttc" id="aclassarea_html_a5dd913ac23971e599fc44ec31a7c9d68"><div class="ttname"><a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">area::get_center</a></div><div class="ttdeci">bool get_center(cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div><div class="ttdoc">Return the center of the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00029">area.cpp:29</a></div></div>
-<div class="ttc" id="aclassarea_html_aeceda763636ebea2056ee7c8bec823e5"><div class="ttname"><a href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">area::origin</a></div><div class="ttdeci">geometry_msgs::Point origin</div><div class="ttdoc">The origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00165">area.h:165</a></div></div>
-<div class="ttc" id="aclassarea_html_a689affa99750a54788bfa576f44cf76b"><div class="ttname"><a href="classarea.html#a689affa99750a54788bfa576f44cf76b">area::fix_to_pose_client</a></div><div class="ttdeci">ServiceClient fix_to_pose_client</div><div class="ttdoc">Service client to convert global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00160">area.h:160</a></div></div>
-<div class="ttc" id="aclassarea_html_a9f3fe025c1982b608584b7e8267069e9"><div class="ttname"><a href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">area::create_map</a></div><div class="ttdeci">bool create_map</div><div class="ttdoc">Whether a grid map will be generated by this node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00121">area.h:121</a></div></div>
-<div class="ttc" id="aclassarea_html_af2ad101e400c7e44534cd5960a56cb81"><div class="ttname"><a href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a></div><div class="ttdeci">void global_to_local()</div><div class="ttdoc">Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00273">area.cpp:273</a></div></div>
-<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00136">area.h:136</a></div></div>
-<div class="ttc" id="aclassarea_html_ac03a56986a5d909d5f942adea1b17fd6"><div class="ttname"><a href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">area::map</a></div><div class="ttdeci">nav_msgs::OccupancyGrid map</div><div class="ttdoc">The grid map representing the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00126">area.h:126</a></div></div>
-<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00106">area.h:106</a></div></div>
-<div class="ttc" id="aclassarea_html_ad63f786362205207cb478cf5688ac7d4"><div class="ttname"><a href="classarea.html#ad63f786362205207cb478cf5688ac7d4">area::cell_warn</a></div><div class="ttdeci">int cell_warn</div><div class="ttdoc">Number of grid cells in the map above which a performance warning is issued.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00170">area.h:170</a></div></div>
-<div class="ttc" id="aclassarea_html_a0659d2b721466457e34484afab04e47c"><div class="ttname"><a href="classarea.html#a0659d2b721466457e34484afab04e47c">area::get_area</a></div><div class="ttdeci">bool get_area(cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</div><div class="ttdoc">Return the area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00023">area.cpp:23</a></div></div>
-<div class="ttc" id="aclassarea_html_aec33a3e5838ad7d93757660e2fa72115"><div class="ttname"><a href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">area::get_gridmap</a></div><div class="ttdeci">nav_msgs::OccupancyGrid get_gridmap()</div><div class="ttdoc">Generate a grid map from the given area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00126">area.cpp:126</a></div></div>
-<div class="ttc" id="aclassarea_html_a7947c99fb363e7e9cefe80ac52587eda"><div class="ttname"><a href="classarea.html#a7947c99fb363e7e9cefe80ac52587eda">area::is_right</a></div><div class="ttdeci">bool is_right(geometry_msgs::Point p0, geometry_msgs::Point p1, geometry_msgs::Point p2)</div><div class="ttdoc">Test whether a point is right of an infinite line.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00332">area.cpp:332</a></div></div>
-<div class="ttc" id="aclassarea_html_a1433f67bc4e2800f5e6bf5d97821b99f"><div class="ttname"><a href="classarea.html#a1433f67bc4e2800f5e6bf5d97821b99f">area::get_rotation</a></div><div class="ttdeci">bool get_rotation(cpswarm_msgs::GetDouble::Request &amp;req, cpswarm_msgs::GetDouble::Response &amp;res)</div><div class="ttdoc">Get the rotation of the area given by coordinates. Assuming a quadrilateral.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00208">area.cpp:208</a></div></div>
-<div class="ttc" id="aclassarea_html_aa717c832cbeb66e12e7a8fcef30f0939"><div class="ttname"><a href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">area::get_origin</a></div><div class="ttdeci">bool get_origin(cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div><div class="ttdoc">Return the origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00202">area.cpp:202</a></div></div>
-<div class="ttc" id="aclassarea_html_a3d12a8eeed699c1d037e17ba76854f3c"><div class="ttname"><a href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a></div><div class="ttdeci">void set_origin()</div><div class="ttdoc">Set the origin of the local coordinate system from the GPS starting position or given parameter.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00291">area.cpp:291</a></div></div>
+<div class="ttc" id="aclassarea_html_aee0e0cdcaa918c41945407d82fe845a1"><div class="ttname"><a href="classarea.html#aee0e0cdcaa918c41945407d82fe845a1">area::coords_sorted</a></div><div class="ttdeci">map&lt; double, map&lt; double, pair&lt; double, double &gt; &gt; &gt; coords_sorted</div><div class="ttdoc">The coordinates of the area at different rotations, sorted counter-clockwise about the center,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00235">area.h:235</a></div></div>
+<div class="ttc" id="aclassarea_html"><div class="ttname"><a href="classarea.html">area</a></div><div class="ttdoc">A class that holds the an area and offers related services.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00031">area.h:31</a></div></div>
+<div class="ttc" id="aclassarea_html_a0f8f91dc566727a9b2d8eeb835e632e8"><div class="ttname"><a href="classarea.html#a0f8f91dc566727a9b2d8eeb835e632e8">area::get_distance</a></div><div class="ttdeci">bool get_distance(cpswarm_msgs::GetDist::Request &amp;req, cpswarm_msgs::GetDist::Response &amp;res)</div><div class="ttdoc">Return the distance of a given point to the area boundary (outside or inside the area)....</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00061">area.cpp:61</a></div></div>
+<div class="ttc" id="aclassarea_html_afe291ca83ddc448185e99dc79eb0a223"><div class="ttname"><a href="classarea.html#afe291ca83ddc448185e99dc79eb0a223">area::rotation</a></div><div class="ttdeci">double rotation</div><div class="ttdoc">The angle that the map has to rotated by to make the bottom edge horizontal, radian,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00245">area.h:245</a></div></div>
+<div class="ttc" id="aclassarea_html_a5dd913ac23971e599fc44ec31a7c9d68"><div class="ttname"><a href="classarea.html#a5dd913ac23971e599fc44ec31a7c9d68">area::get_center</a></div><div class="ttdeci">bool get_center(cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div><div class="ttdoc">Return the centroid of the area (https://en.wikipedia.org/wiki/Centroid#Of_a_polygon).</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00031">area.cpp:31</a></div></div>
+<div class="ttc" id="aclassarea_html_a1ca66a9810e71c5bfdc20c7fedffd772"><div class="ttname"><a href="classarea.html#a1ca66a9810e71c5bfdc20c7fedffd772">area::point2pair</a></div><div class="ttdeci">pair&lt; double, double &gt; point2pair(geometry_msgs::Point point)</div><div class="ttdoc">Convert a geometry_msgs/Point to a pair of doubles.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00466">area.cpp:466</a></div></div>
+<div class="ttc" id="aclassarea_html_aa8158ad7955107d6b43c44485a27b872"><div class="ttname"><a href="classarea.html#aa8158ad7955107d6b43c44485a27b872">area::coords</a></div><div class="ttdeci">map&lt; double, set&lt; pair&lt; double, double &gt; &gt; &gt; coords</div><div class="ttdoc">The coordinates of the area at different rotations.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00146">area.h:146</a></div></div>
+<div class="ttc" id="aclassarea_html_aeceda763636ebea2056ee7c8bec823e5"><div class="ttname"><a href="classarea.html#aeceda763636ebea2056ee7c8bec823e5">area::origin</a></div><div class="ttdeci">geometry_msgs::Point origin</div><div class="ttdoc">The origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00228">area.h:228</a></div></div>
+<div class="ttc" id="aclassarea_html_aaa40eb9bd032d8c486796cc7aa642dbe"><div class="ttname"><a href="classarea.html#aaa40eb9bd032d8c486796cc7aa642dbe">area::translate</a></div><div class="ttdeci">geometry_msgs::Vector3 translate(nav_msgs::OccupancyGrid &amp;map)</div><div class="ttdoc">Shift a map to be aligned with the grid, i.e., the origin should be an even number.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00532">area.cpp:532</a></div></div>
+<div class="ttc" id="aclassarea_html_a1e8293857d5b3cf324d7676893bcafbc"><div class="ttname"><a href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">area::sort_coords</a></div><div class="ttdeci">void sort_coords()</div><div class="ttdoc">Sort the coordinates of the area counter-clockwise about the center by their angle [-π,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00340">area.cpp:340</a></div></div>
+<div class="ttc" id="aclassarea_html_a643cf2e7d1285ff9f1f206b78d592bf4"><div class="ttname"><a href="classarea.html#a643cf2e7d1285ff9f1f206b78d592bf4">area::vector2set</a></div><div class="ttdeci">set&lt; pair&lt; double, double &gt; &gt; vector2set(vector&lt; geometry_msgs::Point &gt; vector)</div><div class="ttdoc">Convert a vector of geometry_msgs/Point to a set of double pairs.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00367">area.cpp:367</a></div></div>
+<div class="ttc" id="aclassarea_html_a3829f1889df61a5b17b1bdda731e5272"><div class="ttname"><a href="classarea.html#a3829f1889df61a5b17b1bdda731e5272">area::on_bound</a></div><div class="ttdeci">bool on_bound(pair&lt; double, double &gt; pos, double angle)</div><div class="ttdoc">Test whether a point is on the area boundary.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00392">area.cpp:392</a></div></div>
+<div class="ttc" id="aclassarea_html_a689affa99750a54788bfa576f44cf76b"><div class="ttname"><a href="classarea.html#a689affa99750a54788bfa576f44cf76b">area::fix_to_pose_client</a></div><div class="ttdeci">ServiceClient fix_to_pose_client</div><div class="ttdoc">Service client to convert global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00223">area.h:223</a></div></div>
+<div class="ttc" id="aclassarea_html_a7b19ef007ee7041ea2f28ed26937f3b6"><div class="ttname"><a href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">area::gridmaps</a></div><div class="ttdeci">map&lt; double, map&lt; double, nav_msgs::OccupancyGrid &gt; &gt; gridmaps</div><div class="ttdoc">The grid map representing the area at different rotations and resolutions.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00141">area.h:141</a></div></div>
+<div class="ttc" id="aclassarea_html_ad6680911799897d1b8ca1b3d38525101"><div class="ttname"><a href="classarea.html#ad6680911799897d1b8ca1b3d38525101">area::to_string</a></div><div class="ttdeci">string to_string()</div><div class="ttdoc">Return a string that uniquely represents the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00178">area.cpp:178</a></div></div>
+<div class="ttc" id="aclassarea_html_af2ad101e400c7e44534cd5960a56cb81"><div class="ttname"><a href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a></div><div class="ttdeci">void global_to_local()</div><div class="ttdoc">Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00278">area.cpp:278</a></div></div>
+<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00151">area.h:151</a></div></div>
+<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00134">area.h:134</a></div></div>
+<div class="ttc" id="aclassarea_html_ad63f786362205207cb478cf5688ac7d4"><div class="ttname"><a href="classarea.html#ad63f786362205207cb478cf5688ac7d4">area::cell_warn</a></div><div class="ttdeci">int cell_warn</div><div class="ttdoc">Number of grid cells in the map above which a performance warning is issued.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00240">area.h:240</a></div></div>
+<div class="ttc" id="aclassarea_html_a0659d2b721466457e34484afab04e47c"><div class="ttname"><a href="classarea.html#a0659d2b721466457e34484afab04e47c">area::get_area</a></div><div class="ttdeci">bool get_area(cpswarm_msgs::GetPoints::Request &amp;req, cpswarm_msgs::GetPoints::Response &amp;res)</div><div class="ttdoc">Return the area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00025">area.cpp:25</a></div></div>
+<div class="ttc" id="aclassarea_html_acfe3cde0d5c80a5a1660fc8dfb5f859c"><div class="ttname"><a href="classarea.html#acfe3cde0d5c80a5a1660fc8dfb5f859c">area::get_map</a></div><div class="ttdeci">bool get_map(cpswarm_msgs::GetMap::Request &amp;req, cpswarm_msgs::GetMap::Response &amp;res)</div><div class="ttdoc">Return the map that represents the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00149">area.cpp:149</a></div></div>
+<div class="ttc" id="aclassarea_html_a40c139884bccf899c3ad70dca8a8eb07"><div class="ttname"><a href="classarea.html#a40c139884bccf899c3ad70dca8a8eb07">area::is_left</a></div><div class="ttdeci">bool is_left(pair&lt; double, double &gt; p0, pair&lt; double, double &gt; p1, pair&lt; double, double &gt; p2)</div><div class="ttdoc">Test whether a point is left of an infinite line.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00376">area.cpp:376</a></div></div>
+<div class="ttc" id="aclassarea_html_a4e1615706da532ffebc44c8bfd6721de"><div class="ttname"><a href="classarea.html#a4e1615706da532ffebc44c8bfd6721de">area::pair2point</a></div><div class="ttdeci">geometry_msgs::Point pair2point(pair&lt; double, double &gt; pair)</div><div class="ttdoc">Convert a pair of doubles to a geometry_msgs/Point.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00458">area.cpp:458</a></div></div>
+<div class="ttc" id="aclassarea_html_a62b41663e94e6ff2c3d83778cb6b04c9"><div class="ttname"><a href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">area::get_gridmap</a></div><div class="ttdeci">nav_msgs::OccupancyGrid get_gridmap(bool rotated=false, double resolution=0)</div><div class="ttdoc">Generate a grid map from the given area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00186">area.cpp:186</a></div></div>
+<div class="ttc" id="aclassarea_html_aa717c832cbeb66e12e7a8fcef30f0939"><div class="ttname"><a href="classarea.html#aa717c832cbeb66e12e7a8fcef30f0939">area::get_origin</a></div><div class="ttdeci">bool get_origin(cpswarm_msgs::GetPoint::Request &amp;req, cpswarm_msgs::GetPoint::Response &amp;res)</div><div class="ttdoc">Return the origin of the coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00165">area.cpp:165</a></div></div>
+<div class="ttc" id="aclassarea_html_a3607d1bd4622cb8a3d21506831ff6c67"><div class="ttname"><a href="classarea.html#a3607d1bd4622cb8a3d21506831ff6c67">area::is_right</a></div><div class="ttdeci">bool is_right(pair&lt; double, double &gt; p0, pair&lt; double, double &gt; p1, pair&lt; double, double &gt; p2)</div><div class="ttdoc">Test whether a point is right of an infinite line.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00384">area.cpp:384</a></div></div>
+<div class="ttc" id="aclassarea_html_a3d12a8eeed699c1d037e17ba76854f3c"><div class="ttname"><a href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a></div><div class="ttdeci">void set_origin()</div><div class="ttdoc">Set the origin of the local coordinate system from the GPS starting position or given parameter.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00298">area.cpp:298</a></div></div>
 <div class="ttc" id="aarea_8h_html"><div class="ttname"><a href="area_8h.html">area.h</a></div></div>
-<div class="ttc" id="aclassarea_html_acc804cb034d0eaa28f5fbba56f538e54"><div class="ttname"><a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">area::resolution</a></div><div class="ttdeci">double resolution</div><div class="ttdoc">Resolution of the grid map representing the area in meter / cell.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00175">area.h:175</a></div></div>
+<div class="ttc" id="aclassarea_html_acc804cb034d0eaa28f5fbba56f538e54"><div class="ttname"><a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">area::resolution</a></div><div class="ttdeci">double resolution</div><div class="ttdoc">Resolution of the grid map representing the area in meter / cell.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00156">area.h:156</a></div></div>
 <div class="ttc" id="aclassarea_html_a330b6c4d93fbea75f60ac975313c983d"><div class="ttname"><a href="classarea.html#a330b6c4d93fbea75f60ac975313c983d">area::area</a></div><div class="ttdeci">area()</div><div class="ttdoc">Constructor that initializes the private member variables.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00003">area.cpp:3</a></div></div>
-<div class="ttc" id="aclassarea_html_a86d143859a1eca41342fedc9b9c8600b"><div class="ttname"><a href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">area::out_of_bounds</a></div><div class="ttdeci">bool out_of_bounds(cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res)</div><div class="ttdoc">Determine whether a position is within the area using the winding number algorithm.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00246">area.cpp:246</a></div></div>
+<div class="ttc" id="aarea_8h_html_a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940"><div class="ttname"><a href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454dab530b2dda5c26f631433340ce3131940">CELL_FREE</a></div><div class="ttdeci">@ CELL_FREE</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00024">area.h:24</a></div></div>
+<div class="ttc" id="aclassarea_html_a86d143859a1eca41342fedc9b9c8600b"><div class="ttname"><a href="classarea.html#a86d143859a1eca41342fedc9b9c8600b">area::out_of_bounds</a></div><div class="ttdeci">bool out_of_bounds(cpswarm_msgs::OutOfBounds::Request &amp;req, cpswarm_msgs::OutOfBounds::Response &amp;res)</div><div class="ttdoc">Determine whether a position is within the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00171">area.cpp:171</a></div></div>
+<div class="ttc" id="aclassarea_html_a0df347e3c69fec830b637de43bb9f2a5"><div class="ttname"><a href="classarea.html#a0df347e3c69fec830b637de43bb9f2a5">area::set2vector</a></div><div class="ttdeci">vector&lt; geometry_msgs::Point &gt; set2vector(set&lt; pair&lt; double, double &gt;&gt; set)</div><div class="ttdoc">Convert a set of double pairs to a vector of geometry_msgs/Point.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00331">area.cpp:331</a></div></div>
+<div class="ttc" id="aarea_8h_html_a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428"><div class="ttname"><a href="area_8h.html#a323757124e1fcbd2ee710e9eb8d4454da7d627308f15bf276c215ec4eb0a25428">CELL_OCCUPIED</a></div><div class="ttdeci">@ CELL_OCCUPIED</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00025">area.h:25</a></div></div>
+<div class="ttc" id="aclassarea_html_aa09514d15176ebd516b10dbd4efb958d"><div class="ttname"><a href="classarea.html#aa09514d15176ebd516b10dbd4efb958d">area::rotate</a></div><div class="ttdeci">double rotate()</div><div class="ttdoc">Rotate the area coordinates to make the bottom edge horizontal. Stores the resulting coordinates in c...</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00474">area.cpp:474</a></div></div>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

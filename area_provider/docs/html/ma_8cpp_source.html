@@ -32,10 +32,10 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">// init map publisher</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keywordtype">int</span> queue_size;</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/queue_size&quot;</span>, queue_size, 1);</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="classarea.html#ae3c41269d438d199a56900714f75da17">map_publisher</a> = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.advertise&lt;nav_msgs::OccupancyGrid&gt;(<span class="stringliteral">&quot;area/map&quot;</span>, queue_size, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// subscribe to map</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.param(this_node::getName() + <span class="stringliteral">&quot;/publish_map&quot;</span>, <a class="code" href="classma.html#a78d617070544063c56457b92e21336b9">publish_map</a>, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <a class="code" href="classma.html#a3a7cf29a809f0a61c0c682d40544eeb2">map_publisher</a> = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.advertise&lt;nav_msgs::OccupancyGrid&gt;(<span class="stringliteral">&quot;area/map&quot;</span>, queue_size, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">// subscribe to map</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">map_subscriber</a> = <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.subscribe(<span class="stringliteral">&quot;map&quot;</span>, queue_size, &amp;<a class="code" href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">ma::map_callback</a>, <span class="keyword">this</span>);</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">// wait a bit to see if there is a map provided by another node</span></div>
@@ -50,107 +50,107 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        rate.sleep();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    }</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// mission area coordinates</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    vector&lt;pair&lt;double,double&gt;&gt; raw_coords;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">// there is a map, extract it&#39;s coordinates</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a>)</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <a class="code" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">map_to_coords</a>();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="comment">// if there is no map, import coordinates</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <a class="code" href="classma.html#aaa52d464cd21904557198d9be3107df8">read_coords</a>();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">// convert global coordinates</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <a class="code" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">global_to_local</a> ();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// there is a map, extract it&#39;s coordinates</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>.count(0) &gt; 0)</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <a class="code" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">map_to_coords</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">// if there is no map, import coordinates</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <a class="code" href="classma.html#aaa52d464cd21904557198d9be3107df8">read_coords</a>();</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">// convert global coordinates</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a0eb55bca59864691f23b179e319884ec">global</a>) {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <a class="code" href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">global_to_local</a> ();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <a class="code" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">set_origin</a>();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">set_origin</a>();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// publish grid map</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> || <a class="code" href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">create_map</a>)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <a class="code" href="classarea.html#ae3c41269d438d199a56900714f75da17">map_publisher</a>.publish(<a class="code" href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">get_gridmap</a>());</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;Not publishing map&quot;</span>);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;}</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">   52</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">ma::map_to_coords</a> ()</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// extract coordinates from map</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    geometry_msgs::Point c;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">// bottom left</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    c = <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.origin.position;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.push_back(c);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// bottom right</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    c.x += <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.width * <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.resolution;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.push_back(c);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// top right</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    c.y += <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.height * <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.resolution;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.push_back(c);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="comment">// top left</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    c.x = <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a>.info.origin.position.x;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.push_back(c);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classma.html#aaa52d464cd21904557198d9be3107df8">   74</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#aaa52d464cd21904557198d9be3107df8">ma::read_coords</a> ()</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;{</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// read area coordinates</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    vector&lt;double&gt; area_x;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    vector&lt;double&gt; area_y;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.getParam(this_node::getName() + <span class="stringliteral">&quot;/area_x&quot;</span>, area_x);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.getParam(this_node::getName() + <span class="stringliteral">&quot;/area_y&quot;</span>, area_y);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> == <span class="keyword">false</span> &amp;&amp; (area_x.size() != area_y.size() || area_x.size() &lt; 3)) {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...&quot;</span>);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        shutdown();</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="comment">// store area coordinates in right format</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; area_x.size(); ++i) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        geometry_msgs::Point c;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        c.x = area_x[i];</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        c.y = area_y[i];</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <a class="code" href="classarea.html#ab3cdba909e86500000638439b39c100c">coords</a>.push_back(c);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">   95</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">ma::map_callback</a> (<span class="keyword">const</span> nav_msgs::OccupancyGrid::ConstPtr&amp; msg)</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;{</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="comment">// store map</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <a class="code" href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">map</a> = *msg;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">map_exists</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="comment">// use only initial map</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">map_subscriber</a>.shutdown();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">// publish grid map</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classma.html#a78d617070544063c56457b92e21336b9">publish_map</a>)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classma.html#a3a7cf29a809f0a61c0c682d40544eeb2">map_publisher</a>.publish(<a class="code" href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">get_gridmap</a>());</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        ROS_INFO(<span class="stringliteral">&quot;Not publishing map&quot;</span>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">   49</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#a0be630a1e21c021e6e712e3a4857563d">ma::map_to_coords</a> ()</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// extract coordinates from (un-rotated) map</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    pair&lt;double,double&gt; c;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// top right</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    c.first += <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>].info.height * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].insert(c);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// top left</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    c.first = <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>].info.origin.position.x;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].insert(c);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">// bottom left</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    c.first = <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>].info.origin.position.x;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    c.second = <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>].info.origin.position.y;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].insert(c);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// bottom right</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    c.first += <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>].info.width * <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].insert(c);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classma.html#aaa52d464cd21904557198d9be3107df8">   72</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#aaa52d464cd21904557198d9be3107df8">ma::read_coords</a> ()</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// read area coordinates</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    vector&lt;double&gt; area_x;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    vector&lt;double&gt; area_y;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.getParam(this_node::getName() + <span class="stringliteral">&quot;/area_x&quot;</span>, area_x);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <a class="code" href="classarea.html#a474af94f136070aae06e096a7521c367">nh</a>.getParam(this_node::getName() + <span class="stringliteral">&quot;/area_y&quot;</span>, area_y);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>.count(0) == 0 &amp;&amp; <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0].count(<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>) == 0 &amp;&amp; (area_x.size() != area_y.size() || area_x.size() &lt; 3)) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        ROS_FATAL(<span class="stringliteral">&quot;AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...&quot;</span>);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        shutdown();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="comment">// store area coordinates in right format</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; area_x.size(); ++i) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <a class="code" href="classarea.html#aa8158ad7955107d6b43c44485a27b872">coords</a>[0].emplace(area_x[i], area_y[i]);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <a class="code" href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">sort_coords</a>();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">   92</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">ma::map_callback</a> (<span class="keyword">const</span> nav_msgs::OccupancyGrid::ConstPtr&amp; msg)</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="comment">// store resolution of given map</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a> = msg-&gt;info.resolution;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="comment">// store un-rotated map</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <a class="code" href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">gridmaps</a>[0][<a class="code" href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">resolution</a>] = *msg;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="comment">// use only initial map</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">map_subscriber</a>.shutdown();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassma_html_aee77bb9c34cc71537e0565d5f881c99e"><div class="ttname"><a href="classma.html#aee77bb9c34cc71537e0565d5f881c99e">ma::map_subscriber</a></div><div class="ttdeci">Subscriber map_subscriber</div><div class="ttdoc">Subscriber to receive an existing map.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8h_source.html#l00037">ma.h:37</a></div></div>
-<div class="ttc" id="aclassma_html_aaa52d464cd21904557198d9be3107df8"><div class="ttname"><a href="classma.html#aaa52d464cd21904557198d9be3107df8">ma::read_coords</a></div><div class="ttdeci">void read_coords()</div><div class="ttdoc">Read mission area coordinates from ROS parameters. If global (GPS) coordinates are given they are con...</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00074">ma.cpp:74</a></div></div>
-<div class="ttc" id="aclassarea_html_ab3cdba909e86500000638439b39c100c"><div class="ttname"><a href="classarea.html#ab3cdba909e86500000638439b39c100c">area::coords</a></div><div class="ttdeci">vector&lt; geometry_msgs::Point &gt; coords</div><div class="ttdoc">The coordinates of the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00131">area.h:131</a></div></div>
-<div class="ttc" id="aclassarea_html_ae6aad6bf8486ec00983122a3716fe46c"><div class="ttname"><a href="classarea.html#ae6aad6bf8486ec00983122a3716fe46c">area::map_exists</a></div><div class="ttdeci">bool map_exists</div><div class="ttdoc">Map has been created.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00116">area.h:116</a></div></div>
-<div class="ttc" id="aclassarea_html_ae3c41269d438d199a56900714f75da17"><div class="ttname"><a href="classarea.html#ae3c41269d438d199a56900714f75da17">area::map_publisher</a></div><div class="ttdeci">Publisher map_publisher</div><div class="ttdoc">Publisher to publish grid map.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00111">area.h:111</a></div></div>
-<div class="ttc" id="aclassarea_html_a9f3fe025c1982b608584b7e8267069e9"><div class="ttname"><a href="classarea.html#a9f3fe025c1982b608584b7e8267069e9">area::create_map</a></div><div class="ttdeci">bool create_map</div><div class="ttdoc">Whether a grid map will be generated by this node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00121">area.h:121</a></div></div>
-<div class="ttc" id="aclassarea_html_af2ad101e400c7e44534cd5960a56cb81"><div class="ttname"><a href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a></div><div class="ttdeci">void global_to_local()</div><div class="ttdoc">Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00273">area.cpp:273</a></div></div>
-<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00136">area.h:136</a></div></div>
-<div class="ttc" id="aclassarea_html_ac03a56986a5d909d5f942adea1b17fd6"><div class="ttname"><a href="classarea.html#ac03a56986a5d909d5f942adea1b17fd6">area::map</a></div><div class="ttdeci">nav_msgs::OccupancyGrid map</div><div class="ttdoc">The grid map representing the area.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00126">area.h:126</a></div></div>
-<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00106">area.h:106</a></div></div>
+<div class="ttc" id="aclassma_html_aaa52d464cd21904557198d9be3107df8"><div class="ttname"><a href="classma.html#aaa52d464cd21904557198d9be3107df8">ma::read_coords</a></div><div class="ttdeci">void read_coords()</div><div class="ttdoc">Read mission area coordinates from ROS parameters. If global (GPS) coordinates are given they are con...</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00072">ma.cpp:72</a></div></div>
+<div class="ttc" id="aclassma_html_a3a7cf29a809f0a61c0c682d40544eeb2"><div class="ttname"><a href="classma.html#a3a7cf29a809f0a61c0c682d40544eeb2">ma::map_publisher</a></div><div class="ttdeci">Publisher map_publisher</div><div class="ttdoc">Publisher to publish grid map.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8h_source.html#l00042">ma.h:42</a></div></div>
+<div class="ttc" id="aclassarea_html_aa8158ad7955107d6b43c44485a27b872"><div class="ttname"><a href="classarea.html#aa8158ad7955107d6b43c44485a27b872">area::coords</a></div><div class="ttdeci">map&lt; double, set&lt; pair&lt; double, double &gt; &gt; &gt; coords</div><div class="ttdoc">The coordinates of the area at different rotations.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00146">area.h:146</a></div></div>
+<div class="ttc" id="aclassarea_html_a1e8293857d5b3cf324d7676893bcafbc"><div class="ttname"><a href="classarea.html#a1e8293857d5b3cf324d7676893bcafbc">area::sort_coords</a></div><div class="ttdeci">void sort_coords()</div><div class="ttdoc">Sort the coordinates of the area counter-clockwise about the center by their angle [-π,...</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00340">area.cpp:340</a></div></div>
+<div class="ttc" id="aclassarea_html_a7b19ef007ee7041ea2f28ed26937f3b6"><div class="ttname"><a href="classarea.html#a7b19ef007ee7041ea2f28ed26937f3b6">area::gridmaps</a></div><div class="ttdeci">map&lt; double, map&lt; double, nav_msgs::OccupancyGrid &gt; &gt; gridmaps</div><div class="ttdoc">The grid map representing the area at different rotations and resolutions.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00141">area.h:141</a></div></div>
+<div class="ttc" id="aclassarea_html_af2ad101e400c7e44534cd5960a56cb81"><div class="ttname"><a href="classarea.html#af2ad101e400c7e44534cd5960a56cb81">area::global_to_local</a></div><div class="ttdeci">void global_to_local()</div><div class="ttdoc">Convert the coordinates of the area from global (GPS) coordinates to the local coordinate system.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00278">area.cpp:278</a></div></div>
+<div class="ttc" id="aclassarea_html_a0eb55bca59864691f23b179e319884ec"><div class="ttname"><a href="classarea.html#a0eb55bca59864691f23b179e319884ec">area::global</a></div><div class="ttdeci">bool global</div><div class="ttdoc">Whether global (GPS) or local coordinates are used as source.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00151">area.h:151</a></div></div>
+<div class="ttc" id="aclassarea_html_a474af94f136070aae06e096a7521c367"><div class="ttname"><a href="classarea.html#a474af94f136070aae06e096a7521c367">area::nh</a></div><div class="ttdeci">NodeHandle nh</div><div class="ttdoc">A node handle for the main ROS node.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00134">area.h:134</a></div></div>
 <div class="ttc" id="ama_8h_html"><div class="ttname"><a href="ma_8h.html">ma.h</a></div></div>
-<div class="ttc" id="aclassarea_html_aec33a3e5838ad7d93757660e2fa72115"><div class="ttname"><a href="classarea.html#aec33a3e5838ad7d93757660e2fa72115">area::get_gridmap</a></div><div class="ttdeci">nav_msgs::OccupancyGrid get_gridmap()</div><div class="ttdoc">Generate a grid map from the given area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00126">area.cpp:126</a></div></div>
-<div class="ttc" id="aclassma_html_a0dd6ae4b7d0264754e84c9a26b230a8d"><div class="ttname"><a href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">ma::map_callback</a></div><div class="ttdeci">void map_callback(const nav_msgs::OccupancyGrid::ConstPtr &amp;msg)</div><div class="ttdoc">Callback function to receive map updates.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00095">ma.cpp:95</a></div></div>
+<div class="ttc" id="aclassarea_html_a62b41663e94e6ff2c3d83778cb6b04c9"><div class="ttname"><a href="classarea.html#a62b41663e94e6ff2c3d83778cb6b04c9">area::get_gridmap</a></div><div class="ttdeci">nav_msgs::OccupancyGrid get_gridmap(bool rotated=false, double resolution=0)</div><div class="ttdoc">Generate a grid map from the given area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00186">area.cpp:186</a></div></div>
+<div class="ttc" id="aclassma_html_a0dd6ae4b7d0264754e84c9a26b230a8d"><div class="ttname"><a href="classma.html#a0dd6ae4b7d0264754e84c9a26b230a8d">ma::map_callback</a></div><div class="ttdeci">void map_callback(const nav_msgs::OccupancyGrid::ConstPtr &amp;msg)</div><div class="ttdoc">Callback function to receive map updates.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00092">ma.cpp:92</a></div></div>
 <div class="ttc" id="aclassma_html_a4ce661d1de7e6e3ea8a88a6c8f0b70f2"><div class="ttname"><a href="classma.html#a4ce661d1de7e6e3ea8a88a6c8f0b70f2">ma::ma</a></div><div class="ttdeci">ma()</div><div class="ttdoc">Constructor that initializes mission area coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00003">ma.cpp:3</a></div></div>
-<div class="ttc" id="aclassarea_html_a3d12a8eeed699c1d037e17ba76854f3c"><div class="ttname"><a href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a></div><div class="ttdeci">void set_origin()</div><div class="ttdoc">Set the origin of the local coordinate system from the GPS starting position or given parameter.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00291">area.cpp:291</a></div></div>
-<div class="ttc" id="aclassma_html_a0be630a1e21c021e6e712e3a4857563d"><div class="ttname"><a href="classma.html#a0be630a1e21c021e6e712e3a4857563d">ma::map_to_coords</a></div><div class="ttdeci">void map_to_coords()</div><div class="ttdoc">Extract coordinates from existing map.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00052">ma.cpp:52</a></div></div>
+<div class="ttc" id="aclassarea_html_a3d12a8eeed699c1d037e17ba76854f3c"><div class="ttname"><a href="classarea.html#a3d12a8eeed699c1d037e17ba76854f3c">area::set_origin</a></div><div class="ttdeci">void set_origin()</div><div class="ttdoc">Set the origin of the local coordinate system from the GPS starting position or given parameter.</div><div class="ttdef"><b>Definition:</b> <a href="area_8cpp_source.html#l00298">area.cpp:298</a></div></div>
+<div class="ttc" id="aclassarea_html_acc804cb034d0eaa28f5fbba56f538e54"><div class="ttname"><a href="classarea.html#acc804cb034d0eaa28f5fbba56f538e54">area::resolution</a></div><div class="ttdeci">double resolution</div><div class="ttdoc">Resolution of the grid map representing the area in meter / cell.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00156">area.h:156</a></div></div>
+<div class="ttc" id="aclassma_html_a78d617070544063c56457b92e21336b9"><div class="ttname"><a href="classma.html#a78d617070544063c56457b92e21336b9">ma::publish_map</a></div><div class="ttdeci">bool publish_map</div><div class="ttdoc">Whether a grid map will be published.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8h_source.html#l00047">ma.h:47</a></div></div>
+<div class="ttc" id="aclassma_html_a0be630a1e21c021e6e712e3a4857563d"><div class="ttname"><a href="classma.html#a0be630a1e21c021e6e712e3a4857563d">ma::map_to_coords</a></div><div class="ttdeci">void map_to_coords()</div><div class="ttdoc">Extract coordinates from existing map.</div><div class="ttdef"><b>Definition:</b> <a href="ma_8cpp_source.html#l00049">ma.cpp:49</a></div></div>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

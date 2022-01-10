@@ -29,16 +29,26 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;gtest/gtest.h&gt;</code><br />
 <code>#include &lt;ros/ros.h&gt;</code><br />
+<code>#include &lt;nav_msgs/OccupancyGrid.h&gt;</code><br />
+<code>#include &quot;cpswarm_msgs/GetPoints.h&quot;</code><br />
+<code>#include &quot;cpswarm_msgs/GetPoint.h&quot;</code><br />
 <code>#include &quot;cpswarm_msgs/GetDist.h&quot;</code><br />
+<code>#include &quot;cpswarm_msgs/GetMap.h&quot;</code><br />
+<code>#include &quot;cpswarm_msgs/OutOfBounds.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for test_area.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="test__area_8cpp__incl.png" border="0" usemap="#test__area_8cpp" alt=""/></div>
 <map name="test__area_8cpp" id="test__area_8cpp">
-<area shape="rect" title=" " alt="" coords="118,5,229,32"/>
+<area shape="rect" title=" " alt="" coords="621,5,731,32"/>
 <area shape="rect" title=" " alt="" coords="5,80,109,107"/>
 <area shape="rect" title=" " alt="" coords="134,80,213,107"/>
-<area shape="rect" title=" " alt="" coords="237,80,425,107"/>
+<area shape="rect" title=" " alt="" coords="237,80,440,107"/>
+<area shape="rect" title=" " alt="" coords="464,80,667,107"/>
+<area shape="rect" title=" " alt="" coords="691,80,885,107"/>
+<area shape="rect" title=" " alt="" coords="910,80,1098,107"/>
+<area shape="rect" title=" " alt="" coords="1122,80,1313,107"/>
+<area shape="rect" title=" " alt="" coords="1337,80,1562,107"/>
 </map>
 </div>
 </div>
@@ -47,11 +57,29 @@ Include dependency graph for test_area.cpp:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
-<tr class="memdesc:a3c04138a5bfe5d72780bb7e82a18e627"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function that runs all tests that were declared with <a class="el" href="test__area_8cpp.html#a1f60a56b238537681d27dd2be66656d5" title="Test the area library distance calculation.">TEST()</a>.  <a href="test__area_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">More...</a><br /></td></tr>
+<tr class="memdesc:a3c04138a5bfe5d72780bb7e82a18e627"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function that runs all tests that were declared with <a class="el" href="test__area_8cpp.html#a11df0849e17902ae4802b59101d65ede" title="Test the mission area get area service.">TEST()</a>.  <a href="test__area_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">More...</a><br /></td></tr>
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f60a56b238537681d27dd2be66656d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a1f60a56b238537681d27dd2be66656d5">TEST</a> (NodeTestArea, testDist)</td></tr>
-<tr class="memdesc:a1f60a56b238537681d27dd2be66656d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the area library distance calculation.  <a href="test__area_8cpp.html#a1f60a56b238537681d27dd2be66656d5">More...</a><br /></td></tr>
-<tr class="separator:a1f60a56b238537681d27dd2be66656d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64eeee0b082aa60dd7f7be3088892847"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a64eeee0b082aa60dd7f7be3088892847">print_grid</a> (nav_msgs::OccupancyGrid &amp;grid)</td></tr>
+<tr class="memdesc:a64eeee0b082aa60dd7f7be3088892847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output grid data to the console for visualization/testing purpose.  <a href="test__area_8cpp.html#a64eeee0b082aa60dd7f7be3088892847">More...</a><br /></td></tr>
+<tr class="separator:a64eeee0b082aa60dd7f7be3088892847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11df0849e17902ae4802b59101d65ede"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a11df0849e17902ae4802b59101d65ede">TEST</a> (NodeTestMissionArea, testGetArea)</td></tr>
+<tr class="memdesc:a11df0849e17902ae4802b59101d65ede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area get area service.  <a href="test__area_8cpp.html#a11df0849e17902ae4802b59101d65ede">More...</a><br /></td></tr>
+<tr class="separator:a11df0849e17902ae4802b59101d65ede"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7200f593c7c38a305de1abaf037c7c3d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a7200f593c7c38a305de1abaf037c7c3d">TEST</a> (NodeTestMissionArea, testGetCenter)</td></tr>
+<tr class="memdesc:a7200f593c7c38a305de1abaf037c7c3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area get center service.  <a href="test__area_8cpp.html#a7200f593c7c38a305de1abaf037c7c3d">More...</a><br /></td></tr>
+<tr class="separator:a7200f593c7c38a305de1abaf037c7c3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0ce5d0b95d464e59ec70045d1d33332"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#ae0ce5d0b95d464e59ec70045d1d33332">TEST</a> (NodeTestMissionArea, testGetDistance)</td></tr>
+<tr class="memdesc:ae0ce5d0b95d464e59ec70045d1d33332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area get distance service.  <a href="test__area_8cpp.html#ae0ce5d0b95d464e59ec70045d1d33332">More...</a><br /></td></tr>
+<tr class="separator:ae0ce5d0b95d464e59ec70045d1d33332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0fd29390ad5a6314b11a918e6a7d819"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#ab0fd29390ad5a6314b11a918e6a7d819">TEST</a> (NodeTestMissionArea, testGetMap)</td></tr>
+<tr class="memdesc:ab0fd29390ad5a6314b11a918e6a7d819"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area get map service.  <a href="test__area_8cpp.html#ab0fd29390ad5a6314b11a918e6a7d819">More...</a><br /></td></tr>
+<tr class="separator:ab0fd29390ad5a6314b11a918e6a7d819"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e4716d6ece02f1a158d6becc1f97c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#a09e4716d6ece02f1a158d6becc1f97c8">TEST</a> (NodeTestMissionArea, testGetOrigin)</td></tr>
+<tr class="memdesc:a09e4716d6ece02f1a158d6becc1f97c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area get origin service.  <a href="test__area_8cpp.html#a09e4716d6ece02f1a158d6becc1f97c8">More...</a><br /></td></tr>
+<tr class="separator:a09e4716d6ece02f1a158d6becc1f97c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab30f6331e9ffaaa588b84462e75f7e08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__area_8cpp.html#ab30f6331e9ffaaa588b84462e75f7e08">TEST</a> (NodeTestMissionArea, testOutOfBounds)</td></tr>
+<tr class="memdesc:ab30f6331e9ffaaa588b84462e75f7e08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the mission area out of bounds service.  <a href="test__area_8cpp.html#ab30f6331e9ffaaa588b84462e75f7e08">More...</a><br /></td></tr>
+<tr class="separator:ab30f6331e9ffaaa588b84462e75f7e08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a3c04138a5bfe5d72780bb7e82a18e627"></a>
@@ -80,14 +108,42 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Main function that runs all tests that were declared with <a class="el" href="test__area_8cpp.html#a1f60a56b238537681d27dd2be66656d5" title="Test the area library distance calculation.">TEST()</a>. </p>
+<p>Main function that runs all tests that were declared with <a class="el" href="test__area_8cpp.html#a11df0849e17902ae4802b59101d65ede" title="Test the mission area get area service.">TEST()</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00139">139</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00438">438</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a1f60a56b238537681d27dd2be66656d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f60a56b238537681d27dd2be66656d5">&#9670;&nbsp;</a></span>TEST()</h2>
+<a id="a64eeee0b082aa60dd7f7be3088892847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64eeee0b082aa60dd7f7be3088892847">&#9670;&nbsp;</a></span>print_grid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void print_grid </td>
+          <td>(</td>
+          <td class="paramtype">nav_msgs::OccupancyGrid &amp;&#160;</td>
+          <td class="paramname"><em>grid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Output grid data to the console for visualization/testing purpose. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">grid</td><td>The occupancy grid map to visualize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00017">17</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a11df0849e17902ae4802b59101d65ede"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11df0849e17902ae4802b59101d65ede">&#9670;&nbsp;</a></span>TEST() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -95,13 +151,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">TEST </td>
           <td>(</td>
-          <td class="paramtype">NodeTestArea&#160;</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">testDist&#160;</td>
+          <td class="paramtype">testGetArea&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -112,9 +168,169 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Test the area library distance calculation. </p>
+<p>Test the mission area get area service. </p>
 
-<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00011">11</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00058">58</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7200f593c7c38a305de1abaf037c7c3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7200f593c7c38a305de1abaf037c7c3d">&#9670;&nbsp;</a></span>TEST() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">testGetCenter&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the mission area get center service. </p>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00086">86</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae0ce5d0b95d464e59ec70045d1d33332"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0ce5d0b95d464e59ec70045d1d33332">&#9670;&nbsp;</a></span>TEST() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">testGetDistance&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the mission area get distance service. </p>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00104">104</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab0fd29390ad5a6314b11a918e6a7d819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0fd29390ad5a6314b11a918e6a7d819">&#9670;&nbsp;</a></span>TEST() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">testGetMap&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the mission area get map service. </p>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00196">196</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a09e4716d6ece02f1a158d6becc1f97c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09e4716d6ece02f1a158d6becc1f97c8">&#9670;&nbsp;</a></span>TEST() <span class="overload">[5/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">testGetOrigin&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the mission area get origin service. </p>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00344">344</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab30f6331e9ffaaa588b84462e75f7e08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab30f6331e9ffaaa588b84462e75f7e08">&#9670;&nbsp;</a></span>TEST() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">NodeTestMissionArea&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">testOutOfBounds&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the mission area out of bounds service. </p>
+
+<p class="definition">Definition at line <a class="el" href="test__area_8cpp_source.html#l00362">362</a> of file <a class="el" href="test__area_8cpp_source.html">test_area.cpp</a>.</p>
 
 </div>
 </div>
@@ -124,7 +340,7 @@ Functions</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>
