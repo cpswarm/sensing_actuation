@@ -86,8 +86,10 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
         ROS_DEBUG("Calculate distance to ROI %s", roi.to_string().c_str());
 
         if (roi.get_distance(req, response)) {
-            if (closest.closest_line.size() <= 0 || response.distance < closest.distance)
+            if (closest.closest_line.size() <= 0 || response.distance < closest.distance) {
                 closest = response;
+                closest.coords = roi.set2vector(roi.coords[0]);
+            }
         }
         else
             ROS_ERROR("Failed to retrieve distance for ROI %s!", roi.to_string().c_str());

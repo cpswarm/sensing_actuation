@@ -85,7 +85,7 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 * `area/get_center` ([cpswarm_msgs/GetPoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoint.html))
   Get the center of the area in which the CPS is allowed to move. Returns the coordinates of the geometric center / centroid of the area.
 * `area/get_distance` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
-  Calculates the distance of given point (or the origin in case the given point is empty (0,0)) to the mission area boundary. The point can be either inside or outside the area. Returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point. The `coords` variable of the request is ignored.
+  Calculates the distance of given point (or the origin in case the given point is empty (0,0)) to the mission area boundary. The point can be either inside or outside the area. Returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point. The `coords` variable, both in request and response is ignored.
 * `area/get_map` ([nav_msgs/GetMap](https://docs.ros.org/en/api/nav_msgs/html/srv/GetMap.html))
   Get the map that represents the environment in which the CPS is allowed to move. Returns the grid map of the environment. The `coords` variable of the request is ignored. The service request offers several options: If `rotate` is set to true, the map is rotated to align the bottom edge horizontally. The response also returns the angle of rotation. If `translate` is set to true, the map is  translated to make the origin an even number. The response returns the translation vector. If `resolution` is specified, the map will be provided at the desired resolution.
 * `area/get_origin` ([cpswarm_msgs/GetPoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetPoint.html))
@@ -134,7 +134,7 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
 * `rois/get_all` ([cpswarm_msgs/GetMultiPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetMultiPoints.html))
   Get coordinates of all ROIs. Returns a flattened vector of points together with the layout of the original, two-dimensional vector.
 * `rois/get_closest` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
-  Find the ROI that is closest to a given point or the origin in case the given point is empty (0,0). It returns the coordinates of the closest boundary segment, the closest point on the segment, and the distance to the given point.
+  Find the ROI that is closest to a given point or the origin in case the given point is empty (0,0). It returns the coordinates of the closest boundary segment, the closest point on the segment, the distance to the given point, and the coordinates of the complete ROI.
 * `area/get_distance` ([cpswarm_msgs/GetDist](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetDist.html))
   Calculates the distance of given point (or the origin in case the given point is empty (0,0)) to the ROI specified by the `coords` variable in the request. The point can be either inside or outside the area. Returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point.
 * `area/get_map` ([nav_msgs/GetMap](https://docs.ros.org/en/api/nav_msgs/html/srv/GetMap.html))
