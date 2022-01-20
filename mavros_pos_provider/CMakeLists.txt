@@ -10,7 +10,6 @@ project(mavros_pos_provider)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2
-  tf2_ros
   geometry_msgs
   sensor_msgs
   cpswarm_msgs

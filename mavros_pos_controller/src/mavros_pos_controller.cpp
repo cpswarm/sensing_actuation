@@ -110,7 +110,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
     if (visualize) {
         geometry_msgs::PointStamped wp;
         wp.header.stamp = Time::now();
-        wp.header.frame_id = "local_origin_ned";
+        wp.header.frame_id = "map";
         wp.point = goal.pose.position;
         wp_pub.publish(wp);
     }
