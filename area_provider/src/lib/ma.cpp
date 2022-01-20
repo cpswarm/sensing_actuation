@@ -39,11 +39,14 @@ ma::ma ()
         set_origin();
     }
 
+    ROS_INFO("Mission area %s", to_string().c_str());
+
     // publish grid map
     if (publish_map)
         map_publisher.publish(get_gridmap());
     else
         ROS_INFO("Not publishing map");
+
 }
 
 void ma::map_to_coords ()

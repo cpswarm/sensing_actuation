@@ -142,7 +142,7 @@ int main(int argc, char **argv)
     oob.request.pose = pose.pose;
     if (out_of_bounds_client.call(oob)) {
         if (oob.response.out == true){
-            ROS_FATAL("CPS is not within allowed area!");
+            ROS_FATAL("CPS (%.2f,%.2f) is not within allowed area!", pose.pose.position.x, pose.pose.position.y);
             shutdown();
         }
     }
