@@ -174,6 +174,17 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, -2);
     EXPECT_EQ(msg.response.closest_line[1].y, 2);
     EXPECT_FLOAT_EQ(msg.response.distance, sqrt(5)/2.0);
+    ASSERT_EQ(msg.response.coords.size(), 5);
+    EXPECT_EQ(msg.response.coords[0].x, -3);
+    EXPECT_EQ(msg.response.coords[0].y, 4);
+    EXPECT_EQ(msg.response.coords[1].x, -2);
+    EXPECT_EQ(msg.response.coords[1].y, 2);
+    EXPECT_EQ(msg.response.coords[2].x, -2);
+    EXPECT_EQ(msg.response.coords[2].y, 5);
+    EXPECT_EQ(msg.response.coords[3].x, -1);
+    EXPECT_EQ(msg.response.coords[3].y, 5);
+    EXPECT_EQ(msg.response.coords[4].x, 0);
+    EXPECT_EQ(msg.response.coords[4].y, 3);
 
     // test points inside rois
     msg.request.point.x = 2;
@@ -187,6 +198,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 3);
     EXPECT_EQ(msg.response.closest_line[1].y, -3);
     EXPECT_FLOAT_EQ(msg.response.distance, 1);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 1);
+    EXPECT_EQ(msg.response.coords[0].y, -3);
+    EXPECT_EQ(msg.response.coords[1].x, 1);
+    EXPECT_EQ(msg.response.coords[1].y, -1);
+    EXPECT_EQ(msg.response.coords[2].x, 3);
+    EXPECT_EQ(msg.response.coords[2].y, -3);
+    EXPECT_EQ(msg.response.coords[3].x, 3);
+    EXPECT_EQ(msg.response.coords[3].y, -1);
     msg.request.point.x = 3.5;
     msg.request.point.y = 0.5;
     ASSERT_TRUE(client.call(msg));
@@ -198,6 +218,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 3);
     EXPECT_EQ(msg.response.closest_line[1].y, 1);
     EXPECT_FLOAT_EQ(msg.response.distance, 0.5);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 3);
+    EXPECT_EQ(msg.response.coords[0].y, -1);
+    EXPECT_EQ(msg.response.coords[1].x, 3);
+    EXPECT_EQ(msg.response.coords[1].y, 1);
+    EXPECT_EQ(msg.response.coords[2].x, 5);
+    EXPECT_EQ(msg.response.coords[2].y, -1);
+    EXPECT_EQ(msg.response.coords[3].x, 5);
+    EXPECT_EQ(msg.response.coords[3].y, 1);
 
     // test points at roi boundaries
     msg.request.point.x = 1;
@@ -211,6 +240,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 1);
     EXPECT_EQ(msg.response.closest_line[1].y, -3);
     EXPECT_FLOAT_EQ(msg.response.distance, 0);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 1);
+    EXPECT_EQ(msg.response.coords[0].y, -3);
+    EXPECT_EQ(msg.response.coords[1].x, 1);
+    EXPECT_EQ(msg.response.coords[1].y, -1);
+    EXPECT_EQ(msg.response.coords[2].x, 3);
+    EXPECT_EQ(msg.response.coords[2].y, -3);
+    EXPECT_EQ(msg.response.coords[3].x, 3);
+    EXPECT_EQ(msg.response.coords[3].y, -1);
     msg.request.point.x = 0;
     msg.request.point.y = 3;
     ASSERT_TRUE(client.call(msg));
@@ -222,6 +260,17 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 0);
     EXPECT_EQ(msg.response.closest_line[1].y, 3);
     EXPECT_FLOAT_EQ(msg.response.distance, 0);
+    ASSERT_EQ(msg.response.coords.size(), 5);
+    EXPECT_EQ(msg.response.coords[0].x, -3);
+    EXPECT_EQ(msg.response.coords[0].y, 4);
+    EXPECT_EQ(msg.response.coords[1].x, -2);
+    EXPECT_EQ(msg.response.coords[1].y, 2);
+    EXPECT_EQ(msg.response.coords[2].x, -2);
+    EXPECT_EQ(msg.response.coords[2].y, 5);
+    EXPECT_EQ(msg.response.coords[3].x, -1);
+    EXPECT_EQ(msg.response.coords[3].y, 5);
+    EXPECT_EQ(msg.response.coords[4].x, 0);
+    EXPECT_EQ(msg.response.coords[4].y, 3);
 
     // test points outside rois
     msg.request.point.x = -1;
@@ -235,6 +284,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 1);
     EXPECT_EQ(msg.response.closest_line[1].y, -3);
     EXPECT_FLOAT_EQ(msg.response.distance, 2);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 1);
+    EXPECT_EQ(msg.response.coords[0].y, -3);
+    EXPECT_EQ(msg.response.coords[1].x, 1);
+    EXPECT_EQ(msg.response.coords[1].y, -1);
+    EXPECT_EQ(msg.response.coords[2].x, 3);
+    EXPECT_EQ(msg.response.coords[2].y, -3);
+    EXPECT_EQ(msg.response.coords[3].x, 3);
+    EXPECT_EQ(msg.response.coords[3].y, -1);
     msg.request.point.x = -99;
     msg.request.point.y = 4;
     ASSERT_TRUE(client.call(msg));
@@ -246,6 +304,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, -7.07106781186548);
     EXPECT_EQ(msg.response.closest_line[1].y, 17.0710678118655);
     EXPECT_FLOAT_EQ(msg.response.distance, 92.8535480581815);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, -7.07106781186548);
+    EXPECT_EQ(msg.response.coords[0].y, 17.0710678118655);
+    EXPECT_EQ(msg.response.coords[1].x, 0);
+    EXPECT_EQ(msg.response.coords[1].y, 10);
+    EXPECT_EQ(msg.response.coords[2].x, 0);
+    EXPECT_EQ(msg.response.coords[2].y, 24.1421356237309);
+    EXPECT_EQ(msg.response.coords[3].x, 7.07106781186548);
+    EXPECT_EQ(msg.response.coords[3].y, 17.0710678118655);
 
     // test points at equal distance between rois
     msg.request.point.x = 3;
@@ -259,6 +326,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 3);
     EXPECT_EQ(msg.response.closest_line[1].y, -1);
     EXPECT_FLOAT_EQ(msg.response.distance, 0);
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 1);
+    EXPECT_EQ(msg.response.coords[0].y, -3);
+    EXPECT_EQ(msg.response.coords[1].x, 1);
+    EXPECT_EQ(msg.response.coords[1].y, -1);
+    EXPECT_EQ(msg.response.coords[2].x, 3);
+    EXPECT_EQ(msg.response.coords[2].y, -3);
+    EXPECT_EQ(msg.response.coords[3].x, 3);
+    EXPECT_EQ(msg.response.coords[3].y, -1);
     msg.request.point.x = -1;
     msg.request.point.y = 0;
     ASSERT_TRUE(client.call(msg));
@@ -270,6 +346,17 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 0);
     EXPECT_EQ(msg.response.closest_line[1].y, 3);
     EXPECT_FLOAT_EQ(msg.response.distance, hypot(1,2));
+    ASSERT_EQ(msg.response.coords.size(), 5);
+    EXPECT_EQ(msg.response.coords[0].x, -3);
+    EXPECT_EQ(msg.response.coords[0].y, 4);
+    EXPECT_EQ(msg.response.coords[1].x, -2);
+    EXPECT_EQ(msg.response.coords[1].y, 2);
+    EXPECT_EQ(msg.response.coords[2].x, -2);
+    EXPECT_EQ(msg.response.coords[2].y, 5);
+    EXPECT_EQ(msg.response.coords[3].x, -1);
+    EXPECT_EQ(msg.response.coords[3].y, 5);
+    EXPECT_EQ(msg.response.coords[4].x, 0);
+    EXPECT_EQ(msg.response.coords[4].y, 3);
     msg.request.point.x = 101;
     msg.request.point.y = -99;
     ASSERT_TRUE(client.call(msg));
@@ -281,6 +368,15 @@ TEST (NodeTestRoi, testGetClosest)
     EXPECT_EQ(msg.response.closest_line[1].x, 3);
     EXPECT_EQ(msg.response.closest_line[1].y, -3);
     EXPECT_FLOAT_EQ(msg.response.distance, hypot(98,96));
+    ASSERT_EQ(msg.response.coords.size(), 4);
+    EXPECT_EQ(msg.response.coords[0].x, 1);
+    EXPECT_EQ(msg.response.coords[0].y, -3);
+    EXPECT_EQ(msg.response.coords[1].x, 1);
+    EXPECT_EQ(msg.response.coords[1].y, -1);
+    EXPECT_EQ(msg.response.coords[2].x, 3);
+    EXPECT_EQ(msg.response.coords[2].y, -3);
+    EXPECT_EQ(msg.response.coords[3].x, 3);
+    EXPECT_EQ(msg.response.coords[3].y, -1);
 }
 
 /**
