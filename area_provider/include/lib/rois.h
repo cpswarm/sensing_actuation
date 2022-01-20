@@ -108,6 +108,11 @@ private:
     Publisher roi_publisher;
 
     /**
+     * @brief Publisher of ROI maps for introspection.
+     */
+    vector<Publisher> map_publisher;
+
+    /**
      * @brief All ROIs with IDs.
      */
     set<roi> regions;
@@ -121,6 +126,11 @@ private:
      * @brief Whether to publish any newly imported ROI as event.
      */
     bool publish;
+
+    /**
+     * @brief Whether to publish the map of any newly imported ROI.
+     */
+    bool visualize;
 };
 
 #endif // ROIS_H

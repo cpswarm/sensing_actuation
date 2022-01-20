@@ -6,6 +6,7 @@ rois::rois ()
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/duplicates", duplicates, false);
+    nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // get rois from incoming event messages
     roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
@@ -146,8 +147,10 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
 bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
 {
     // reset old rois
-    if (req.data)
+    if (req.data) {
         regions.clear();
+        map_publisher.clear();
+    }
 
     // import rois from files
     from_file();
@@ -190,6 +193,13 @@ void rois::add_roi (vector<double> x, vector<double> y)
             event.x = x;
             event.y = y;
             roi_publisher.publish(event);
+        }
+
+        if (visualize) {
+            int queue_size;
+            nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+            map_publisher.push_back(nh.advertise<nav_msgs::OccupancyGrid>("rois/map_" + to_string(map_publisher.size()), queue_size, true));
+            map_publisher.back().publish(roi.get_gridmap());
         }
     }
 }

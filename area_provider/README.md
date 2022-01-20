@@ -130,6 +130,10 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
 * `bridge/events/roi` ([cpswarm_msgs/PointArrayEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/PointArrayEvent.html))
   Receive the coordinates of a ROI and import it.
 
+#### Published Topics
+* `rois/map_<i>` ([nav_msgs/OccupancyGrid](https://docs.ros.org/en/api/nav_msgs/html/msg/OccupancyGrid.html))
+  The map representing ROI `i`, where `i` is the ordinal number of the ROIs in the order in which they are imported. Only if the parameter `visualize` is set to `true`.
+
 #### Services
 * `rois/get_all` ([cpswarm_msgs/GetMultiPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetMultiPoints.html))
   Get coordinates of all ROIs. Returns a flattened vector of points together with the layout of the original, two-dimensional vector.
@@ -169,6 +173,8 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
   Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
 * `~publish` (boolean, default: `false`)
   Whether to publish any newly imported ROI as event.
+* `~visualize` (bolean, default: `false`)
+  Whether to publish the map of any newly imported ROI.
 
 ## Code API
 [area_provider package code API documentation](https://cpswarm.github.io/sensing_actuation/area_provider/docs/html/files.html)
