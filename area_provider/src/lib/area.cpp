@@ -24,7 +24,8 @@ area::area ()
 
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
-    res.points = set2vector(coords[0]);
+    for (auto c : coords_sorted[0])
+        res.points.push_back(pair2point(c.second));
     return true;
 }
 
