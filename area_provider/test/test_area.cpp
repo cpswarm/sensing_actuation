@@ -69,14 +69,14 @@ TEST (NodeTestMissionArea, testGetArea)
     EXPECT_NEAR(msg.response.points[0].x, -6, 0.01);
     EXPECT_NEAR(msg.response.points[0].y, -6, 0.01);
     EXPECT_NEAR(msg.response.points[0].z, 0, 0.01);
-    EXPECT_NEAR(msg.response.points[1].x, -6, 0.01);
-    EXPECT_NEAR(msg.response.points[1].y, 6, 0.01);
+    EXPECT_NEAR(msg.response.points[1].x, 6, 0.01);
+    EXPECT_NEAR(msg.response.points[1].y, -4, 0.01);
     EXPECT_NEAR(msg.response.points[1].z, 0, 0.01);
     EXPECT_NEAR(msg.response.points[2].x, 6, 0.01);
-    EXPECT_NEAR(msg.response.points[2].y, -4, 0.01);
+    EXPECT_NEAR(msg.response.points[2].y, 4, 0.01);
     EXPECT_NEAR(msg.response.points[2].z, 0, 0.01);
-    EXPECT_NEAR(msg.response.points[3].x, 6, 0.01);
-    EXPECT_NEAR(msg.response.points[3].y, 4, 0.01);
+    EXPECT_NEAR(msg.response.points[3].x, -6, 0.01);
+    EXPECT_NEAR(msg.response.points[3].y, 6, 0.01);
     EXPECT_NEAR(msg.response.points[3].z, 0, 0.01);
 }
 
