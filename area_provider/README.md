@@ -119,9 +119,13 @@ If both sources are unavailable the `ma_services`, this node will issue a fatal 
 * `~wait_for_map` (real, default: `2.0`)
   Time in seconds to wait initially for another map provider. If this timeout expires, no map server is assumed to be available and the map is constructed from another source.
 * `~area_x` (real list, default: `[]`)
-  X-coordinates/longitudes that specify the mission area polygon. Make sure they are given in the same order as `area_y`. Only read if no map server is available.
+  X-coordinates that specify the mission area polygon to be used for relative localization. Make sure they are given in the same order as `area_y`. Only read if no map server is available and `pos_type` is `local`.
 * `~area_y` (real list, default: `[]`)
-  Y-coordinates/latitudes that specify the mission area polygon. Make sure they are given in the same order as `area_x`. Only read if no map server is available.
+  Y-coordinates that specify the mission area polygon to be used for relative localization. Make sure they are given in the same order as `area_x`. Only read if no map server is available and `pos_type` is `local`.
+* `~area_x_global` (real list, default: `[]`)
+  Longitudes that specify the mission area polygon to be used for global localization. Make sure they are given in the same order as `area_y_global`. Only read if no map server is available and `pos_type` is `global`.
+* `~area_y_global` (real list, default: `[]`)
+  Latitudes that specify the mission area polygon to be used for global localization. Make sure they are given in the same order as `area_x_global`. Only read if no map server is available and `pos_type` is `global`.
 
 ### roi_services
 The basis for the ROI services are coordinates of the ROIs which are provided through several JSON files in a specified directory. The JSON files must follow the definition of the [qGroundControl plan file format](https://dev.qgroundcontrol.com/master/en/file_formats/plan.html).

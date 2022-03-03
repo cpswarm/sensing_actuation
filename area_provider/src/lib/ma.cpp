@@ -77,8 +77,14 @@ void ma::read_coords ()
     // read area coordinates
     vector<double> area_x;
     vector<double> area_y;
-    nh.getParam(this_node::getName() + "/area_x", area_x);
-    nh.getParam(this_node::getName() + "/area_y", area_y);
+    if (global) {
+        nh.getParam(this_node::getName() + "/area_x_global", area_x);
+        nh.getParam(this_node::getName() + "/area_y_global", area_y);
+    }
+    else {
+        nh.getParam(this_node::getName() + "/area_x", area_x);
+        nh.getParam(this_node::getName() + "/area_y", area_y);
+    }
     if (gridmaps.count(0) == 0 && gridmaps[0].count(resolution) == 0 && (area_x.size() != area_y.size() || area_x.size() < 3)) {
         ROS_FATAL("AREA_PROV - Invalid area, it must contain at least three coordinates! Exiting...");
         shutdown();
