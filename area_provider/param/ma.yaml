@@ -7,15 +7,15 @@ wait_for_map: 2.0   # Time in seconds to wait initially for another map provider
 
 # Simulation
 area_x:
-- -10
-- 10
-- 10
-- -10
+- -25
+- 25
+- 25
+- -25
 area_y:
-- -10
-- -10
-- 10
-- 10
+- -25
+- -25
+- 25
+- 25
 
 # Lakeside area A meadow only
 area_x_global:
