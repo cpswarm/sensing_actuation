@@ -42,10 +42,20 @@ public:
     bool get_closest (cpswarm_msgs::GetDist::Request& req, cpswarm_msgs::GetDist::Response& res);
 
     /**
-     * @brief Get all ROIs managed by this class.
-     * @return Each ROI together with its unique ID.
+     * @brief Return the distance to a given ROI.
+     * @param req The coordinates of the point to check.
+     * @param res The coordinates of the closest area boundary line segment, the coordinates of the closest point on the boundary, and the distance.
+     * @return Whether request succeeded.
      */
-    map<int,roi> get_rois ();
+    bool get_distance (cpswarm_msgs::GetDist::Request& req, cpswarm_msgs::GetDist::Response& res);
+
+    /**
+     * @brief Return the map that correspond to a given ROI.
+     * @param req The coordinates of the ROI together with the desired resolution of the map and whether its bottom edge should be aligned horizontally and the origin should be an integer.
+     * @param res The grid map of the environment together with the angle it has been rotated by and the offset it has been translated by.
+     * @return Whether the request succeeded.
+     */
+    bool get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res);
 
     /**
      * @brief Reload ROIs from files.
@@ -98,9 +108,14 @@ private:
     Publisher roi_publisher;
 
     /**
+     * @brief Publisher of ROI maps for introspection.
+     */
+    vector<Publisher> map_publisher;
+
+    /**
      * @brief All ROIs with IDs.
      */
-    map<int,roi> regions;
+    set<roi> regions;
 
     /**
      * @brief Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
@@ -111,6 +126,11 @@ private:
      * @brief Whether to publish any newly imported ROI as event.
      */
     bool publish;
+
+    /**
+     * @brief Whether to publish the map of any newly imported ROI.
+     */
+    bool visualize;
 };
 
 #endif // ROIS_H

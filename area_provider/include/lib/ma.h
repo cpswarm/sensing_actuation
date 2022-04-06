@@ -35,6 +35,16 @@ private:
      * @brief Subscriber to receive an existing map.
      */
     Subscriber map_subscriber;
+
+    /**
+     * @brief Publisher to publish grid map.
+     */
+    Publisher map_publisher;
+
+    /**
+     * @brief Whether a grid map will be published.
+     */
+    bool publish_map;
 };
 
 #endif // MA_H

@@ -32,14 +32,24 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classroi.html">    9</a></span>&#160;<span class="keyword">class </span><a class="code" href="classroi.html">roi</a> : <span class="keyword">public</span> <a class="code" href="classarea.html">area</a></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="classroi.html#a7a7328fef6b35aa635350e3caa1d2fea">roi</a> (vector&lt;geometry_msgs::Point&gt; raw_coords);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;};</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif // ROI_H</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classroi.html#a4876460e23b4840f003b8512a18753e5">   14</a></span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classrois.html">rois</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="classroi.html#a701c27eee6123d5f7f6eb241d2924dc8">roi</a> (vector&lt;double&gt; x, vector&lt;double&gt; y);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classroi.html#a51fccb70b14fa8a30ab5683c7d0cc089">operator== </a>(<span class="keyword">const</span> <a class="code" href="classroi.html">roi</a> other);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classroi.html#a838ad6b71454a1a44df9cc677ad8cf97">operator&lt; </a>(<span class="keyword">const</span> <a class="code" href="classroi.html">roi</a> other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif // ROI_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassarea_html"><div class="ttname"><a href="classarea.html">area</a></div><div class="ttdoc">A class that holds the an area and offers related services.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00022">area.h:22</a></div></div>
-<div class="ttc" id="aclassroi_html_a7a7328fef6b35aa635350e3caa1d2fea"><div class="ttname"><a href="classroi.html#a7a7328fef6b35aa635350e3caa1d2fea">roi::roi</a></div><div class="ttdeci">roi(vector&lt; geometry_msgs::Point &gt; raw_coords)</div><div class="ttdoc">Constructor that initializes ROI coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="roi_8cpp_source.html#l00003">roi.cpp:3</a></div></div>
+<div class="ttc" id="aclassarea_html"><div class="ttname"><a href="classarea.html">area</a></div><div class="ttdoc">A class that holds the an area and offers related services.</div><div class="ttdef"><b>Definition:</b> <a href="area_8h_source.html#l00031">area.h:31</a></div></div>
+<div class="ttc" id="aclassrois_html"><div class="ttname"><a href="classrois.html">rois</a></div><div class="ttdoc">A class that manages several regions of interest (ROIs).</div><div class="ttdef"><b>Definition:</b> <a href="rois_8h_source.html#l00020">rois.h:20</a></div></div>
+<div class="ttc" id="aclassroi_html_a51fccb70b14fa8a30ab5683c7d0cc089"><div class="ttname"><a href="classroi.html#a51fccb70b14fa8a30ab5683c7d0cc089">roi::operator==</a></div><div class="ttdeci">bool operator==(const roi other)</div><div class="ttdoc">Compare two ROIs.</div><div class="ttdef"><b>Definition:</b> <a href="roi_8cpp_source.html#l00032">roi.cpp:32</a></div></div>
+<div class="ttc" id="aclassroi_html_a838ad6b71454a1a44df9cc677ad8cf97"><div class="ttname"><a href="classroi.html#a838ad6b71454a1a44df9cc677ad8cf97">roi::operator&lt;</a></div><div class="ttdeci">bool operator&lt;(const roi other) const</div><div class="ttdoc">Compare two ROIs.</div><div class="ttdef"><b>Definition:</b> <a href="roi_8cpp_source.html#l00037">roi.cpp:37</a></div></div>
+<div class="ttc" id="aclassroi_html_a701c27eee6123d5f7f6eb241d2924dc8"><div class="ttname"><a href="classroi.html#a701c27eee6123d5f7f6eb241d2924dc8">roi::roi</a></div><div class="ttdeci">roi(vector&lt; double &gt; x, vector&lt; double &gt; y)</div><div class="ttdoc">Constructor that initializes ROI coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="roi_8cpp_source.html#l00003">roi.cpp:3</a></div></div>
 <div class="ttc" id="aarea_8h_html"><div class="ttname"><a href="area_8h.html">area.h</a></div></div>
 <div class="ttc" id="aclassroi_html"><div class="ttname"><a href="classroi.html">roi</a></div><div class="ttdoc">A class that holds a region of interest (ROI).</div><div class="ttdef"><b>Definition:</b> <a href="roi_8h_source.html#l00009">roi.h:9</a></div></div>
 
@@ -47,7 +57,7 @@ $(function() {
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_provider">area_provider</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 11 2021 13:00:49</small>
+<small>autogenerated on Mon Jan 10 2022 15:13:45</small>
 </div>
 </body>
 </html>

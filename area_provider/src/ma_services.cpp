@@ -25,7 +25,6 @@ int main(int argc, char **argv)
     ServiceServer get_distance_service  = nh.advertiseService("area/get_distance",  &area::get_distance, &lib);
     ServiceServer get_map_service       = nh.advertiseService("area/get_map",       &area::get_map, &lib);
     ServiceServer get_origin_service    = nh.advertiseService("area/get_origin",    &area::get_origin, &lib);
-    ServiceServer get_rotation_service  = nh.advertiseService("area/get_rotation",  &area::get_rotation, &lib);
     ServiceServer out_of_bounds_service = nh.advertiseService("area/out_of_bounds", &area::out_of_bounds, &lib);
 
     ROS_DEBUG("AREA_PROV - Mission area services are ready");

@@ -1,6 +1,5 @@
-create_map:   false # Whether to create a grid map from the coordinates.
+publish_map:  false # Whether to publish a grid map, either created from the coordinates or received from a map server.
 cell_warn:    1000  # Number of grid cells in the map above which a performance warning is issued.
-resolution:   1.0   # Resolution of the grid map representing the area in meter / cell.
 wait_for_map: 2.0   # Time in seconds to wait initially for another map provider.
 
 # The area in which the mission takes place. It is a polygon specified by a list of coordinates.
@@ -8,27 +7,27 @@ wait_for_map: 2.0   # Time in seconds to wait initially for another map provider
 
 # Simulation
 area_x:
-- -10
-- 10
-- 10
-- -10
+- -25
+- 25
+- 25
+- -25
 area_y:
-- -10
-- -10
-- 10
-- 10
+- -25
+- -25
+- 25
+- 25
 
 # Lakeside area A meadow only
-# area_x:
-# - 14.26510
-# - 14.26565
-# - 14.26550
-# - 14.26510
-# area_y:
-# - 46.61315
-# - 46.61312
-# - 46.61275
-# - 46.61272
+area_x_global:
+- 14.26510
+- 14.26565
+- 14.26555
+- 14.26505
+area_y_global:
+- 46.61315
+- 46.61312
+- 46.61268
+- 46.61265
 
 # Lakeside basketball court
 # area_x:

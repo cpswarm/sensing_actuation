@@ -252,6 +252,10 @@ if(CATKIN_ENABLE_TESTING)
   if(TARGET area_test)
     target_link_libraries(area_test ${catkin_LIBRARIES})
   endif()
+  add_rostest_gtest(roi_test test/test_roi.test test/test_roi.cpp)
+  if(TARGET roi_test)
+    target_link_libraries(roi_test ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests

@@ -15,10 +15,7 @@ roi::roi (vector<double> x, vector<double> y)
     else {
         // set coordinates
         for (int i=0; i<x.size(); ++i) {
-            geometry_msgs::Point c;
-            c.x = x[i];
-            c.y = y[i];
-            coords.push_back(c);
+            coords[0].emplace(x[i], y[i]);
         }
 
         // convert global coordinates
@@ -28,27 +25,16 @@ roi::roi (vector<double> x, vector<double> y)
         // set origin
         set_origin();
     }
+
+    sort_coords();
 }
 
 bool roi::operator== (const roi other)
 {
-    // rois are not equal, they have different number of coordinates
-    if (coords.size() != other.coords.size())
-        return false;
+    return coords[0] == other.coords.at(0);
+}
 
-    // the vector of equal coordinates
-    unsigned int equal = 0;
-
-    // count coordinates that are equal between rois
-    for (auto c : coords) {
-        for (auto c_other : other.coords) {
-            if (c == c_other) {
-                ++equal;
-                break;
-            }
-        }
-    }
-
-    // rois are equal if all coordinates are equal
-    return coords.size() == equal;
+bool roi::operator< (const roi other) const
+{
+    return coords.at(0) < other.coords.at(0);
 }

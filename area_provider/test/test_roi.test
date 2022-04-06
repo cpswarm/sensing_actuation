@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="pos_type" default="local" />
+    <arg name="x" default="-3.5" />
+    <arg name="y" default="2.5" />
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find area_provider)/test/rosconsole.config" />
+
+    <!-- ROI services -->
+    <node pkg="area_provider" type="roi_services" name="roi_services" output="screen" required="true">
+        <param name="pos_type" value="$(arg pos_type)" />
+        <param name="x" value="$(arg x)" />
+        <param name="y" value="$(arg y)" />
+        <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
+        <rosparam file="$(find area_provider)/param/roi.yaml" command="load" />
+        <rosparam file="$(find area_provider)/test/test_roi.yaml" command="load" />
+    </node>
+
+    <!-- Node unit test area services -->
+    <test pkg="area_provider" type="roi_test" test-name="roi_test" required="true" />
+
+</launch>

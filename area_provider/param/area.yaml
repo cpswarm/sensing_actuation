@@ -1,2 +1,3 @@
 loop_rate:    1.0   # The frequency in Hz at which to run the control loops.
 queue_size:   10    # The size of the message queue used for publishing and subscribing to topics.
+resolution:   1.0   # Resolution of the grid map representing the area in meter / cell.

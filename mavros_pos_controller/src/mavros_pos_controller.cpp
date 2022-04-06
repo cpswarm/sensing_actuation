@@ -110,7 +110,7 @@ void publish_goal (geometry_msgs::PoseStamped goal) {
     if (visualize) {
         geometry_msgs::PointStamped wp;
         wp.header.stamp = Time::now();
-        wp.header.frame_id = "local_origin_ned";
+        wp.header.frame_id = "map";
         wp.point = goal.pose.position;
         wp_pub.publish(wp);
     }
@@ -156,8 +156,8 @@ void process_goal(geometry_msgs::PoseStamped& goal)
     if (turning == false)
         goal.pose.orientation = pose.pose.orientation;
 
-    // calculate new orientation if turning is enabled
-    else {
+    // calculate orientation towards goal if turning is enabled and no pose given
+    else if (goal.pose.orientation.x == 0 && goal.pose.orientation.y == 0 && goal.pose.orientation.z == 0 && goal.pose.orientation.w == 0) {
         tf2::Quaternion orientation;
         orientation.setRPY(0, 0, atan2(goal.pose.position.y - pose.pose.position.y, goal.pose.position.x - pose.pose.position.x));
         goal.pose.orientation = tf2::toMsg(orientation);

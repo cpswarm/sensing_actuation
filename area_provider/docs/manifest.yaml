@@ -3,18 +3,18 @@ authors: Micha Sende <sende@lakeside-labs.com>
 brief: ''
 bugtracker: ''
 depends:
-- std_srvs
+- catkin
+- roscpp
+- nlohmann_json
 - roslib
+- filesystem
+- std_srvs
 - geometry_msgs
+- fstream
+- nav_msgs
 - mavros_gps
 - cpswarm_msgs
-- roscpp
-- fstream
 - rostest
-- catkin
-- nav_msgs
-- nlohmann_json
-- filesystem
 description: A node that provides services to access the area of the mission and regions
   of interest (ROIs) in local coordinates.
 license: Apache License 2.0

@@ -1,10 +1,12 @@
+create_map:   true  # Whether to create a grid map from the coordinates.
+resolution:   1.0   # Resolution of the grid map representing the area in meter / cell.
 area_x:
-- -10
-- 10
-- 10
-- -10
+- -6
+- 6
+- 6
+- -6
 area_y:
-- -10
-- -10
-- 10
-- 10
+- -6
+- -4
+- 4
+- 6

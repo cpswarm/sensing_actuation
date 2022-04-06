@@ -6,6 +6,7 @@ rois::rois ()
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/duplicates", duplicates, false);
+    nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // get rois from incoming event messages
     roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
@@ -21,10 +22,6 @@ rois::rois ()
 
 bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res)
 {
-    // empty request for area service to get coordinates
-    cpswarm_msgs::GetPoints::Request request;
-    cpswarm_msgs::GetPoints::Response response;
-
     // collection of all roi coordinates
     vector<vector<geometry_msgs::Point>> coords;
 
@@ -33,22 +30,19 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
 
     // iterate all rois
     for (auto roi : regions) {
-        // call area service to get coordinates
-        roi.second.get_area(request, response);
-
         // store maximum number of coordinates
-        if (response.points.size() > max_num_coords)
-            max_num_coords = response.points.size();
+        if (roi.coords[0].size() > max_num_coords)
+            max_num_coords = roi.coords[0].size();
 
         // append coordinates
-        coords.push_back(response.points);
+        coords.push_back(roi.set2vector(roi.coords[0]));
     }
 
     // pad all rois with empty coordinates at the end
     geometry_msgs::Point empty;
-    for (vector<vector<geometry_msgs::Point>>::iterator roi = coords.begin() ; roi != coords.end(); ++roi) {
-        for (int i=0; i<max_num_coords-roi->size(); ++i) {
-            roi->push_back(empty);
+    for (auto& roi : coords) {
+        for (int i=roi.size(); i<max_num_coords; ++i) {
+            roi.push_back(empty);
         }
     }
 
@@ -90,11 +84,16 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
     cpswarm_msgs::GetDist::Response response;
 
     for (auto roi : regions) {
-        if (roi.second.get_distance(req, response))
-            if (closest.closest_line.size() <= 0 || response.distance < closest.distance)
+        ROS_DEBUG("Calculate distance to ROI %s", roi.to_string().c_str());
+
+        if (roi.get_distance(req, response)) {
+            if (closest.closest_line.size() <= 0 || response.distance < closest.distance) {
                 closest = response;
+                closest.coords = roi.set2vector(roi.coords[0]);
+            }
+        }
         else
-            ROS_ERROR("Failed to retrieve distance for ROI %d!", roi.first);
+            ROS_ERROR("Failed to retrieve distance for ROI %s!", roi.to_string().c_str());
     }
 
     res = closest;
@@ -102,16 +101,56 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
     return true;
 }
 
-map<int,roi> rois::get_rois ()
+bool rois::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
 {
-    return regions;
+    cpswarm_msgs::GetDist::Response closest;
+    cpswarm_msgs::GetDist::Response response;
+
+    // find roi according to given coordinates
+    for (auto roi : regions) {
+        // forward request
+        if (roi.coords[0] == roi.vector2set(req.coords)) {
+            roi.get_distance(req, res);
+            return true;
+        }
+    }
+
+    // create string for warning
+    stringstream coords_ss;
+    for (auto p : req.coords)
+        coords_ss << "(" << p.x << "," << p.y << ") ";
+    ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
+
+    return false;
+}
+
+bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res)
+{
+    // find roi according to given coordinates
+    for (auto roi : regions) {
+        // forward request
+        if (roi.coords[0] == roi.vector2set(req.coords)) {
+            roi.get_map(req, res);
+            return true;
+        }
+    }
+
+    // create string for warning
+    stringstream coords_ss;
+    for (auto p : req.coords)
+        coords_ss << "(" << p.x << "," << p.y << ") ";
+    ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
+
+    return false;
 }
 
 bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
 {
     // reset old rois
-    if (req.data)
+    if (req.data) {
         regions.clear();
+        map_publisher.clear();
+    }
 
     // import rois from files
     from_file();
@@ -125,12 +164,12 @@ void rois::add_roi (vector<double> x, vector<double> y)
 {
     // equal number of x and y coordinates required
     if (x.size() != y.size()) {
-        ROS_ERROR("Cannot add ROI %lu, number of x and y coordinates do not match (%lu != %lu)", regions.size(), x.size(), y.size());
+        ROS_ERROR("Cannot add ROI, number of x and y coordinates do not match (%lu != %lu)", x.size(), y.size());
     }
 
     // not enough coordinates
     else if (x.size() < 3) {
-        ROS_ERROR("Cannot add ROI %lu, not enough coordinates: %lu", regions.size(), x.size());
+        ROS_ERROR("Cannot add ROI, not enough coordinates: %lu", x.size());
     }
 
     else {
@@ -139,12 +178,12 @@ void rois::add_roi (vector<double> x, vector<double> y)
 
         // check if roi already exists
         if (duplicates == false && exists(roi)) {
-            ROS_INFO("Skipped ROI #%lu (%lu coordinates), already existing", regions.size(), x.size());
+            ROS_INFO("Skipped ROI %s, already existing", roi.to_string().c_str());
             return;
         }
 
-        ROS_INFO("Added ROI #%lu: %lu coordinates", regions.size(), x.size());
-        regions.emplace(regions.size(), roi);
+        ROS_INFO("Added ROI %s", roi.to_string().c_str());
+        regions.insert(roi);
 
         // publish roi
         if (publish) {
@@ -155,6 +194,13 @@ void rois::add_roi (vector<double> x, vector<double> y)
             event.y = y;
             roi_publisher.publish(event);
         }
+
+        if (visualize) {
+            int queue_size;
+            nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+            map_publisher.push_back(nh.advertise<nav_msgs::OccupancyGrid>("rois/map_" + to_string(map_publisher.size()), queue_size, true));
+            map_publisher.back().publish(roi.get_gridmap());
+        }
     }
 }
 
@@ -162,7 +208,7 @@ bool rois::exists (roi roi)
 {
     // look through all regions
     for (auto r : regions) {
-        if (r.second == roi)
+        if (r == roi)
             return true;
     }
 
@@ -215,20 +261,28 @@ void rois::from_file ()
                 vector<double> y;
                 for (auto c : roi_json["mission"]["items"]) {
                     if (c["params"].size() < 7) {
-                        ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7!", roi_file_name.c_str());
+                        ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7 for each mission item!", roi_file_name.c_str());
                         break;
+                    }
+                    if (c["command"] != 16) {
+                        ROS_DEBUG("%s: Skipping item (%f,%f), not a waypoint!", roi_file_name.c_str(), double(c["params"][4]), double(c["params"][5]));
+                        continue;
                     }
                     x.push_back(c["params"][4]);
                     y.push_back(c["params"][5]);
                 }
 
                 // create roi object
-                ROS_INFO("Add ROI #%lu from file %s...", regions.size(), roi_file_name.c_str());
+                ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
                 add_roi(x, y);
             }
 
             catch (json::exception &e) {
                 ROS_DEBUG("Skipping file %s, invalid syntax: %s", roi_file_name.c_str(), e.what());
+            }
+
+            catch (exception &e) {
+                ROS_DEBUG("Skipping file %s: %s", roi_file_name.c_str(), e.what());
             }
         }
     }
@@ -245,6 +299,6 @@ void rois::from_file ()
 void rois::roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event)
 {
     // create roi object
-    ROS_INFO("Received ROI #%lu from swarm member %s", regions.size(), event->swarmio.node.c_str());
+    ROS_INFO("Received ROI from swarm member %s", event->swarmio.node.c_str());
     add_roi(event->x, event->y);
 }
