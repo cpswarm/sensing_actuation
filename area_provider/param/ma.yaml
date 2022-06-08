@@ -42,19 +42,19 @@ area_y_global:
 # - 46.61263
 
 # Lakeside basketball court
-# area_x:
+# area_x_global:
 # - 14.26526
 # - 14.26548
 # - 14.26546
 # - 14.26524
-# area_y:
+# area_y_global:
 # - 46.61347
 # - 46.61345
 # - 46.61330
 # - 46.61332
 
 # Lakeside area A
-# area_x:
+# area_x_global:
 # - 14.26578
 # - 14.26586
 # - 14.26764
@@ -63,7 +63,7 @@ area_y_global:
 # - 14.26309
 # - 14.26488
 # - 14.26501
-# area_y:
+# area_y_global:
 # - 46.61347
 # - 46.61262
 # - 46.61267
@@ -74,14 +74,14 @@ area_y_global:
 # - 46.61346
 
 # Lakeside area B
-# area_x:
+# area_x_global:
 # - 14.26098
 # - 14.25986
 # - 14.25464
 # - 14.25463
 # - 14.25822
 # - 14.25845
-# area_y:
+# area_y_global:
 # - 46.61579
 # - 46.61113
 # - 46.61119
@@ -90,12 +90,12 @@ area_y_global:
 # - 46.61576
 
 # Lakeside campus
-# area_x:
+# area_x_global:
 # - 14.25693
 # - 14.26845
 # - 14.27010
 # - 14.26090
-# area_y:
+# area_y_global:
 # - 46.61693
 # - 46.61563
 # - 46.60820
@@ -115,12 +115,12 @@ area_y_global:
 
 # CPSwarm arena at DigiSky premises.
 # center: 45.08389, 7.61079
-# area_x:
+# area_x_global:
 # - 7.61074548
 # - 7.61074548
 # - 7.61083452
 # - 7.61083452
-# area_y:
+# area_y_global:
 # - 45.08387651
 # - 45.08390349
 # - 45.08390349
