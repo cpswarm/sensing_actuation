@@ -245,36 +245,72 @@ void rois::from_file ()
                 json roi_json;
                 roi_stream >> roi_json;
 
-                // invalid plan file
-                if (roi_json.contains("fileType") == false or roi_json["fileType"] != "Plan") {
-                    ROS_ERROR("Skipping file %s, invalid syntax: not a qGroundControl plan file!", roi_file_name.c_str());
-                    continue;
-                }
-                if (roi_json.contains("mission") == false or roi_json["mission"].contains("items") == false or roi_json["mission"]["items"].size() < 3) {
-                    ROS_ERROR("Skipping file %s, invalid syntax: no mission specified!", roi_file_name.c_str());
-                    continue;
-                }
-
-                // extract coordinates
-                ROS_DEBUG("Extract ROI coordinates from %s...", roi_file_name.c_str());
-                vector<double> x;
-                vector<double> y;
-                for (auto c : roi_json["mission"]["items"]) {
-                    if (c["params"].size() < 7) {
-                        ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7 for each mission item!", roi_file_name.c_str());
-                        break;
-                    }
-                    if (c["command"] != 16) {
-                        ROS_DEBUG("%s: Skipping item (%f,%f), not a waypoint!", roi_file_name.c_str(), double(c["params"][4]), double(c["params"][5]));
+                // qgc plan file
+                if (roi_json.contains("fileType") and roi_json["fileType"] == "Plan") {
+                    // no (or invalid) mission specified
+                    if (roi_json.contains("mission") == false or roi_json["mission"].contains("items") == false or roi_json["mission"]["items"].size() < 3) {
+                        ROS_ERROR("Skipping file %s, invalid syntax: no mission specified!", roi_file_name.c_str());
                         continue;
                     }
-                    x.push_back(c["params"][4]);
-                    y.push_back(c["params"][5]);
+
+                    // extract coordinates
+                    ROS_DEBUG("Extract ROI coordinates from %s...", roi_file_name.c_str());
+                    vector<double> x;
+                    vector<double> y;
+                    for (auto c : roi_json["mission"]["items"]) {
+                        if (c["params"].size() < 7) {
+                            ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7 for each mission item!", roi_file_name.c_str());
+                            break;
+                        }
+                        if (c["command"] != 16) {
+                            ROS_DEBUG("%s: Skipping item (%f,%f), not a waypoint!", roi_file_name.c_str(), double(c["params"][4]), double(c["params"][5]));
+                            continue;
+                        }
+                        x.push_back(c["params"][4]);
+                        y.push_back(c["params"][5]);
+                    }
+
+                    // create roi object
+                    ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
+                    add_roi(x, y);
                 }
 
-                // create roi object
-                ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
-                add_roi(x, y);
+                // geo json
+                else if (roi_json.contains("type") and roi_json["type"] == "FeatureCollection") {
+                    // no (or invalid) mission specified
+                    if (roi_json.contains("features") == false || roi_json["features"].size() < 1) {
+                        ROS_ERROR("Skipping file %s, invalid syntax: no mission specified!", roi_file_name.c_str());
+                        continue;
+                    }
+
+                    // add roi for each feature
+                    ROS_DEBUG("Extract ROI coordinates from %s...", roi_file_name.c_str());
+                    for (auto c : roi_json["features"]) {
+                        // invalid feature
+                        if (c.contains("geometry") == false || c["geometry"].contains("coordinates") == false || c["geometry"]["coordinates"].size() < 1 || c["geometry"]["coordinates"][0].size() < 3) {
+                            ROS_ERROR("Skipping feature in file %s, invalid syntax: not enough coordinates specified!", roi_file_name.c_str());
+                            continue;
+                        }
+
+                        // extract coordinates
+                        vector<double> x;
+                        vector<double> y;
+                        for (auto p : c["geometry"]["coordinates"][0]) {
+                            x.push_back(p[0]);
+                            y.push_back(p[1]);
+                        }
+
+                        // create roi object
+                        ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
+                        add_roi(x, y);
+                    }
+                }
+
+                // unknown file type
+                else {
+                    ROS_ERROR("Skipping file %s, unknown file type, must be QGC plan or GeoJSON!", roi_file_name.c_str());
+                    continue;
+                }
             }
 
             catch (json::exception &e) {
