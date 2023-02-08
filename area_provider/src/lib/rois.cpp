@@ -9,7 +9,7 @@ rois::rois ()
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // get rois from incoming event messages
-    roi_subscriber = nh.subscribe("bridge/events/roi", queue_size, &rois::roi_callback, this);
+    roi_subscriber = nh.subscribe("bridge/events/rois/roi", queue_size, &rois::roi_callback, this);
 
     // publish new rois
     nh.param(this_node::getName() + "/publish", publish, false);
