@@ -266,8 +266,8 @@ void rois::from_file ()
                             ROS_DEBUG("%s: Skipping item (%f,%f), not a waypoint!", roi_file_name.c_str(), double(c["params"][4]), double(c["params"][5]));
                             continue;
                         }
-                        x.push_back(c["params"][4]);
-                        y.push_back(c["params"][5]);
+                        x.push_back(c["params"][5]);
+                        y.push_back(c["params"][4]);
                     }
 
                     // create roi object
