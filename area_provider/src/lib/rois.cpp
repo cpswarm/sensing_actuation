@@ -14,7 +14,8 @@ rois::rois ()
     // publish new rois
     nh.param(this_node::getName() + "/publish", publish, false);
     if (publish)
-        roi_publisher = nh.advertise<cpswarm_msgs::PointArrayEvent>("rois/roi", queue_size, true); // latched
+        roi_publisher = nh.advertise<cpswarm_msgs::PointArrayEvent>("rois/roi", queue_size);
+        Duration(1).sleep(); // give subscribers some time to connect
 
     // import rois from files
     from_file();
@@ -218,7 +219,7 @@ bool rois::exists (roi roi)
 
 void rois::from_file ()
 {
-    // directory with roi coodinate files
+    // directory with roi coordinate files
     string roi_dir_str = "";
     nh.param(this_node::getName() + "/roi_dir", roi_dir_str, roi_dir_str);
 
