@@ -101,6 +101,19 @@ area_y_global:
 # - 46.60820
 # - 46.60653
 
+# Modellflugplatz UMFC Stocking
+# area_x_global:
+# - 15.54356
+# - 15.55178
+# - 15.55006
+# - 15.54042
+
+# area_y_global:
+# - 46.88025
+# - 46.87600
+# - 46.87211
+# - 46.87739
+
 # CPSwamrm cage at LINKS premises
 # area_x:
 # - 0.9
