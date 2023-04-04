@@ -103,6 +103,11 @@ private:
     Subscriber roi_subscriber;
 
     /**
+     * @brief Subscriber object to receive ROI coordinates from assignment event messages.
+     */
+    Subscriber assignment_subscriber;
+
+    /**
      * @brief Event publisher for ROI coordinates.
      */
     Publisher roi_publisher;

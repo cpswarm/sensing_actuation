@@ -133,6 +133,8 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
 #### Subscribed Topics
 * `bridge/events/roi` ([cpswarm_msgs/PointArrayEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/PointArrayEvent.html))
   Receive the coordinates of a ROI and import it.
+* `bridge/events/assignment` ([cpswarm_msgs/PointArrayEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/PointArrayEvent.html))
+  Receive the coordinates of a ROI assigned to this CPS and import it.
 
 #### Published Topics
 * `rois/map_<i>` ([nav_msgs/OccupancyGrid](https://docs.ros.org/en/api/nav_msgs/html/msg/OccupancyGrid.html))
