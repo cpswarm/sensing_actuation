@@ -81,11 +81,13 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
 
 bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDist::Response &res)
 {
+    string closest_str;
     cpswarm_msgs::GetDist::Response closest;
     cpswarm_msgs::GetDist::Response response;
 
     for (auto roi : regions) {
-        ROS_DEBUG("Calculate distance to ROI %s", roi.to_string().c_str());
+        closest_str = roi.to_string();
+        ROS_DEBUG("Calculate distance to ROI %s", closest_str.c_str());
 
         if (roi.get_distance(req, response)) {
             if (closest.closest_line.size() <= 0 || response.distance < closest.distance) {
@@ -94,8 +96,10 @@ bool rois::get_closest (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetDi
             }
         }
         else
-            ROS_ERROR("Failed to retrieve distance for ROI %s!", roi.to_string().c_str());
+            ROS_ERROR("Failed to retrieve distance for ROI %s!", closest_str.c_str());
     }
+
+    ROS_INFO("Closest ROI %s", closest_str.c_str());
 
     res = closest;
 
