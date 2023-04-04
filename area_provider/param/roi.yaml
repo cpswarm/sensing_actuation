@@ -1,5 +1,4 @@
 cell_warn:  1000  # Number of grid cells in the map above which a performance warning is issued.
-roi_dir:    param # The directory containing the files with the ROI coordinates (relative to this package).
 duplicates: false # Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
 publish:    true  # Whether to publish any newly imported ROI as event.
 visualize:  false # Whether to publish the map of any newly imported ROI.

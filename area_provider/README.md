@@ -165,6 +165,8 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
   The starting position x-coordinate, used as origin for local positioning.
 * `y` (real, default: `0.0`)
   The starting position y-coordinate, used as origin for local positioning.
+* `roi_dir` (string, default: )
+  The directory relative to this package where to look for the ROI files.
 * `~loop_rate` (real, default: `1.0`)
   The frequency in Hz at which to run the control loops.
 * `~queue_size` (integer, default: `1`)
@@ -173,8 +175,6 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
   Number of grid cells in the map above which a performance warning is issued.
 * `~resolution` (real, default: `1.0`)
   Resolution of the grid map created from the given polygon coordinates representing the ROI in meter / cell.
-* `~roi_dir` (string, default: )
-  The directory relative to this package where to look for the ROI files.
 * `~duplicates` (boolean, default: `false`)
   Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
 * `~publish` (boolean, default: `false`)
