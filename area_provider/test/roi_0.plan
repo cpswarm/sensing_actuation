@@ -46,8 +46,8 @@
                     0,
                     0,
                     null,
-                    1,
                     -3,
+                    1,
                     50
                 ],
                 "type": "SimpleItem"
@@ -65,8 +65,8 @@
                     0,
                     0,
                     null,
-                    1,
                     -1,
+                    1,
                     50
                 ],
                 "type": "SimpleItem"
@@ -84,8 +84,8 @@
                     0,
                     0,
                     null,
-                    3,
                     -3,
+                    3,
                     50
                 ],
                 "type": "SimpleItem"
@@ -103,8 +103,8 @@
                     0,
                     0,
                     null,
-                    3,
                     -1,
+                    3,
                     50
                 ],
                 "type": "SimpleItem"
