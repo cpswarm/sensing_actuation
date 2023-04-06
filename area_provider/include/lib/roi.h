@@ -22,6 +22,13 @@ public:
     roi (vector<double> x, vector<double> y);
 
     /**
+     * @brief Get the global coordiantes.
+     *
+     * @return A pair of vectors. First the longitudes, second the latitudes.
+     */
+    pair<vector<double>, vector<double>> get_global ();
+
+    /**
      * @brief Compare two ROIs.
      * @param other The other ROI to compare to this one.
      * @returns True, if both ROIs have the same coordinates, false otherwise.

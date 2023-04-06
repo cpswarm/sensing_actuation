@@ -278,9 +278,11 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
 
 void area::global_to_local ()
 {
-    cpswarm_msgs::FixToPose f2p;
+    // keep global coordinates
+    coords_global = coords[0];
 
     // convert given area to local coordinates
+    cpswarm_msgs::FixToPose f2p;
     set<pair<double,double>> local;
     for (auto c : coords[0]) {
         f2p.request.fix.longitude = c.first;

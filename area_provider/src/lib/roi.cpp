@@ -29,6 +29,29 @@ roi::roi (vector<double> x, vector<double> y)
     sort_coords();
 }
 
+pair<vector<double>, vector<double>> roi::get_global ()
+{
+    vector<double> lon, lat;
+
+    // get global coordinates
+    if (global) {
+        for (auto it=coords_global.begin(); it!=coords_global.end(); ++it) {
+            lon.push_back(it->first);
+            lat.push_back(it->second);
+        }
+    }
+
+    // use local coordinates (not rotated)
+    else {
+        for (auto it=coords[0].begin(); it!=coords[0].end(); ++it) {
+            lon.push_back(it->first);
+            lat.push_back(it->second);
+        }
+    }
+
+    return make_pair(lon, lat);
+}
+
 bool roi::operator== (const roi other)
 {
     return coords[0] == other.coords.at(0);

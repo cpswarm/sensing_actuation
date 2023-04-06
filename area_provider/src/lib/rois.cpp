@@ -196,8 +196,9 @@ void rois::add_roi (vector<double> x, vector<double> y)
             cpswarm_msgs::PointArrayEvent event;
             event.header.stamp = Time::now();
             event.swarmio.name = "roi";
-            event.x = x;
-            event.y = y;
+            pair<vector<double>, vector<double>> coords = roi.get_global();
+            event.x = coords.first;
+            event.y = coords.second;
             roi_publisher.publish(event);
         }
 

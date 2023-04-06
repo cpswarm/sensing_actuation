@@ -146,6 +146,11 @@ protected:
     map<double,set<pair<double,double>>> coords;
 
     /**
+     * @brief The global coordinates of the area.
+     */
+    set<pair<double,double>> coords_global;
+
+    /**
      * @brief Whether global (GPS) or local coordinates are used as source.
      */
     bool global;
