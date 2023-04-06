@@ -1,3 +1,4 @@
+#include <queue>
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
@@ -6,6 +7,7 @@
 #include "cpswarm_msgs/GetMultiPoints.h"
 #include "cpswarm_msgs/GetDist.h"
 #include "cpswarm_msgs/GetMap.h"
+#include "cpswarm_msgs/PointArrayEvent.h"
 
 using namespace std;
 using namespace ros;
@@ -50,6 +52,22 @@ void print_grid (nav_msgs::OccupancyGrid& grid)
         }
         cerr << endl;
     }
+}
+
+/**
+ * @brief A queue of ROI event messages to store the ROIs received by the subscriber.
+ */
+queue<cpswarm_msgs::PointArrayEvent> rois;
+
+/**
+ * @brief Callback function to receive ROIs published by the ROI services node.
+ *
+ * @param roi The ROI event message.
+ */
+void roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& roi)
+{
+    ROS_ERROR("REceived ROI");
+    rois.push(*roi);
 }
 
 /**
@@ -969,6 +987,34 @@ TEST (NodeTestRoi, testReload)
     EXPECT_FLOAT_EQ(msg.response.points[19].x, 0);
     EXPECT_FLOAT_EQ(msg.response.points[19].y, 0);
     EXPECT_FLOAT_EQ(msg.response.points[19].z, 0);
+}
+
+/**
+ * @brief Test the roi publisher.
+ */
+TEST (NodeTestRoi, testPublish)
+{
+    NodeHandle nh;
+
+    // create subscriber for ROI event messages
+    Subscriber roi_subscriber = nh.subscribe("rois/roi", 10, roi_callback);
+    Duration(1).sleep(); // give subscriber some time to connect
+
+    // create service client to reload ROIs from files
+    ServiceClient reload_client = nh.serviceClient<std_srvs::SetBool>("rois/reload");
+    ASSERT_TRUE(reload_client.waitForExistence(Duration(5.0))); // failure, if server does not respond within 5 seconds
+    std_srvs::SetBool reload_msg;
+
+    // reload rois, clearing existing ones
+    reload_msg.request.data = true;
+    ASSERT_TRUE(reload_client.call(reload_msg));
+    EXPECT_TRUE(reload_msg.response.success);
+
+    // execute subscriber callback
+    spinOnce();
+
+    // make sure all four rois are received
+    ASSERT_EQ(rois.size(), 4);
 }
 
 /**
