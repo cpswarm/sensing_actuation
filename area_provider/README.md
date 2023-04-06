@@ -139,7 +139,9 @@ The basis for the ROI services are coordinates of the ROIs which are provided th
 #### Published Topics
 * `rois/map_<i>` ([nav_msgs/OccupancyGrid](https://docs.ros.org/en/api/nav_msgs/html/msg/OccupancyGrid.html))
   The map representing ROI `i`, where `i` is the ordinal number of the ROIs in the order in which they are imported. Only if the parameter `visualize` is set to `true`.
-
+* `rois/roi` ([cpswarm_msgs/PointArrayEvent]((https://cpswarm.github.io/cpswarm_msgs/html/srv/PointArrayEvent.html))
+  The coordinates of every newly imported ROI. It is an event message to be forwarded to other CPSs. Global coordinates are used if available. Only if the parameter `publish` is set to `true`.
+rois/roi
 #### Services
 * `rois/get_all` ([cpswarm_msgs/GetMultiPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetMultiPoints.html))
   Get coordinates of all ROIs. Returns a flattened vector of points together with the layout of the original, two-dimensional vector.
