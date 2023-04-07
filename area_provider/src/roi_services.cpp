@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     ServiceServer get_map_service      = nh.advertiseService("rois/get_map",      &rois::get_map, &rois_lib);
     ServiceServer get_todo             = nh.advertiseService("rois/get_todo",     &rois::get_todo, &rois_lib);
     ServiceServer reload_service       = nh.advertiseService("rois/reload",       &rois::reload, &rois_lib);
+    ServiceServer set_state            = nh.advertiseService("rois/set_state",    &rois::set_state, &rois_lib);
 
     ROS_DEBUG("ROI_PROV - ROI services are ready");
     spin();

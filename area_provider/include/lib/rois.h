@@ -10,6 +10,7 @@
 #include <std_srvs/SetBool.h>
 #include <cpswarm_msgs/GetMultiPoints.h>
 #include <cpswarm_msgs/PointArrayEvent.h>
+#include <cpswarm_msgs/SetRoiState.h>
 #include "lib/roi.h"
 
 using json = nlohmann::json;
@@ -72,6 +73,14 @@ public:
      * @return Whether request succeeded.
      */
     bool reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
+
+    /**
+     * @brief Set the state of an ROI.
+     * @param req The ROI and the state.
+     * @param res Whether the request succeeded.
+     * @return Whether the request succeeded.
+     */
+    bool set_state (cpswarm_msgs::SetRoiState::Request &req, cpswarm_msgs::SetRoiState::Response &res);
 
 private:
     /**

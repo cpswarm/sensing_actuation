@@ -187,6 +187,34 @@ bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response&
     return true;
 }
 
+bool rois::set_state (cpswarm_msgs::SetRoiState::Request &req, cpswarm_msgs::SetRoiState::Response &res)
+{
+    // assume either unknown roi or wrong state by default
+    res.success = false;
+
+    // find roi by coordinates
+    // for (set<roi>::iterator it=regions.begin(); it!=regions.end(); ++it) {
+    for (roi r : regions) {
+        // roi exists
+        if (r.coords[0] == r.vector2set(req.coords)) {
+            // valid state
+            if (ROI_TODO <= req.state && req.state <= ROI_DONE) {
+                // take roi out of set
+                auto temp = regions.extract(r);
+                // change state
+                temp.value().state = (roi_state_t)req.state;
+                // reinsert it into the set
+                regions.insert(move(temp));
+                // service succeeded
+                res.success = true;
+                break;
+            }
+        }
+    }
+
+    return true;
+}
+
 void rois::add_roi (vector<double> x, vector<double> y)
 {
     // equal number of x and y coordinates required
