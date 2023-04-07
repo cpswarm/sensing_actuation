@@ -13,6 +13,9 @@ roi::roi (vector<double> x, vector<double> y)
     }
 
     else {
+        // initialize state
+        state = ROI_TODO;
+
         // set coordinates
         for (int i=0; i<x.size(); ++i) {
             coords[0].emplace(x[i], y[i]);

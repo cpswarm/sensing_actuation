@@ -4,6 +4,15 @@
 #include "lib/area.h"
 
 /**
+ * @brief An enumeration for the state of a ROI.
+ */
+typedef enum {
+    ROI_TODO = 0,    // ROI still needs to be processed, e.g., searched
+    ROI_IN_PROGRESS, // ROI is being processed
+    ROI_DONE         // ROI has been processed successfully
+} roi_state_t;
+
+/**
  * @brief A class that holds a region of interest (ROI).
  */
 class roi : public area
@@ -41,6 +50,11 @@ public:
      * @return True, if this ROIs coordinates are less than the other ROI coordinates, false otherwise.
      */
     bool operator< (const roi other) const;
+
+    /**
+     * @brief The state of the ROI.
+     */
+    roi_state_t state;
 
 };
 
