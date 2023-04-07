@@ -151,6 +151,8 @@ rois/roi
   Calculates the distance of given point (or the origin in case the given point is empty (0,0)) to the ROI specified by the `coords` variable in the request. The point can be either inside or outside the area. Returns the coordinates of the boundary segment, the closest point on the segment, and the distance to the given point.
 * `area/get_map` ([nav_msgs/GetMap](https://docs.ros.org/en/api/nav_msgs/html/srv/GetMap.html))
   Get the map that represents the ROI specified by the `coords` variable in the request. Returns a grid map. The service request offers several options: If `rotate` is set to true, the map is rotated to align the bottom edge horizontally. The response also returns the angle of rotation. If `translate` is set to true, the map is  translated to make the origin an even number. The response returns the translation vector. If `resolution` is specified, the map will be provided at the desired resolution.
+* `rois/get_todo` ([cpswarm_msgs/GetMultiPoints](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetMultiPoints.html))
+  Get coordinates of all ROIs in the TODO state. Returns a flattened vector of points together with the layout of the original, two-dimensional vector.
 * `rois/reload` ([std_srvs/SetBool](https://docs.ros.org/en/api/std_srvs/html/srv/SetBool.html))
   Reload ROIs from files. If set to true, previous ROIs are removed before reloading.
 

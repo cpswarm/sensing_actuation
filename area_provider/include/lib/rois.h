@@ -26,7 +26,7 @@ public:
     rois ();
 
     /**
-     * @brief Return all ROIs
+     * @brief Return all ROIs.
      * @param req Empty request.
      * @param res The coordinates of the ROI boundaries.
      * @return Whether the request succeeded.
@@ -58,6 +58,14 @@ public:
     bool get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res);
 
     /**
+     * @brief Return all ROIs in the state TODO.
+     * @param req Empty request.
+     * @param res The coordinates of the ROI boundaries.
+     * @return Whether the request succeeded.
+     */
+    bool get_todo (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res);
+
+    /**
      * @brief Reload ROIs from files.
      * @param req The trigger to reload. If true, current ROIs are removed before reloading.
      * @param res
@@ -80,6 +88,15 @@ private:
      * @return True, if the coordinates of the given ROI are identical with an existing ROI. False otherwise.
      */
     bool exists (roi roi);
+
+    /**
+     * @brief Create a flat 1D vector of coordinates.
+     *
+     * @param vector_2d The original 2D vector of coordinates.
+     * @param vector_flat The flattened 1D vector of coordinates.
+     * @param layout Information about how the coordinates are stored in the flat vector.
+     */
+    void flatten_vector (vector<vector<geometry_msgs::Point>> vector_2d, vector<geometry_msgs::Point>& vector_flat, std_msgs::MultiArrayLayout& layout);
 
     /**
      * @brief Read ROI coordinates from files at the folder specified with the `roi_dir` param.

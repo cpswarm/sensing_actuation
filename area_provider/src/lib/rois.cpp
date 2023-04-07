@@ -48,30 +48,10 @@ bool rois::get_all (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::Ge
         }
     }
 
-    // flatten roi coordinates
+    // flatten coords
     vector<geometry_msgs::Point> coords_flat;
-    for (auto roi : coords) {
-        coords_flat.insert(coords_flat.end(), roi.begin(), roi.end());
-    }
-
-    // define multi-array layout
-    vector<std_msgs::MultiArrayDimension> dim;
-
-    std_msgs::MultiArrayDimension dim0;
-    dim0.label = "roi";
-    dim0.size = coords.size();
-    dim0.stride = coords.size() * max_num_coords;
-    dim.push_back(dim0);
-
-    std_msgs::MultiArrayDimension dim1;
-    dim1.label = "coords";
-    dim1.size = max_num_coords;
-    dim1.stride = max_num_coords;
-    dim.push_back(dim1);
-
     std_msgs::MultiArrayLayout layout;
-    layout.dim = dim;
-    layout.data_offset = 0;
+    flatten_vector(coords, coords_flat, layout);
 
     // create service response
     res.layout = layout;
@@ -150,6 +130,47 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
     return false;
 }
 
+bool rois::get_todo (cpswarm_msgs::GetMultiPoints::Request &req, cpswarm_msgs::GetMultiPoints::Response &res)
+{
+    // collection of roi coordinates
+    vector<vector<geometry_msgs::Point>> coords;
+
+    // maximum number of coordinates of any roi
+    int max_num_coords = 0;
+
+    // iterate all rois
+    for (auto roi : regions) {
+        // only consider rois in todo state
+        if (roi.state == ROI_TODO) {
+            // store maximum number of coordinates
+            if (roi.coords[0].size() > max_num_coords)
+                max_num_coords = roi.coords[0].size();
+
+            // append coordinates
+            coords.push_back(roi.set2vector(roi.coords[0]));
+        }
+    }
+
+    // pad all rois with empty coordinates at the end
+    geometry_msgs::Point empty;
+    for (auto& roi : coords) {
+        for (int i=roi.size(); i<max_num_coords; ++i) {
+            roi.push_back(empty);
+        }
+    }
+
+    // flatten coords
+    vector<geometry_msgs::Point> coords_flat;
+    std_msgs::MultiArrayLayout layout;
+    flatten_vector(coords, coords_flat, layout);
+
+    // create service response
+    res.layout = layout;
+    res.points = coords_flat;
+
+    return true;
+}
+
 bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
 {
     // reset old rois
@@ -221,6 +242,32 @@ bool rois::exists (roi roi)
 
     // no matching region found
     return false;
+}
+
+void rois::flatten_vector (vector<vector<geometry_msgs::Point>> vector_2d, vector<geometry_msgs::Point>& vector_flat, std_msgs::MultiArrayLayout& layout)
+{
+    // flatten roi coordinates
+    for (auto roi : vector_2d) {
+        vector_flat.insert(vector_flat.end(), roi.begin(), roi.end());
+    }
+
+    // define multi-array layout
+    vector<std_msgs::MultiArrayDimension> dim;
+
+    std_msgs::MultiArrayDimension dim0;
+    dim0.label = "roi";
+    dim0.size = vector_2d.size();
+    dim0.stride = vector_2d.size() * vector_2d[0].size();
+    dim.push_back(dim0);
+
+    std_msgs::MultiArrayDimension dim1;
+    dim1.label = "coords";
+    dim1.size = vector_2d[0].size();
+    dim1.stride = vector_2d[0].size();
+    dim.push_back(dim1);
+
+    layout.dim = dim;
+    layout.data_offset = 0;
 }
 
 void rois::from_file ()

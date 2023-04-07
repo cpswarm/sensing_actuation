@@ -817,6 +817,92 @@ TEST (NodeTestRoi, testGetMap)
 }
 
 /**
+ * @brief Test the roi get todo service.
+ */
+TEST (NodeTestRoi, testGetTodo)
+{
+    // create service client
+    NodeHandle nh;
+    ServiceClient client = nh.serviceClient<cpswarm_msgs::GetMultiPoints>("rois/get_todo");
+    ASSERT_TRUE(client.waitForExistence(Duration(5.0))); // failure, if server does not respond within 5 seconds
+    cpswarm_msgs::GetMultiPoints msg;
+
+    // test response
+    ASSERT_TRUE(client.call(msg));
+    ASSERT_EQ(msg.response.layout.dim.size(), 2);
+    EXPECT_EQ(msg.response.layout.dim[0].size, 4);
+    EXPECT_EQ(msg.response.layout.dim[0].stride, 20);
+    EXPECT_EQ(msg.response.layout.dim[1].size, 5);
+    EXPECT_EQ(msg.response.layout.dim[1].stride, 5);
+    EXPECT_EQ(msg.response.layout.data_offset, 0);
+    ASSERT_EQ(msg.response.points.size(), 20);
+
+    EXPECT_FLOAT_EQ(msg.response.points[0].x, -7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[0].y, 17.0710678118655);
+    EXPECT_FLOAT_EQ(msg.response.points[0].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[1].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[1].y, 10);
+    EXPECT_FLOAT_EQ(msg.response.points[1].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[2].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[2].y, 24.1421356237309);
+    EXPECT_FLOAT_EQ(msg.response.points[2].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[3].x, 7.07106781186548);
+    EXPECT_FLOAT_EQ(msg.response.points[3].y, 17.0710678118655);
+    EXPECT_FLOAT_EQ(msg.response.points[3].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[4].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[4].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[4].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[5].x, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[5].y, 4);
+    EXPECT_FLOAT_EQ(msg.response.points[5].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[6].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[6].y, 2);
+    EXPECT_FLOAT_EQ(msg.response.points[6].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[7].x, -2);
+    EXPECT_FLOAT_EQ(msg.response.points[7].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[7].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[8].x, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[8].y, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[8].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[9].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[9].y, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[9].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[10].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[10].y, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[10].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[11].x, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[11].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[12].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[12].y, -3);
+    EXPECT_FLOAT_EQ(msg.response.points[12].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[13].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[13].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[13].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[14].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[14].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[14].z, 0);
+
+    EXPECT_FLOAT_EQ(msg.response.points[15].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[15].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[15].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[16].x, 3);
+    EXPECT_FLOAT_EQ(msg.response.points[16].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[16].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[17].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[17].y, -1);
+    EXPECT_FLOAT_EQ(msg.response.points[17].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[18].x, 5);
+    EXPECT_FLOAT_EQ(msg.response.points[18].y, 1);
+    EXPECT_FLOAT_EQ(msg.response.points[18].z, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].x, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].y, 0);
+    EXPECT_FLOAT_EQ(msg.response.points[19].z, 0);
+}
+
+/**
  * @brief Test the roi reload service.
  */
 TEST (NodeTestRoi, testReload)
