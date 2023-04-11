@@ -12,6 +12,9 @@ rois::rois ()
     roi_subscriber = nh.subscribe("bridge/events/rois/roi", queue_size, &rois::roi_callback, this);
     assignment_subscriber = nh.subscribe("bridge/events/rois/assignment", queue_size, &rois::roi_callback, this);
 
+    // get roi state from incoming event messages
+    state_subscriber = nh.subscribe("bridge/events/rois/state", queue_size, &rois::state_callback, this);
+
     // publish new rois
     nh.param(this_node::getName() + "/publish", publish, false);
     if (publish)
@@ -189,28 +192,12 @@ bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response&
 
 bool rois::set_state (cpswarm_msgs::SetRoiState::Request &req, cpswarm_msgs::SetRoiState::Response &res)
 {
-    // assume either unknown roi or wrong state by default
-    res.success = false;
+    // convert coordinates to set
+    set<pair<double,double>> coords;
+    for (auto point : req.coords)
+        coords.emplace(point.x, point.y);
 
-    // find roi by coordinates
-    // for (set<roi>::iterator it=regions.begin(); it!=regions.end(); ++it) {
-    for (roi r : regions) {
-        // roi exists
-        if (r.coords[0] == r.vector2set(req.coords)) {
-            // valid state
-            if (ROI_TODO <= req.state && req.state <= ROI_DONE) {
-                // take roi out of set
-                auto temp = regions.extract(r);
-                // change state
-                temp.value().state = (roi_state_t)req.state;
-                // reinsert it into the set
-                regions.insert(move(temp));
-                // service succeeded
-                res.success = true;
-                break;
-            }
-        }
-    }
+    res.success = set_state(coords, (roi_state_t)req.state);
 
     return true;
 }
@@ -414,9 +401,79 @@ void rois::from_file ()
     }
 }
 
+bool rois::set_state (set<pair<double,double>> roi, roi_state_t state)
+{
+    bool unknown_roi = true;
+
+    // find roi by coordinates
+    for (auto r : regions) {
+        // roi exists
+        if (r.coords[0] == roi) {
+            unknown_roi = false;
+
+            // valid state
+            if (ROI_TODO <= state && state <= ROI_DONE) {
+                // take roi out of set
+                auto temp = regions.extract(r);
+
+                // change state
+                temp.value().state = state;
+
+                // reinsert it into the set
+                regions.insert(move(temp));
+
+                // state change succeeded
+                return true;
+            }
+        }
+    }
+
+    // unknown roi
+    if (unknown_roi) {
+        stringstream coords_ss;
+        for (auto p : roi)
+            coords_ss << "(" << p.first << "," << p.second << ") ";
+        ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
+    }
+
+    // invalid state
+    else {
+        ROS_WARN("Invalid ROI state %d!", state);
+    }
+
+    // assume either unknown roi or wrong state by default
+    return false;
+}
+
 void rois::roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event)
 {
     // create roi object
     ROS_INFO("Received ROI from swarm member %s", event->swarmio.node.c_str());
     add_roi(event->x, event->y);
+}
+
+void rois::state_callback (const cpswarm_msgs::PointArrayStateEvent::ConstPtr& event)
+{
+    // equal number of x and y coordinates required
+    if (event->x.size() != event->y.size()) {
+        ROS_ERROR("Cannot change ROI state, number of x and y coordinates do not match (%lu != %lu)", event->x.size(), event->y.size());
+        return;
+    }
+
+    // not enough coordinates
+    else if (event->x.size() < 3) {
+        ROS_ERROR("Cannot change ROI state, not enough coordinates: %lu", event->x.size());
+        return;
+    }
+
+    // convert coordinates to set
+    set<pair<double,double>> coords;
+    for (int i=0; i<event->x.size(); ++i)
+        coords.emplace(event->x[i], event->y[i]);
+
+    // set state
+    if (set_state(coords, (roi_state_t)event->state))
+        ROS_INFO("Changed ROI state to %d as requested by swarm member %s", event->state, event->swarmio.node.c_str());
+    else
+        ROS_ERROR("ROI state change requested by swarm member %s failed! ", event->swarmio.node.c_str());
 }

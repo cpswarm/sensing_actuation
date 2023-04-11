@@ -10,6 +10,7 @@
 #include <std_srvs/SetBool.h>
 #include <cpswarm_msgs/GetMultiPoints.h>
 #include <cpswarm_msgs/PointArrayEvent.h>
+#include <cpswarm_msgs/PointArrayStateEvent.h>
 #include <cpswarm_msgs/SetRoiState.h>
 #include "lib/roi.h"
 
@@ -113,10 +114,24 @@ private:
     void from_file ();
 
     /**
+     * @brief Set the state of a ROI.
+     * @param roi The coordinates of the ROI.
+     * @param state The new state for the ROI.
+     * @return True, if the coordinates correspond to a known ROI and the state is valid. False otherwise.
+     */
+    bool set_state (set<pair<double,double>> roi, roi_state_t state);
+
+    /**
      * @brief Receive ROI coordinates from an event message.
      * @param event A pointer to the event holding a vector of coordinates.
      */
     void roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event);
+
+    /**
+     * @brief Receive a state update for a ROI.
+     * @param event A pointer to the event holding the ROI coordinates and the desired state.
+     */
+    void state_callback (const cpswarm_msgs::PointArrayStateEvent::ConstPtr& event);
 
     /**
      * @brief A node handle for the main ROS node.
@@ -132,6 +147,11 @@ private:
      * @brief Subscriber object to receive ROI coordinates from assignment event messages.
      */
     Subscriber assignment_subscriber;
+
+    /**
+     * @brief Subscriber object to receive ROI state updates from event messages.
+     */
+    Subscriber state_subscriber;
 
     /**
      * @brief Event publisher for ROI coordinates.
