@@ -272,13 +272,22 @@ void rois::flatten_vector (vector<vector<geometry_msgs::Point>> vector_2d, vecto
     std_msgs::MultiArrayDimension dim0;
     dim0.label = "roi";
     dim0.size = vector_2d.size();
-    dim0.stride = vector_2d.size() * vector_2d[0].size();
+    if (vector_2d.size() > 0)
+        dim0.stride = vector_2d.size() * vector_2d[0].size();
+    else
+        dim0.stride = 0;
     dim.push_back(dim0);
 
     std_msgs::MultiArrayDimension dim1;
     dim1.label = "coords";
-    dim1.size = vector_2d[0].size();
-    dim1.stride = vector_2d[0].size();
+    if (vector_2d.size() > 0){
+        dim1.size = vector_2d[0].size();
+        dim1.stride = vector_2d[0].size();
+    }
+    else {
+        dim1.size = 0;
+        dim1.stride = 0;
+    }
     dim.push_back(dim1);
 
     layout.dim = dim;
