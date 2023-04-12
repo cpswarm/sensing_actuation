@@ -25,7 +25,7 @@ area::area ()
 bool area::get_area (cpswarm_msgs::GetPoints::Request &req, cpswarm_msgs::GetPoints::Response &res)
 {
     for (auto c : coords_sorted[0])
-        res.points.push_back(pair2point(c.second));
+        res.points.push_back(tuple2point(get<1>(c)));
     return true;
 }
 
@@ -33,20 +33,21 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
 {
     double area = 0;
 
-    // compute centroid
-    map<double, pair<double,double>>::iterator ne;
-    for (map<double, pair<double,double>>::iterator it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it) {
+    // compute centroid in 2d
+    map<double, tuple<double,double,double>>::iterator ne;
+    for (map<double, tuple<double,double,double>>::iterator it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it) {
         // next element
         ne = next(it);
         if (ne == coords_sorted[0].end())
             ne = coords_sorted[0].begin();
 
         // sum up coordinates
-        res.point.x += (it->second.first + ne->second.first) * (it->second.first * ne->second.second - ne->second.first * it->second.second);
-        res.point.y += (it->second.second + ne->second.second) * (it->second.first * ne->second.second - ne->second.first * it->second.second);
+        res.point.x += (get<0>(it->second) + get<0>(ne->second)) * (get<0>(it->second) * get<1>(ne->second) - get<0>(ne->second) * get<1>(it->second));
+        res.point.y += (get<1>(it->second) + get<1>(ne->second)) * (get<0>(it->second) * get<1>(ne->second) - get<0>(ne->second) * get<1>(it->second));
+        res.point.z += get<2>(it->second);
 
         // sum up area
-        area += it->second.first * ne->second.second - ne->second.first * it->second.second;
+        area += get<0>(it->second) * get<1>(ne->second) - get<0>(ne->second) * get<1>(it->second);
     }
 
     // normalize area
@@ -55,6 +56,9 @@ bool area::get_center (cpswarm_msgs::GetPoint::Request &req, cpswarm_msgs::GetPo
     // normalize coordinates
     res.point.x /= 6 * area;
     res.point.y /= 6 * area;
+
+    // normalize altitude
+    res.point.z /= coords_sorted[0].size();
 
     return true;
 }
@@ -77,8 +81,8 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     ROS_DEBUG("Calculate distance for point (%.2f,%.2f)", p0.x, p0.y);
 
     // find minimal distance to any area bound
-    map<double, pair<double,double>>::iterator ne;
-    for (map<double, pair<double,double>>::iterator it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it) {
+    map<double, tuple<double,double,double>>::iterator ne;
+    for (map<double, tuple<double,double,double>>::iterator it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it) {
         // next element
         ne = next(it);
         if (ne == coords_sorted[0].end())
@@ -86,8 +90,8 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
 
 
         // coordinates of two neighboring polygon points
-        geometry_msgs::Point p1 = pair2point(it->second);
-        geometry_msgs::Point p2 = pair2point(ne->second);
+        geometry_msgs::Point p1 = tuple2point(it->second);
+        geometry_msgs::Point p2 = tuple2point(ne->second);
 
         // difference between all three points
         geometry_msgs::Point p02;
@@ -122,6 +126,7 @@ bool area::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
         else {
             closest.x = p1.x + r * p12.x;
             closest.y = p1.y + r * p12.y;
+            closest.z = p1.z + r * p12.z;
             dist = sqrt((p10.x * p10.x + p10.y * p10.y) - dis * r * r);
         }
 
@@ -180,7 +185,7 @@ string area::to_string ()
 {
     stringstream ss;
     for (auto c : coords_sorted[0])
-        ss << "(" << c.second.first << "," << c.second.second << ") ";
+        ss << "(" << get<0>(get<1>(c)) << "," << get<1>(get<1>(c)) << "," << get<2>(get<1>(c)) << ") ";
     return ss.str();
 }
 
@@ -207,14 +212,14 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
         double ymin = numeric_limits<double>::max();
         double ymax = numeric_limits<double>::lowest();
         for (auto p : coords[angle]) {
-            if (p.first < xmin)
-                xmin = p.first;
-            if (p.first > xmax)
-                xmax = p.first;
-            if (p.second < ymin)
-                ymin = p.second;
-            if (p.second > ymax)
-                ymax = p.second;
+            if (get<0>(p) < xmin)
+                xmin = get<0>(p);
+            if (get<0>(p) > xmax)
+                xmax = get<0>(p);
+            if (get<1>(p) < ymin)
+                ymin = get<1>(p);
+            if (get<1>(p) > ymax)
+                ymax = get<1>(p);
         }
 
         // calculate dimensions
@@ -234,8 +239,6 @@ nav_msgs::OccupancyGrid area::get_gridmap (bool rotated, double resolution)
             ROS_WARN("Given coordinates seem wrong, grid map extremley large: %d cells!", x*y);
 
         // generate grid map data
-        cpswarm_msgs::OutOfBounds::Request req;
-        cpswarm_msgs::OutOfBounds::Response res;
         vector<int8_t> data;
         for (int i=0; i<y; ++i) { // row major order
             for (int j=0; j<x; ++j) {
@@ -283,12 +286,13 @@ void area::global_to_local ()
 
     // convert given area to local coordinates
     cpswarm_msgs::FixToPose f2p;
-    set<pair<double,double>> local;
+    set<tuple<double,double,double>> local;
     for (auto c : coords[0]) {
-        f2p.request.fix.longitude = c.first;
-        f2p.request.fix.latitude = c.second;
+        f2p.request.fix.longitude = get<0>(c);
+        f2p.request.fix.latitude = get<1>(c);
+        f2p.request.fix.altitude = get<2>(c);
         if (fix_to_pose_client.call(f2p)) {
-            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y);
+            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y, f2p.response.pose.pose.position.z);
         }
         else
             ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
@@ -323,19 +327,21 @@ void area::set_origin ()
 
     else {
         // read origin from parameters
-        double x,y;
+        double x,y,z;
         nh.param(this_node::getName() + "/x", x, 0.0);
         nh.param(this_node::getName() + "/y", y, 0.0);
+        nh.param(this_node::getName() + "/z", z, 0.0);
         origin.x = x;
         origin.y = y;
+        origin.z = z;
     }
 }
 
-vector<geometry_msgs::Point> area::set2vector (set<pair<double,double>> set)
+vector<geometry_msgs::Point> area::set2vector (set<tuple<double,double,double>> set)
 {
     vector<geometry_msgs::Point> vector;
-    for (auto pair : set) {
-        vector.push_back(pair2point(pair));
+    for (auto tuple : set) {
+        vector.push_back(tuple2point(tuple));
     }
     return vector;
 }
@@ -347,31 +353,31 @@ void area::sort_coords ()
     // coordinates of different rotations
     for (auto c : coords) {
         // rotation of coordinates
-        double rot = c.first;
+        double rot = get<0>(c);
 
         // compute centroid / barycenter
         pair<double,double> center;
-        for (auto cc : c.second) {
-            center.first += cc.first;
-            center.second += cc.second;
+        for (auto cc : get<1>(c)) {
+            center.first += get<0>(cc);
+            center.second += get<1>(cc);
         }
-        center.first /= c.second.size();
-        center.second /= c.second.size();
+        center.first /= get<1>(c).size();
+        center.second /= get<1>(c).size();
 
         // sort by angle around center
         double angle;
-        for (auto cc : c.second) {
-            angle = atan2(cc.second-center.second, cc.first-center.first);
+        for (auto cc : get<1>(c)) {
+            angle = atan2(get<1>(cc)-center.second, get<0>(cc)-center.first);
             coords_sorted[rot][angle] = cc;
         }
     }
 }
 
-set<pair<double,double>> area::vector2set (vector<geometry_msgs::Point> vector)
+set<tuple<double,double,double>> area::vector2set (vector<geometry_msgs::Point> vector)
 {
-    set<pair<double,double>> set;
+    set<tuple<double,double,double>> set;
     for (auto point : vector) {
-        set.insert(point2pair(point));
+        set.insert(point2tuple(point));
     }
     return set;
 }
@@ -397,22 +403,22 @@ bool area::on_bound (pair<double,double> pos, double angle)
     double d01x, d01y, d01, d02x, d02y, d02, d12x, d12y, d12;
 
     // loop through all edges of the polygon
-    map<double, pair<double,double>>::iterator ne;
-    for (map<double, pair<double,double>>::iterator it = coords_sorted[angle].begin(); it != coords_sorted[angle].end(); ++it) {
+    map<double, tuple<double,double,double>>::iterator ne;
+    for (map<double, tuple<double,double,double>>::iterator it = coords_sorted[angle].begin(); it != coords_sorted[angle].end(); ++it) {
         // next element in set
         ne = next(it);
         if (ne == coords_sorted[angle].end())
             ne = coords_sorted[angle].begin();
 
         // distances between points
-        d01x = ne->second.first - it->second.first;
-        d01y = ne->second.second - it->second.second;
+        d01x = get<0>(ne->second) - get<0>(it->second);
+        d01y = get<1>(ne->second) - get<1>(it->second);
         d01 = hypot(d01x, d01y);
-        d02x = pos.first - it->second.first;
-        d02y = pos.second - it->second.second;
+        d02x = pos.first - get<0>(it->second);
+        d02y = pos.second - get<1>(it->second);
         d02 = hypot(d02x, d02y);
-        d12x = pos.first - ne->second.first;
-        d12y = pos.second - ne->second.second;
+        d12x = pos.first - get<0>(ne->second);
+        d12y = pos.second - get<1>(ne->second);
         d12 = hypot(d12x, d12y);
 
         // close enough to boundary
@@ -434,19 +440,19 @@ bool area::out_of_bounds (pair<double,double> pos, double angle)
     int wn = 0;
 
     // loop through all edges of the polygon
-    map<double, pair<double,double>>::iterator ne;
-    for (map<double, pair<double,double>>::iterator it = coords_sorted[angle].begin(); it != coords_sorted[angle].end(); ++it) {
+    map<double, tuple<double,double,double>>::iterator ne;
+    for (map<double, tuple<double,double,double>>::iterator it = coords_sorted[angle].begin(); it != coords_sorted[angle].end(); ++it) {
         // next element in set
         ne = next(it);
         if (ne == coords_sorted[angle].end())
             ne = coords_sorted[angle].begin();
 
         // ray crosses upward edge
-        if (it->second.second <= pos.second && pos.second < ne->second.second && is_left(it->second, ne->second, pos))
+        if (get<1>(it->second) <= pos.second && pos.second < get<1>(ne->second) && is_left(make_pair(get<0>(it->second), get<1>(it->second)), make_pair(get<0>(ne->second), get<1>(ne->second)), pos))
             ++wn;
 
         // ray crosses downward edge
-        else if (ne->second.second <= pos.second && pos.second < it->second.second && is_right(it->second, ne->second, pos))
+        else if (get<1>(ne->second) <= pos.second && pos.second < get<1>(it->second) && is_right(make_pair(get<0>(it->second), get<1>(it->second)), make_pair(get<0>(ne->second), get<1>(ne->second)), pos))
             --wn;
     }
 
@@ -458,20 +464,25 @@ bool area::out_of_bounds (pair<double,double> pos, double angle)
     return false;
 }
 
-geometry_msgs::Point area::pair2point (pair<double,double> pair)
+geometry_msgs::Point area::tuple2point (tuple<double,double,double> tuple)
 {
     geometry_msgs::Point point;
-    point.x = pair.first;
-    point.y = pair.second;
+    point.x = get<0>(tuple);
+    point.y = get<1>(tuple);
+    point.z = get<2>(tuple);
     return point;
 }
 
 pair<double,double> area::point2pair (geometry_msgs::Point point)
 {
-    pair<double,double> pair;
-    pair.first = point.x;
-    pair.second = point.y;
+    pair<double,double> pair{point.x, point.y};
     return pair;
+}
+
+tuple<double,double,double> area::point2tuple (geometry_msgs::Point point)
+{
+    tuple<double,double,double> tuple{point.x, point.y, point.z};
+    return tuple;
 }
 
 double area::rotate ()
@@ -481,42 +492,43 @@ double area::rotate ()
         return rotation;
 
     // bottom most point
-    map<double, pair<double,double>>::iterator bot = coords_sorted[0].begin();
+    map<double, tuple<double,double,double>>::iterator bot = coords_sorted[0].begin();
     for (auto it = coords_sorted[0].begin(); it != coords_sorted[0].end(); ++it)
-        if (it->second.second < bot->second.second)
+        if (get<1>(it->second) < get<1>(bot->second))
             bot = it;
 
     // previous point
-    map<double, pair<double,double>>::iterator pr;
+    map<double, tuple<double,double,double>>::iterator pr;
     if (bot == coords_sorted[0].begin())
         pr = prev(coords_sorted[0].end());
     else
         pr = prev(bot);
 
     // next point
-    map<double, pair<double,double>>::iterator ne = next(bot);
+    map<double, tuple<double,double,double>>::iterator ne = next(bot);
     if (ne == coords_sorted[0].end())
         ne = coords_sorted[0].begin();
 
     // calculate rotation
-    if (pr->second.second < ne->second.second || pr->second.second == ne->second.second && pr->second.second != bot->second.second) // prefer counter-clockwise rotation in case of tie
-        rotation = -atan2(bot->second.second - pr->second.second, bot->second.first - pr->second.first);
-    else if (pr->second.second > ne->second.second)
-        rotation = -atan2(ne->second.second - bot->second.second, ne->second.first - bot->second.first);
+    if (get<1>(pr->second) < get<1>(ne->second) || get<1>(pr->second) == get<1>(ne->second) && get<1>(pr->second) != get<1>(bot->second)) // prefer counter-clockwise rotation in case of tie
+        rotation = -atan2(get<1>(bot->second) - get<1>(pr->second), get<0>(bot->second) - get<0>(pr->second));
+    else if (get<1>(pr->second) > get<1>(ne->second))
+        rotation = -atan2(get<1>(ne->second) - get<1>(bot->second), get<0>(ne->second) - get<0>(bot->second));
     else
         return 0;
 
     ROS_DEBUG("Rotate map by %.2f...", rotation);
 
     // rotate coordinates
-    pair<double,double> rot;
     if (coords.count(rotation) == 0) {
         stringstream css;
         for (auto c : coords[0]) {
-            rot.first = c.first * cos(rotation) - c.second * sin(rotation);
-            rot.second = c.first * sin(rotation) + c.second * cos(rotation);
+            tuple<double,double,double> rot;
+            get<0>(rot) = get<0>(c) * cos(rotation) - get<1>(c) * sin(rotation);
+            get<1>(rot) = get<0>(c) * sin(rotation) + get<1>(c) * cos(rotation);
+            get<2>(rot) = get<2>(c);
             coords[rotation].insert(rot);
-            css << "(" << rot.first << "," << rot.second << ") ";
+            css << "(" << get<0>(rot) << "," << get<1>(rot) << "," << get<2>(rot) << ") ";
         }
         ROS_DEBUG("Rotated coordinates: %s", css.str().c_str());
     }
@@ -524,8 +536,10 @@ double area::rotate ()
     // rotate sorted coordinates
     if (coords_sorted.count(rotation) == 0)
         for (auto c : coords_sorted[0]) {
-            rot.first = c.second.first * cos(rotation) - c.second.second * sin(rotation);
-            rot.second = c.second.first * sin(rotation) + c.second.second * cos(rotation);
+            tuple<double,double,double> rot;
+            get<0>(rot) = get<0>(c.second) * cos(rotation) - get<1>(c.second) * sin(rotation);
+            get<1>(rot) = get<0>(c.second) * sin(rotation) + get<1>(c.second) * cos(rotation);
+            get<2>(rot) = get<2>(c.second);
             coords_sorted[rotation][c.first] = rot;
         }
 

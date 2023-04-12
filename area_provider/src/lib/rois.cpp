@@ -107,7 +107,7 @@ bool rois::get_distance (cpswarm_msgs::GetDist::Request &req, cpswarm_msgs::GetD
     // create string for warning
     stringstream coords_ss;
     for (auto p : req.coords)
-        coords_ss << "(" << p.x << "," << p.y << ") ";
+        coords_ss << "(" << p.x << "," << p.y << "," << p.z << ") ";
     ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
 
     return false;
@@ -127,7 +127,7 @@ bool rois::get_map (cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Re
     // create string for warning
     stringstream coords_ss;
     for (auto p : req.coords)
-        coords_ss << "(" << p.x << "," << p.y << ") ";
+        coords_ss << "(" << p.x << "," << p.y << "," << p.z << ") ";
     ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
 
     return false;
@@ -193,20 +193,20 @@ bool rois::reload (std_srvs::SetBool::Request& req, std_srvs::SetBool::Response&
 bool rois::set_state (cpswarm_msgs::SetRoiState::Request &req, cpswarm_msgs::SetRoiState::Response &res)
 {
     // convert coordinates to set
-    set<pair<double,double>> coords;
+    set<tuple<double,double,double>> coords;
     for (auto point : req.coords)
-        coords.emplace(point.x, point.y);
+        coords.emplace(point.x, point.y, point.z);
 
     res.success = set_state(coords, (roi_state_t)req.state);
 
     return true;
 }
 
-void rois::add_roi (vector<double> x, vector<double> y)
+void rois::add_roi (vector<double> x, vector<double> y, vector<double> z)
 {
-    // equal number of x and y coordinates required
-    if (x.size() != y.size()) {
-        ROS_ERROR("Cannot add ROI, number of x and y coordinates do not match (%lu != %lu)", x.size(), y.size());
+    // equal number of x, y, and z coordinates required
+    if (x.size() != y.size() || x.size() != z.size() || y.size() != z.size()) {
+        ROS_ERROR("Cannot add ROI, number of x and y coordinates do not match (%lu != %lu != %lu)", x.size(), y.size(), z.size());
     }
 
     // not enough coordinates
@@ -216,7 +216,7 @@ void rois::add_roi (vector<double> x, vector<double> y)
 
     else {
         // add roi
-        roi roi(x, y);
+        roi roi(x, y, z);
 
         // check if roi already exists
         if (duplicates == false && exists(roi)) {
@@ -232,9 +232,10 @@ void rois::add_roi (vector<double> x, vector<double> y)
             cpswarm_msgs::PointArrayEvent event;
             event.header.stamp = Time::now();
             event.swarmio.name = "roi";
-            pair<vector<double>, vector<double>> coords = roi.get_global();
-            event.x = coords.first;
-            event.y = coords.second;
+            tuple<vector<double>, vector<double>, vector<double>> coords = roi.get_global();
+            event.x = get<0>(coords);
+            event.y = get<1>(coords);
+            event.z = get<2>(coords);
             roi_publisher.publish(event);
         }
 
@@ -335,6 +336,7 @@ void rois::from_file ()
                     ROS_DEBUG("Extract ROI coordinates from %s...", roi_file_name.c_str());
                     vector<double> x;
                     vector<double> y;
+                    vector<double> z;
                     for (auto c : roi_json["mission"]["items"]) {
                         if (c["params"].size() < 7) {
                             ROS_ERROR("Skipping file %s, invalid syntax: number of params must be 7 for each mission item!", roi_file_name.c_str());
@@ -346,11 +348,12 @@ void rois::from_file ()
                         }
                         x.push_back(c["params"][5]);
                         y.push_back(c["params"][4]);
+                        z.push_back(c["params"][6]);
                     }
 
                     // create roi object
                     ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
-                    add_roi(x, y);
+                    add_roi(x, y, z);
                 }
 
                 // geo json
@@ -370,17 +373,24 @@ void rois::from_file ()
                             continue;
                         }
 
+                        // altitude
+                        double alt = 0;
+                        if (c.contains("properties") && c["properties"].contains("agl") && c["properties"]["agl"] > 0)
+                            alt = c["properties"]["agl"];
+
                         // extract coordinates
                         vector<double> x;
                         vector<double> y;
+                        vector<double> z;
                         for (auto p : c["geometry"]["coordinates"][0]) {
                             x.push_back(p[0]);
                             y.push_back(p[1]);
+                            z.push_back(alt);
                         }
 
                         // create roi object
                         ROS_INFO("Add ROI from file %s...", roi_file_name.c_str());
-                        add_roi(x, y);
+                        add_roi(x, y, z);
                     }
                 }
 
@@ -410,7 +420,7 @@ void rois::from_file ()
     }
 }
 
-bool rois::set_state (set<pair<double,double>> roi, roi_state_t state)
+bool rois::set_state (set<tuple<double,double,double>> roi, roi_state_t state)
 {
     bool unknown_roi = true;
 
@@ -441,7 +451,7 @@ bool rois::set_state (set<pair<double,double>> roi, roi_state_t state)
     if (unknown_roi) {
         stringstream coords_ss;
         for (auto p : roi)
-            coords_ss << "(" << p.first << "," << p.second << ") ";
+            coords_ss << "(" << get<0>(p) << "," << get<1>(p) << "," << get<2>(p) << ") ";
         ROS_WARN("Could not find ROI %s", coords_ss.str().c_str());
     }
 
@@ -458,14 +468,14 @@ void rois::roi_callback (const cpswarm_msgs::PointArrayEvent::ConstPtr& event)
 {
     // create roi object
     ROS_INFO("Received ROI from swarm member %s", event->swarmio.node.c_str());
-    add_roi(event->x, event->y);
+    add_roi(event->x, event->y, event->z);
 }
 
 void rois::state_callback (const cpswarm_msgs::PointArrayStateEvent::ConstPtr& event)
 {
     // equal number of x and y coordinates required
-    if (event->x.size() != event->y.size()) {
-        ROS_ERROR("Cannot change ROI state, number of x and y coordinates do not match (%lu != %lu)", event->x.size(), event->y.size());
+    if (event->x.size() != event->y.size() || event->x.size() != event->z.size() || event->y.size() != event->z.size()) {
+        ROS_ERROR("Cannot change ROI state, number of x, y, and z coordinates do not match (%lu != %lu != %lu)", event->x.size(), event->y.size(), event->z.size());
         return;
     }
 
@@ -476,9 +486,9 @@ void rois::state_callback (const cpswarm_msgs::PointArrayStateEvent::ConstPtr& e
     }
 
     // convert coordinates to set
-    set<pair<double,double>> coords;
+    set<tuple<double,double,double>> coords;
     for (int i=0; i<event->x.size(); ++i)
-        coords.emplace(event->x[i], event->y[i]);
+        coords.emplace(event->x[i], event->y[i], event->z[i]);
 
     // set state
     if (set_state(coords, (roi_state_t)event->state))

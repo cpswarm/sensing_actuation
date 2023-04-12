@@ -52,24 +52,18 @@ ma::ma ()
 void ma::map_to_coords ()
 {
     // extract coordinates from (un-rotated) map
-    pair<double,double> c;
 
     // top right
-    c.first += gridmaps[0][resolution].info.height * resolution;
-    coords[0].insert(c);
+    coords[0].emplace(gridmaps[0][resolution].info.origin.position.x + gridmaps[0][resolution].info.width * resolution, gridmaps[0][resolution].info.origin.position.y + gridmaps[0][resolution].info.height * resolution, gridmaps[0][resolution].info.origin.position.z);
 
     // top left
-    c.first = gridmaps[0][resolution].info.origin.position.x;
-    coords[0].insert(c);
+    coords[0].emplace(gridmaps[0][resolution].info.origin.position.x, gridmaps[0][resolution].info.origin.position.y + gridmaps[0][resolution].info.height * resolution, gridmaps[0][resolution].info.origin.position.z);
 
     // bottom left
-    c.first = gridmaps[0][resolution].info.origin.position.x;
-    c.second = gridmaps[0][resolution].info.origin.position.y;
-    coords[0].insert(c);
+    coords[0].emplace(gridmaps[0][resolution].info.origin.position.x, gridmaps[0][resolution].info.origin.position.y, gridmaps[0][resolution].info.origin.position.z);
 
     // bottom right
-    c.first += gridmaps[0][resolution].info.width * resolution;
-    coords[0].insert(c);
+    coords[0].emplace(gridmaps[0][resolution].info.origin.position.x + gridmaps[0][resolution].info.width * resolution, gridmaps[0][resolution].info.origin.position.y, gridmaps[0][resolution].info.origin.position.z);
 }
 
 void ma::read_coords ()
@@ -92,7 +86,7 @@ void ma::read_coords ()
 
     // store area coordinates in right format
     for (int i = 0; i < area_x.size(); ++i) {
-        coords[0].emplace(area_x[i], area_y[i]);
+        coords[0].emplace(area_x[i], area_y[i], 0.0); // altitude zero
     }
 
     sort_coords();

@@ -88,8 +88,9 @@ private:
      * @brief Add an ROI.
      * @param x A vector of the ROI x-coordinates.
      * @param y A vector of the ROI y-coordinates.
+     * @param z A vector of the ROI z-coordinates.
      */
-    void add_roi (vector<double> x, vector<double> y);
+    void add_roi (vector<double> x, vector<double> y, vector<double> z);
 
     /**
      * @brief Check whether a given ROI is already known.
@@ -119,7 +120,7 @@ private:
      * @param state The new state for the ROI.
      * @return True, if the coordinates correspond to a known ROI and the state is valid. False otherwise.
      */
-    bool set_state (set<pair<double,double>> roi, roi_state_t state);
+    bool set_state (set<tuple<double,double,double>> roi, roi_state_t state);
 
     /**
      * @brief Receive ROI coordinates from an event message.

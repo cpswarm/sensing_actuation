@@ -27,15 +27,16 @@ public:
      * @brief Constructor that initializes ROI coordinates.
      * @param x The x-coordinates of the ROI, can be global (GPS) or local coordinates.
      * @param y The y-coordinates of the ROI, can be global (GPS) or local coordinates.
+     * @param z The y-coordinates of the ROI, can be global (GPS) or local coordinates.
      */
-    roi (vector<double> x, vector<double> y);
+    roi (vector<double> x, vector<double> y, vector<double> z);
 
     /**
      * @brief Get the global coordiantes.
      *
-     * @return A pair of vectors. First the longitudes, second the latitudes.
+     * @return A tuple of vectors. First the longitudes, second the latitudes, third the altitudes.
      */
-    pair<vector<double>, vector<double>> get_global ();
+    tuple<vector<double>, vector<double>, vector<double>> get_global ();
 
     /**
      * @brief Compare two ROIs.

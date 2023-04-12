@@ -5,6 +5,7 @@
     <arg name="pos_type" default="local" />
     <arg name="x" default="0" />
     <arg name="y" default="0" />
+    <arg name="z" default="0" />
     <arg name="output" default="log" />
 
     <!-- Mission area services -->
@@ -12,6 +13,7 @@
         <param name="pos_type" value="$(arg pos_type)" />
         <param name="x" value="$(arg x)" />
         <param name="y" value="$(arg y)" />
+        <param name="z" value="$(arg z)" />
         <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
         <rosparam file="$(find area_provider)/param/ma.yaml" command="load" />
     </node>

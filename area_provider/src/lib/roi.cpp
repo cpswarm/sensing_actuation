@@ -1,10 +1,10 @@
 #include "lib/roi.h"
 
-roi::roi (vector<double> x, vector<double> y)
+roi::roi (vector<double> x, vector<double> y, vector<double> z)
 {
     // equal number of x and y coordinates required
-    if (x.size() != y.size()) {
-        ROS_ERROR("Cannot create ROI, number of x and y coordinates do not match (%lu != %lu)", x.size(), y.size());
+    if (x.size() != y.size() || x.size() != z.size() || y.size() != z.size()) {
+        ROS_ERROR("Cannot create ROI, number of x and y coordinates do not match (%lu != %lu != %lu)", x.size(), y.size(), z.size());
     }
 
     // not enough coordinates
@@ -18,7 +18,7 @@ roi::roi (vector<double> x, vector<double> y)
 
         // set coordinates
         for (int i=0; i<x.size(); ++i) {
-            coords[0].emplace(x[i], y[i]);
+            coords[0].emplace(x[i], y[i], z[i]);
         }
 
         // convert global coordinates
@@ -32,27 +32,29 @@ roi::roi (vector<double> x, vector<double> y)
     sort_coords();
 }
 
-pair<vector<double>, vector<double>> roi::get_global ()
+tuple<vector<double>, vector<double>, vector<double>> roi::get_global ()
 {
-    vector<double> lon, lat;
+    vector<double> lon, lat, alt;
 
     // get global coordinates
     if (global) {
         for (auto it=coords_global.begin(); it!=coords_global.end(); ++it) {
-            lon.push_back(it->first);
-            lat.push_back(it->second);
+            lon.push_back(get<0>(*it));
+            lat.push_back(get<1>(*it));
+            alt.push_back(get<2>(*it));
         }
     }
 
     // use local coordinates (not rotated)
     else {
         for (auto it=coords[0].begin(); it!=coords[0].end(); ++it) {
-            lon.push_back(it->first);
-            lat.push_back(it->second);
+            lon.push_back(get<0>(*it));
+            lat.push_back(get<1>(*it));
+            alt.push_back(get<2>(*it));
         }
     }
 
-    return make_pair(lon, lat);
+    return make_tuple(lon, lat, alt);
 }
 
 bool roi::operator== (const roi other)
