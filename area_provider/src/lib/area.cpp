@@ -292,7 +292,7 @@ void area::global_to_local ()
         f2p.request.fix.latitude = get<1>(c);
         f2p.request.fix.altitude = get<2>(c);
         if (fix_to_pose_client.call(f2p)) {
-            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y, f2p.response.pose.pose.position.z);
+            local.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y, get<2>(c)); // altitude of area is always above ground level
         }
         else
             ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
