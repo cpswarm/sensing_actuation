@@ -140,6 +140,11 @@ private:
     NodeHandle nh;
 
     /**
+     * @brief Service client to convert global (GPS) coordinates to the local coordinate system.
+     */
+    ServiceClient fix_to_pose_client;
+
+    /**
      * @brief Subscriber object to receive ROI coordinates from event messages.
      */
     Subscriber roi_subscriber;
@@ -183,6 +188,11 @@ private:
      * @brief Whether to publish the map of any newly imported ROI.
      */
     bool visualize;
+
+    /**
+     * @brief Whether global (GPS) or local coordinates are used as source.
+     */
+    bool global;
 };
 
 #endif // ROIS_H

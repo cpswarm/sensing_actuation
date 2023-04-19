@@ -8,6 +8,18 @@ rois::rois ()
     nh.param(this_node::getName() + "/duplicates", duplicates, false);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
+    // check of global (gps) coordinates are used
+    string pos_type = "global";
+    nh.param(this_node::getName() + "/pos_type", pos_type, pos_type);
+    global = pos_type == "local" ? false : true;
+
+    // service client for converting gps to local coordinates
+    if (global) {
+        fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
+        ROS_DEBUG("Wait for fix_to_pose service...");
+        fix_to_pose_client.waitForExistence();
+    }
+
     // get rois from incoming event messages
     roi_subscriber = nh.subscribe("bridge/events/rois/roi", queue_size, &rois::roi_callback, this);
     assignment_subscriber = nh.subscribe("bridge/events/rois/assignment", queue_size, &rois::roi_callback, this);
@@ -487,8 +499,25 @@ void rois::state_callback (const cpswarm_msgs::PointArrayStateEvent::ConstPtr& e
 
     // convert coordinates to set
     set<tuple<double,double,double>> coords;
-    for (int i=0; i<event->x.size(); ++i)
-        coords.emplace(event->x[i], event->y[i], event->z[i]);
+    cpswarm_msgs::FixToPose f2p;
+    for (int i=0; i<event->x.size(); ++i) {
+        // convert global to local coordinates
+        if (global) {
+            f2p.request.fix.longitude = event->x[i];
+            f2p.request.fix.latitude = event->y[i];
+            f2p.request.fix.altitude = event->z[i];
+            if (fix_to_pose_client.call(f2p)) {
+                coords.emplace(f2p.response.pose.pose.position.x, f2p.response.pose.pose.position.y, event->z[i]); // altitude of roi is always above ground level
+            }
+            else
+                ROS_FATAL("AREA_PROV - Failed to convert area bounds to local coordinates");
+        }
+
+        // copy local coordinates
+        else
+            coords.emplace(event->x[i], event->y[i], event->z[i]);
+
+    }
 
     // set state
     if (set_state(coords, (roi_state_t)event->state))
