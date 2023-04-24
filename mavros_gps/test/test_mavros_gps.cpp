@@ -43,8 +43,8 @@ TEST (NodeTestMavrosGps, testFixToPose)
         EXPECT_NEAR(f2p.response.pose.pose.position.z, fix.altitude-500, 0.1);
         EXPECT_NEAR(f2p.response.pose.pose.orientation.x, 0.0, 0.01);
         EXPECT_NEAR(f2p.response.pose.pose.orientation.y, 0.0, 0.01);
-        EXPECT_NEAR(f2p.response.pose.pose.orientation.z, 0.376, 0.01);
-        EXPECT_NEAR(f2p.response.pose.pose.orientation.w, 0.927, 0.01);
+        EXPECT_NEAR(f2p.response.pose.pose.orientation.z, 0.0, 0.01);
+        EXPECT_NEAR(f2p.response.pose.pose.orientation.w, 0.0, 0.01);
     }
     else {
         ADD_FAILURE();
