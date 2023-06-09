@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="lat" default="46.612918" />
+    <arg name="lon" default="14.265227" />
+    <arg name="alt" default="500.0" />
+
+    <!-- Fake GPS publisher -->
+    <node pkg="mavros_gps" type="fake_gps" name="fake_gps" output="screen" required="true">
+        <param name="lat" value="$(arg lat)" />
+        <param name="lon" value="$(arg lon)" />
+        <param name="alt" value="$(arg alt)" />
+    </node>
+
+</launch>
