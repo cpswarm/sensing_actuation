@@ -3,7 +3,7 @@
 
     <arg name="id" default="1" />
     <arg name="pos_type" default="local" />
-    <arg name="ma_coords_file" default="$(find area_provider)/param/ma_coords.yaml"
+    <arg name="ma_coords_file" default="$(find area_provider)/param/ma_coords.yaml" />
     <arg name="x" default="0" />
     <arg name="y" default="0" />
     <arg name="z" default="0" />
