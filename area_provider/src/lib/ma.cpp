@@ -72,8 +72,8 @@ void ma::read_coords ()
     vector<double> area_x;
     vector<double> area_y;
     if (global) {
-        nh.getParam(this_node::getName() + "/area_x_global", area_x);
-        nh.getParam(this_node::getName() + "/area_y_global", area_y);
+        nh.getParam(this_node::getName() + "/area_lon", area_x);
+        nh.getParam(this_node::getName() + "/area_lat", area_y);
     }
     else {
         nh.getParam(this_node::getName() + "/area_x", area_x);

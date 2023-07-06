@@ -3,6 +3,7 @@
 
     <arg name="id" default="1" />
     <arg name="pos_type" default="local" />
+    <arg name="ma_coords_file" default="$(find area_provider)/param/ma_coords.yaml"
     <arg name="x" default="0" />
     <arg name="y" default="0" />
     <arg name="z" default="0" />
@@ -16,6 +17,7 @@
         <param name="z" value="$(arg z)" />
         <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
         <rosparam file="$(find area_provider)/param/ma.yaml" command="load" />
+        <rosparam file="$(arg ma_coords_file)" command="load" />
     </node>
 
 </launch>
