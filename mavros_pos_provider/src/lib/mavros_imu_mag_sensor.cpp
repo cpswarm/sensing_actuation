@@ -1,6 +1,6 @@
-#include "lib/mavros_compass_sensor.h"
+#include "lib/mavros_imu_mag_sensor.h"
 
-mavros_compass_sensor::mavros_compass_sensor ()
+mavros_imu_mag_sensor::mavros_imu_mag_sensor ()
 {
     // read parameters
     int num_msgs;
@@ -14,16 +14,16 @@ mavros_compass_sensor::mavros_compass_sensor ()
     // subscribe sensor readings
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    subscriber = nh.subscribe("mavros/global_position/compass_hdg", queue_size, &mavros_compass_sensor::callback, this);
+    subscriber = nh.subscribe("mavros/imu/mag", queue_size, &mavros_imu_mag_sensor::callback, this);
 
     // initialize range sensor messages
     for (int i = 0; i < num_msgs; ++i) {
-        std_msgs::Float64 mag;
+        sensor_msgs::MagneticField mag;
         msgs.push_back(mag);
     }
 }
 
-double mavros_compass_sensor::get_yaw ()
+double mavros_imu_mag_sensor::get_yaw ()
 {
     // process new sensor messages
     if (dirty)
@@ -32,13 +32,13 @@ double mavros_compass_sensor::get_yaw ()
     return yaw;
 }
 
-void mavros_compass_sensor::process ()
+void mavros_imu_mag_sensor::process ()
 {
     // compute the average yaw
     double total_x = 0, total_y = 0;
     for (int i = 0; i < msgs.size(); ++i) {
-        total_x += cos(msgs[i].data / 180.0 * M_PI);
-        total_y += sin(msgs[i].data / 180.0 * M_PI);
+        total_x += msgs[i].magnetic_field.x;
+        total_y += msgs[i].magnetic_field.y;
     }
     yaw = atan2(total_y, total_x);
 
@@ -46,7 +46,7 @@ void mavros_compass_sensor::process ()
     dirty = false;
 }
 
-void mavros_compass_sensor::callback (const std_msgs::Float64::ConstPtr& msg)
+void mavros_imu_mag_sensor::callback (const sensor_msgs::MagneticField::ConstPtr& msg)
 {
     // increase current position of message in vector
     cur_msg++;

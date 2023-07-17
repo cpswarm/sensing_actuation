@@ -10,6 +10,7 @@ project(mavros_pos_provider)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2
+  std_msgs
   geometry_msgs
   sensor_msgs
   cpswarm_msgs
@@ -125,9 +126,13 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
- mavros_compass_sensor
- src/lib/mavros_compass_sensor.cpp
-)
+  mavros_imu_mag_sensor
+  src/lib/mavros_imu_mag_sensor.cpp
+ )
+ add_library(
+  mavros_compass_sensor
+  src/lib/mavros_compass_sensor.cpp
+ )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -155,6 +160,7 @@ add_executable(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
   ${PROJECT_NAME}
+  mavros_imu_mag_sensor
   mavros_compass_sensor
   ${catkin_LIBRARIES}
 )

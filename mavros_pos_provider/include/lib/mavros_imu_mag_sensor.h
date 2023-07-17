@@ -1,8 +1,8 @@
-#ifndef MAVROS_COMPASS_SENSOR_H
-#define MAVROS_COMPASS_SENSOR_H
+#ifndef MAVROS_IMU_MAG_SENSOR_H
+#define MAVROS_IMU_MAG_SENSOR_H
 
 #include <ros/ros.h>
-#include <std_msgs/Float64.h>
+#include <sensor_msgs/MagneticField.h>
 
 using namespace std;
 using namespace ros;
@@ -10,13 +10,13 @@ using namespace ros;
 /**
  * @brief An implementation of the sensor class that describes a compass sensor. The yaw angle of the compass is measured in radian, counterclockwise starting from east.
  */
-class mavros_compass_sensor
+class mavros_imu_mag_sensor
 {
 public:
     /**
      * @brief Constructor that initializes the private member variables.
      */
-    mavros_compass_sensor ();
+    mavros_imu_mag_sensor ();
 
     /**
      * @brief Get the computed reliable CPS yaw.
@@ -32,9 +32,9 @@ private:
 
     /**
      * @brief Callback function for sensor updates.
-     * @param msg Compass heading received from the CPS's IMU.
+     * @param msg Magnetic field received from the CPS's IMU.
      */
-    void callback (const std_msgs::Float64::ConstPtr& msg);
+    void callback (const sensor_msgs::MagneticField::ConstPtr& msg);
 
     /**
      * @brief A node handle for the main ROS node.
@@ -54,7 +54,7 @@ private:
     /**
      * @brief Multiple sensor messages which are used to compute a reliable yaw.
      */
-    vector<std_msgs::Float64> msgs;
+    vector<sensor_msgs::MagneticField> msgs;
 
     /**
      * @brief The position of the latest sensor message in the msgs vector.
@@ -67,4 +67,4 @@ private:
     bool dirty;
 };
 
-#endif // MAVROS_COMPASS_SENSOR_H
+#endif // MAVROS_IMU_MAG_SENSOR_H

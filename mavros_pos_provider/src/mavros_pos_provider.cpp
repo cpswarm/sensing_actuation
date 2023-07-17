@@ -6,6 +6,7 @@
 #include "cpswarm_msgs/OutOfBounds.h"
 #include "cpswarm_msgs/FixToPose.h"
 #include "cpswarm_msgs/NedToEnu.h"
+#include "lib/mavros_imu_mag_sensor.h"
 #include "lib/mavros_compass_sensor.h"
 
 using namespace std;
@@ -161,10 +162,13 @@ int main(int argc, char **argv)
             tf2::Quaternion orientation;
             cpswarm_msgs::NedToEnu n2e;
             n2e.request.yaw = yaw_sensor->get_yaw();
-            if (ned_to_enu_client.call(n2e))
+            if (ned_to_enu_client.call(n2e)) {
+                ROS_DEBUG("Convert yaw: %.2f --> %.2f", yaw_sensor->get_yaw(), n2e.response.yaw);
                 orientation.setRPY(0, 0, n2e.response.yaw);
+            }
             else
                 ROS_ERROR("POS_PROV - Failed to convert global pose");
+
             pose.pose.orientation = tf2::toMsg(orientation);
         }
 
