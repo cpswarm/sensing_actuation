@@ -35,11 +35,12 @@ double mavros_compass_sensor::get_yaw ()
 void mavros_compass_sensor::process ()
 {
     // compute the average yaw
-    double total_yaw = 0;
+    double total_x = 0, total_y = 0;
     for (int i = 0; i < msgs.size(); ++i) {
-        total_yaw += atan2(msgs[i].magnetic_field.y, msgs[i].magnetic_field.x);
+        total_x += msgs[i].magnetic_field.x;
+        total_y += msgs[i].magnetic_field.y;
     }
-    yaw = total_yaw / double(msgs.size());
+    yaw = atan2(total_y, total_x);
 
     // all messages have been processed
     dirty = false;
