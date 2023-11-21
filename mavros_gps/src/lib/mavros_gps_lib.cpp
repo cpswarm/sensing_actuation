@@ -9,8 +9,10 @@ mavros_gps_lib::mavros_gps_lib () : geoid("egm96-5", "", true, true)
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/precision", precision, 2);
+    nh.param(this_node::getName() + "/origin_init_drop", origin_init_drop, 10);
 
     // init origin
+    origin_init_count = 0;
     pose_sub = nh.subscribe("mavros/global_position/global", queue_size, &mavros_gps_lib::pose_callback, this);
     while (ok() && origin.latitude == 0) {
         ROS_DEBUG_THROTTLE(10, "Waiting for valid GPS...");
@@ -291,7 +293,14 @@ void mavros_gps_lib::pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
     ROS_DEBUG("Got GPS coordinates [%f, %f, %.2f]", msg->latitude, msg->longitude, msg->altitude);
 
-    if (msg->latitude != 0) {
+
+    if (msg->latitude != 0 && msg->status.status >= 0) {
+        // drop some initial messages for robustness
+        if (origin_init_count < origin_init_drop) {
+            ++origin_init_count;
+            return;
+        }
+
         // store pose as origin class variable
         origin = *msg;
 

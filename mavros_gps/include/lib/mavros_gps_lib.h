@@ -280,6 +280,16 @@ private:
     int precision;
 
     /**
+     * @brief Number of messages to drop initially before setting the origin.
+     */
+    int origin_init_drop;
+
+    /**
+     * @brief Number of messages to received while waiting to set origin.
+     */
+    int origin_init_count;
+
+    /**
      * @brief The geoid dataset for conversion between AMSL and WGS-84.
      */
     GeographicLib::Geoid geoid;
