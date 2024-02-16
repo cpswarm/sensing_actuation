@@ -129,7 +129,7 @@ int main(int argc, char **argv)
     // wait for valid position
     ROS_DEBUG("POS_PROV - Delay startup by %.2f s", init_time);
     Duration(init_time).sleep();
-    while (ok() && (pose.pose.position.x == 0 && pose.pose.position.y == 0 && pose.pose.position.z == 0)) {
+    while (ok() && (pose.pose.position.x == 0 && pose.pose.position.y == 0 && pose.pose.position.z == 0 && pose.header.stamp.isValid() == false)) {
         ROS_DEBUG_THROTTLE(1, "POS_PROV - Waiting for valid pose");
         spinOnce();
         rate.sleep();
