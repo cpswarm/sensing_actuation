@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <mavros_msgs/State.h>
 
 using namespace ros;
 
@@ -24,8 +25,9 @@ int main (int argc, char** argv)
     // publish rate in hertz
     Rate rate(20);
 
-    // init publisher
+    // init publishers
     Publisher gps_pub = nh.advertise<sensor_msgs::NavSatFix>("mavros/global_position/global", 1);
+    Publisher fcu_pub = nh.advertise<mavros_msgs::State>("mavros/state", 1);
 
     // initial position
     sensor_msgs::NavSatFix fix;
@@ -38,10 +40,19 @@ int main (int argc, char** argv)
     fix.position_covariance = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     fix.position_covariance_type = 2;
 
+    // fcu state
+    mavros_msgs::State state;
+    state.connected = true;
+    state.manual_input = true;
+    state.mode = "STABILIZE";
+    state.system_status = 3;
+
     // publish gps fix
     while (ok()) {
         fix.header.stamp = Time::now();
         gps_pub.publish(fix);
+        state.header.stamp = Time::now();
+        fcu_pub.publish(state);
         rate.sleep();
     }
 
