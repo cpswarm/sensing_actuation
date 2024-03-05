@@ -2,12 +2,9 @@
 #include <tf2/utils.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/NavSatFix.h>
-#include <sensor_msgs/MagneticField.h>
+#include <sensor_msgs/Imu.h>
 #include "cpswarm_msgs/OutOfBounds.h"
 #include "cpswarm_msgs/FixToPose.h"
-#include "cpswarm_msgs/NedToEnu.h"
-#include "lib/mavros_imu_mag_sensor.h"
-#include "lib/mavros_compass_sensor.h"
 
 using namespace std;
 using namespace ros;
@@ -18,6 +15,11 @@ using namespace ros;
 geometry_msgs::PoseStamped pose;
 
 /**
+ * @brief Current orientation of the CPS.
+ */
+geometry_msgs::Quaternion orientation;
+
+/**
  * @brief Origin of the CPS in local coordinates.
  */
 geometry_msgs::Pose origin;
@@ -26,11 +28,6 @@ geometry_msgs::Pose origin;
  * @brief Service client to convert a GPS fix to a local pose.
  */
 ServiceClient fix_to_pose_client;
-
-/**
- * Service client to convert the yaw from NED to ENU.
- */
-ServiceClient ned_to_enu_client;
 
 /**
  * @brief Compute the yaw angle from a given pose.
@@ -76,6 +73,16 @@ void global_pose_callback (const sensor_msgs::NavSatFix::ConstPtr& msg)
 }
 
 /**
+ * @brief Callback function for orientation updates.
+ * @param msg Orientation received from the CPS.
+ */
+void orientation_callback (const sensor_msgs::Imu::ConstPtr& msg)
+{
+    // store new orientation in class variables
+    orientation = msg->orientation;
+}
+
+/**
  * @brief Main function to be executed by ROS.
  * @param argc Number of command line arguments.
  * @param argv Array of command line arguments.
@@ -105,32 +112,34 @@ int main(int argc, char **argv)
     nh.param(this_node::getName() + "/init_time", init_time, 10.0);
 
     // init pose subscribers
-    mavros_compass_sensor* yaw_sensor;
-    Subscriber yaw_sub, pose_sub;
+    Subscriber pose_sub, orient_sub;
     if (global) {
         pose_sub = nh.subscribe("mavros/global_position/global", queue_size, global_pose_callback);
-        yaw_sensor = new mavros_compass_sensor();
     }
     else {
         pose_sub = nh.subscribe("mavros/local_position/pose", queue_size, local_pose_callback);
     }
+    orient_sub = nh.subscribe("mavros/imu/data", queue_size, orientation_callback);
 
     // init pose publisher
     Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_provider/pose", queue_size);
 
     // init gps service clients
     fix_to_pose_client = nh.serviceClient<cpswarm_msgs::FixToPose>("gps/fix_to_pose");
-    ned_to_enu_client = nh.serviceClient<cpswarm_msgs::NedToEnu>("gps/ned_to_enu");
     if (global) {
         fix_to_pose_client.waitForExistence();
-        ned_to_enu_client.waitForExistence();
     }
 
     // wait for valid position
     ROS_DEBUG("POS_PROV - Delay startup by %.2f s", init_time);
     Duration(init_time).sleep();
     while (ok() && (pose.pose.position.x == 0 && pose.pose.position.y == 0 && pose.pose.position.z == 0 && pose.header.stamp.isValid() == false)) {
-        ROS_DEBUG_THROTTLE(1, "POS_PROV - Waiting for valid pose");
+        ROS_DEBUG_THROTTLE(1, "POS_PROV - Waiting for valid position");
+        spinOnce();
+        rate.sleep();
+    }
+    while (ok() && (orientation.x == 0 && orientation.y == 0 && orientation.z == 0 && orientation.w == 0)) {
+        ROS_DEBUG_THROTTLE(1, "POS_PROV - Waiting for valid orientation");
         spinOnce();
         rate.sleep();
     }
@@ -156,28 +165,13 @@ int main(int argc, char **argv)
     while (ok()) {
         // update position information
         spinOnce();
-
-        // convert orientation to local coordinates
-        if (global) {
-            tf2::Quaternion orientation;
-            cpswarm_msgs::NedToEnu n2e;
-            n2e.request.yaw = yaw_sensor->get_yaw();
-            if (ned_to_enu_client.call(n2e)) {
-                ROS_DEBUG("Convert yaw: %.2f --> %.2f", yaw_sensor->get_yaw(), n2e.response.yaw);
-                orientation.setRPY(0, 0, n2e.response.yaw);
-            }
-            else
-                ROS_ERROR("POS_PROV - Failed to convert global pose");
-
-            pose.pose.orientation = tf2::toMsg(orientation);
-        }
-
-        ROS_DEBUG_THROTTLE(1, "POS_PROV - Current position (%.2f,%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
-
         // publish position
         pose.header.stamp = Time::now();
         pose.header.frame_id = "map";
+        pose.pose.orientation = orientation;
         pose_pub.publish(pose);
+
+        ROS_DEBUG_THROTTLE(1, "POS_PROV - Current position (%.2f,%.2f,%.2f,%.2f)", pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, get_yaw(pose.pose));
 
         rate.sleep();
     }
